@@ -1,0 +1,72 @@
+object FormMain: TFormMain
+  Left = 0
+  Top = 0
+  Caption = 'ModernListView'
+  ClientHeight = 480
+  ClientWidth = 321
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 3
+  object btnColorizer: TButton
+    Anchors = [akLeft, akTop, akRight]
+    Position.X = 56.000000000000000000
+    Position.Y = 87.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    Text = 'Colorizer'
+    OnClick = btnColorizerClick
+  end
+  object btnHorizontal: TButton
+    Anchors = [akLeft, akTop, akRight]
+    Position.X = 56.000000000000000000
+    Position.Y = 132.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = 'Horizontal mode'
+    OnClick = btnHorizontalClick
+  end
+  object Label1: TLabel
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = True
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 56.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 31.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 25.000000000000000000
+    Text = 'Modern ListView'
+  end
+  object btnColumns: TButton
+    Anchors = [akLeft, akTop, akRight]
+    Position.X = 56.000000000000000000
+    Position.Y = 177.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'AutoColumns Mode'
+    OnClick = btnColumnsClick
+  end
+  object Label2: TLabel
+    Align = Bottom
+    StyledSettings = [Family, Style, FontColor]
+    Margins.Left = 5.000000000000000000
+    Margins.Top = 5.000000000000000000
+    Margins.Right = 5.000000000000000000
+    Margins.Bottom = 5.000000000000000000
+    Position.X = 5.000000000000000000
+    Position.Y = 452.000000000000000000
+    Size.Width = 311.000000000000000000
+    Size.Height = 23.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 10.000000000000000000
+    TextSettings.HorzAlign = Trailing
+    Text = 'by ZuBy'
+  end
+end
