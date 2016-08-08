@@ -69,4 +69,14 @@ object FormMain: TFormMain
     TextSettings.HorzAlign = Trailing
     Text = 'by ZuBy'
   end
+  object Button1: TButton
+    Position.X = 56.000000000000000000
+    Position.Y = 224.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 44.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    Text = 'Button1'
+    OnClick = Button1Click
+  end
 end

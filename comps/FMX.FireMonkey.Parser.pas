@@ -3,15 +3,16 @@ unit FMX.FireMonkey.Parser;
 interface
 
 uses
-  System.Classes, System.SysUtils, System.IOUtils, System.StrUtils,
-  System.Generics.Collections,
-  IdHTTP, IdCompressorZLib,
+  System.Classes, System.Types, System.Threading, System.IOUtils, System.StrUtils, System.SysUtils,
+  System.Generics.Collections, FMX.Types,
+  IdHTTP, IdCompressorZLib, IdHashMessageDigest,
   FMX.ListView;
 
 type
   TFMXMember = record
     Name: string;
     URL: string;
+    FileName: string;
     constructor Create(aName, aURL: string);
   end;
 
@@ -19,10 +20,16 @@ type
     class function GetURL: string; static;
     class procedure Request(aURL: string); static;
     class procedure MakeList; static;
+    class procedure CachePictures(const aLV: TListView); static;
+    class procedure Clean; static;
   end;
 
 var
   FMembersList: TList<TFMXMember>;
+  FStreamList: array of TMemoryStream;
+  Pool: TThreadPool = nil;
+
+function md5(const Value: string): string;
 
 implementation
 
@@ -40,6 +47,15 @@ begin
     Exit;
   if p2 > p then
     Result := (Copy(source, p + tag1.Length, p2 - p - tag1.Length));
+end;
+
+function md5(const Value: string): string;
+begin
+  with TIdHashMessageDigest5.Create do
+  begin
+    Result := AnsiLowerCase(HashStringAsHex(Value)) + '.jpg';
+    Free;
+  end;
 end;
 
 { TFMXSiteParser }
@@ -65,6 +81,8 @@ begin
       System.Delete(FContent, 1, pos(aDel, FContent) + aDel.Length + 1);
 
       FMembersList.Add(TFMXMember.Create(aName, aURL));
+      // SetLength(FStreamList, Length(FStreamList) + 1);
+      // FStreamList[Length(FStreamList) - 1] := TMemoryStream.Create;
     end;
     Inc(I);
   end;
@@ -73,48 +91,133 @@ end;
 class procedure TFireMonkey.Request(aURL: string);
 var
   Decompress: TIdCompressorZLib;
-  Content: TBytesStream;
+  Content: TMemoryStream;
   AStream: TStringStream;
   aPath: string;
 begin
   aPath := TPath.Combine(TPath.GetDocumentsPath, 'content.txt');
 
-  Decompress := TIdCompressorZLib.Create(nil);
-  with TIdHTTP.Create(nil) do
+  if not FileExists(aPath) then
   begin
-    Compressor := Decompress;
-
-    AllowCookies := true;
-    with Request do
+    Decompress := TIdCompressorZLib.Create(nil);
+    with TIdHTTP.Create(nil) do
     begin
-      Accept := 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
-      AcceptLanguage := 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3';
-      AcceptCharSet := 'text/html;charset=UTF-8';
-      // AcceptEncoding := 'gzip, deflate';
-      // UserAgent := 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0';
-      Host := 'fire-monkey.ru';
-    end;
+      Compressor := Decompress;
 
-    Content := TBytesStream.Create;
-    try
-      Get(aURL, Content);
-      Content.SaveToFile(aPath);
-
-      AStream := TStringStream.Create('', TEncoding.UTF8);
-      try
-        AStream.LoadFromFile(aPath);
-        FContent := AStream.DataString;
-      finally
-        AStream.Free;
+      AllowCookies := true;
+      with Request do
+      begin
+        Accept := 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
+        AcceptLanguage := 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3';
+        AcceptCharSet := 'text/html;charset=UTF-8';
+        // AcceptEncoding := 'gzip, deflate';
+        // UserAgent := 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0';
+        Host := 'fire-monkey.ru';
       end;
 
-    finally
-      Content.Free;
-    end;
+      Content := TMemoryStream.Create;
+      try
+        Get(aURL, Content);
+        Content.SaveToFile(aPath);
+      finally
+        Content.Free;
+      end;
 
-    Free;
+      Free;
+    end;
+    Decompress.Free;
   end;
-  Decompress.Free;
+
+  AStream := TStringStream.Create('', TEncoding.UTF8);
+  try
+    AStream.LoadFromFile(aPath);
+    FContent := AStream.DataString;
+  finally
+    AStream.Free;
+  end;
+end;
+
+class procedure TFireMonkey.CachePictures(const aLV: TListView);
+begin
+  Pool.SetMaxWorkerThreads(10); // TThreadPool.Default.MaxWorkerThreads
+
+  TParallel.For(0, FMembersList.Count - 1,
+    procedure(Idx: Integer)
+    var
+      AHTTP: TIdHTTP;
+    begin
+      if not FileExists(FMembersList[Idx].FileName) then
+      begin
+        AHTTP := TIdHTTP.Create(nil);
+        try
+          AHTTP.HandleRedirects := true;
+          FStreamList[Idx].Clear;
+          AHTTP.Get(FMembersList[Idx].URL, FStreamList[Idx]);
+        finally
+          FreeAndNil(AHTTP);
+        end;
+
+        TThread.Queue(TThread.CurrentThread,
+          procedure
+          var
+            AItem: Integer;
+          begin
+            if FStreamList[Idx].Size > 0 then
+            begin
+              FStreamList[Idx].SaveToFile(FMembersList[Idx].FileName);
+              AItem := Trunc(Idx / aLV.Columns);
+              if AItem < aLV.Items.Count then
+                aLV.Adapter.ResetView(aLV.Items[AItem]);
+            end;
+            Log.d('Current Thread = ' + inttostr(Idx));
+          end);
+      end;
+    end, Pool);
+end;
+
+{ class procedure TFireMonkey.CachePictures;
+  begin
+  FThreadMain := TTask.Run(
+  procedure
+  var
+  I: Integer;
+  AHTTP: TIdHTTP;
+  begin
+  FThreadWork := true;
+  for I := 0 to FMembersList.Count - 1 do
+  begin
+  AHTTP := TIdHTTP.Create(nil);
+  try
+  AHTTP.HandleRedirects := true;
+  AHTTP.Get(FMembersList[I].URL, FStreamList[I]);
+  finally
+  FreeAndNil(AHTTP);
+  end;
+  Log.d('current thread = ' + inttostr(I));
+  end;
+
+  TThread.Synchronize(TThread.CurrentThread,
+  procedure
+  var
+  I: Integer;
+  begin
+  for I := 0 to FMembersList.Count - 1 do
+  begin
+  if FStreamList[I].Size > 0 then
+  FStreamList[I].SaveToFile(FMembersList[I].FileName);
+  end;
+  end);
+  FThreadWork := false;
+  end)
+  end; }
+
+class procedure TFireMonkey.Clean;
+var
+  I: Integer;
+begin
+  for I := Low(FStreamList) to High(FStreamList) do
+    FStreamList[I].Free;
+  SetLength(FStreamList, 0);
 end;
 
 class function TFireMonkey.GetURL: string;
@@ -129,14 +232,17 @@ constructor TFMXMember.Create(aName, aURL: string);
 begin
   Self.Name := aName;
   Self.URL := aURL;
+  Self.FileName := TPath.Combine(TPath.GetDocumentsPath, md5(aURL));
 end;
 
 initialization
 
 FMembersList := TList<TFMXMember>.Create;
+Pool := TThreadPool.Create;
 
 finalization
 
 FMembersList.Free;
+Pool.Free;
 
 end.

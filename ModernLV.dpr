@@ -11,8 +11,9 @@ uses
   FMX.ListView.Types in 'FMX.ListView.Types.pas',
   FMX.ListView.TextButtonFix in 'comps\FMX.ListView.TextButtonFix.pas',
   FMX.FireMonkey.Parser in 'comps\FMX.FireMonkey.Parser.pas',
-  FMX.BitmapHelper in 'comps\FMX.BitmapHelper.pas',
-  AnonThread in 'comps\AnonThread.pas';
+  uForm4 in 'uForm4.pas' {Form4},
+  AnonThread in 'comps\AnonThread.pas',
+  FMX.Devgear.Extentions in 'comps\FMX.Devgear.Extentions.pas';
 
 {$R *.res}
 
@@ -24,6 +25,7 @@ begin
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TForm2, Form2);
   Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TForm4, Form4);
   Application.Run;
 
 end.

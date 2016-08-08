@@ -12,11 +12,12 @@ type
     Layout1: TLayout;
     Label1: TLabel;
     ListView1: TListView;
+    AniIndicator1: TAniIndicator;
     procedure FormShow(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem; var AHandled: Boolean);
     procedure ListView1Paint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
-    procedure Label1Tap(Sender: TObject; const Point: TPointF);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     procedure ReLoadLV;
@@ -29,7 +30,6 @@ type
 
 var
   Form3: TForm3;
-  FUniqueTag: Integer = 0;
 
 implementation
 
@@ -37,15 +37,25 @@ implementation
 
 uses
   System.Threading, System.Math, System.IOUtils,
-  FMX.FireMonkey.Parser, FMX.BitmapHelper,
-  uForm2;
+  FMX.FireMonkey.Parser,
+  uForm2, FMX.Devgear.Extentions;
 
 const
-  colTitle = 'title';
-  colBitmap = 'bitmap';
-  colLogo = 'logo';
-  colLoading = 'loading';
+  colTitle         = 'title';
+  colBitmap        = 'bitmap';
+  colLogo          = 'logo';
+  colLoading       = 'loading';
   ColumnStartIndex = 1;
+
+function getRealIndex(const Row, Column, Columns: Integer): Integer;
+begin
+  Result := (((Row + 1) * Columns) - 1) - (Columns - Column);
+end;
+
+procedure TForm3.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  TFireMonkey.Clean;
+end;
 
 procedure TForm3.FormResize(Sender: TObject);
 begin
@@ -60,6 +70,7 @@ begin
   ListView1.ItemAppearance.ItemHeight := 180;
   ListView1.StyleLookup := 'listviewstyle_panel';
   ListView1.OnColumnClick := OnColumnClick;
+  ListView1.ShowScrollBar := false;
 
   TTask.Run(
     procedure
@@ -67,7 +78,7 @@ begin
       TFireMonkey.Request(TFireMonkey.GetURL);
       TFireMonkey.MakeList;
 
-      TThread.Synchronize(TThread.CurrentThread,
+      TThread.Synchronize(nil,
         procedure
         begin
           Tag := 0;
@@ -76,38 +87,37 @@ begin
     end);
 end;
 
-procedure TForm3.Label1Tap(Sender: TObject; const Point: TPointF);
-begin
-  ShowMessage(TPath.Combine(TPath.GetDocumentsPath, 'content.txt'));
-end;
-
 procedure TForm3.ListView1Paint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
 var
   I, J, RowColumns: Integer;
   iBitmap: TListItemImage;
 begin
-  if (ListView1.Tag <> FUniqueTag) or (ListView1.Items.Count <= 0) then
-    exit;
+  // string.Join(':', [ListView1.getFirstVisibleItemIndex, ListView1.getVisibleCount,
+  // ListView1.getLastVisibleItemindex]);
 
-  for I := ListView1.getFirstVisibleItemIndex to ListView1.getFirstVisibleItemIndex + ListView1.getVisibleCount do
+  // Label1.Text := IntToStr(FAnonThreadsCount);
+  // if (ListView1.Tag <> FUniqueTag) or (ListView1.Items.Count <= 0) then
+  // exit;
+
+  for I := ListView1.getFirstVisibleItemIndex to ListView1.getLastVisibleItemindex do
   begin
-    if (I >= 0) and (I < ListView1.Items.Count) then
+    if InRange(I, 0, ListView1.Items.Count) then
     begin
+      Label1.Text := string.Join(':', [I, ListView1.getFirstVisibleItemIndex, ListView1.getVisibleCount,
+        ListView1.getLastVisibleItemindex]);
+
       RowColumns := ListView1.Items[I].Tag;
       for J := 1 to RowColumns do
       begin
         iBitmap := ListView1.Items[I].Objects.FindObjectT<TListItemImage>(colBitmap + IntToStr(J));
 
-        if Assigned(iBitmap) and (Assigned(iBitmap.Bitmap)) then
+        if Assigned(iBitmap) then
         begin
-          if (ListView1.Items[I].Data[colLoading + IntToStr(J)].AsInteger = 1) then
+          if Assigned(iBitmap.Bitmap) and (ListView1.Items[I].Data[colLoading + IntToStr(J)].AsInteger = 1) then
           begin
-            if (ListView1.Tag = FUniqueTag) then
-            begin
-              ListView1.Items[I].Data[colLoading + IntToStr(J)] := 0;
-              iBitmap.Bitmap.LoadFromURL(ListView1.Items[I].Data[colLogo + IntToStr(J)].AsString);
-              // , nil, true,               ListView1.Tag);
-            end;
+            ListView1.Items[I].Data[colLoading + IntToStr(J)] := 0;
+            iBitmap.Bitmap.LoadFromURL(ListView1.Items[I].Data[colLogo + IntToStr(J)].AsString,
+              FMembersList[getRealIndex(I, J, ListView1.Columns)].FileName, iBitmap.Bitmap);
           end;
         end;
       end;
@@ -123,6 +133,7 @@ var
   iBitmap: TListItemImage;
   aPos: Single;
   I: Integer;
+  realIndex: Integer;
 begin
   for I := 1 to ListView1.Columns do
   begin
@@ -140,11 +151,12 @@ begin
     iBitmap.ScalingMode := TImageScalingMode.Stretch;
     iBitmap.PlaceOffset.X := aPos;
     iBitmap.PlaceOffset.Y := 4;
-    if (iBitmap.Bitmap = nil) or (not iBitmap.OwnsBitmap) then
-    begin
-      iBitmap.OwnsBitmap := true;
+    iBitmap.OwnsBitmap := true;
+    if (iBitmap.Bitmap = nil) then
       iBitmap.Bitmap := TBitmap.Create;
-    end;
+    // realIndex := getRealIndex(AItem.Index, I, ListView1.Columns);
+    // if FileExists(FMembersList[realIndex].FileName) then
+    // iBitmap.Bitmap.LoadFromFile(FMembersList[realIndex].FileName);
 
     // заголовок
     iTitle := AItem.Objects.FindObjectT<TListItemText>(colTitle + IntToStr(I));
@@ -169,17 +181,22 @@ end;
 
 procedure TForm3.OnColumnClick(const Sender: TObject; const Column: Integer; const X, Y: Single;
 const AItem: TListViewItem; const DrawebleName: string);
+var
+  realIndex: Integer;
 begin
-  ShowMessage(DrawebleName + #13#10 + AItem.Data[colLogo + IntToStr(Column)].AsString);
+  realIndex := getRealIndex(AItem.Index, Column, ListView1.Columns);
+  ShowMessage(DrawebleName + #13#10 + realIndex.ToString + '  ' + FMembersList[realIndex].FileName + #13#10 +
+    AItem.Data[colLogo + IntToStr(Column)].AsString);
 end;
 
 procedure TForm3.ReLoadLV;
 var
-  J, RealIndex, ColumnInRow, RowCount: Integer;
+  J, realIndex, ColumnInRow, RowCount: Integer;
   AItem: TListViewItem;
   iBitmap: TListItemImage;
 begin
-  FUniqueTag := RandomRange(1000, 9999) + 1;
+  ListView1.OnPaint := nil;
+  AniIndicator1.Enabled := true;
 
   while ListView1.Items.Count > 0 do
   begin
@@ -200,34 +217,36 @@ begin
     exit;
 
   RowCount := ceil(FMembersList.Count / ListView1.Columns);
-  RealIndex := -1;
+  realIndex := -1;
 
   for J := 0 to RowCount - 1 do
   begin
-    inc(RealIndex);
+    inc(realIndex);
 
     AItem := ListView1.Items.Add;
     with AItem do
     begin
       ColumnInRow := ColumnStartIndex;
 
-      while RealIndex < FMembersList.Count do
+      while realIndex < FMembersList.Count do
       begin
-        Data[colTitle + IntToStr(ColumnInRow)] := FMembersList.Items[RealIndex].Name;
-        Data[colLogo + IntToStr(ColumnInRow)] := FMembersList.Items[RealIndex].URL;
+        Data[colTitle + IntToStr(ColumnInRow)] := FMembersList.Items[realIndex].Name;
+        Data[colLogo + IntToStr(ColumnInRow)] := FMembersList.Items[realIndex].URL;
         Data[colLoading + IntToStr(ColumnInRow)] := 1;
         Tag := ColumnInRow;
 
         if ColumnInRow mod ListView1.Columns = 0 then
           break;
-        inc(RealIndex);
+        inc(realIndex);
         inc(ColumnInRow);
       end;
 
     end;
     ListView1.Adapter.ResetView(AItem);
   end;
-  ListView1.Tag := FUniqueTag;
+
+  AniIndicator1.Enabled := false;
+  ListView1.OnPaint := ListView1Paint;
 end;
 
 end.

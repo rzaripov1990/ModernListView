@@ -22,7 +22,7 @@ type
   protected
     procedure Execute; override;
   public
-    constructor Create(AThreadFunc: TFunc<T>; AOnFinishedProc: TProc<T>; AOnErrorProc: TProc<Exception>;
+    constructor Create(AThreadFunc: TFunc<T>; AOnFinishedProc: TProc<T>; AOnErrorProc: TProc<Exception> = nil;
       ACreateSuspended: Boolean = False; AFreeOnTerminate: Boolean = True);
 
     class constructor Create;
@@ -51,12 +51,12 @@ end;
 
 class destructor TAnonymousThread<T>.Destroy;
 begin
-  CRunningThreads.Free;
+  FreeAndNil(CRunningThreads);
   inherited;
 end;
 
-constructor TAnonymousThread<T>.Create(AThreadFunc: TFunc<T>; AOnFinishedProc: TProc<T>; AOnErrorProc: TProc<Exception>;
-  ACreateSuspended: Boolean = False; AFreeOnTerminate: Boolean = True);
+constructor TAnonymousThread<T>.Create(AThreadFunc: TFunc<T>; AOnFinishedProc: TProc<T>;
+  AOnErrorProc: TProc < Exception >= nil; ACreateSuspended: Boolean = False; AFreeOnTerminate: Boolean = True);
 begin
   FOnFinishedProc := AOnFinishedProc;
   FOnErrorProc := AOnErrorProc;
@@ -80,8 +80,7 @@ var
 {$ENDIF}
 begin
 {$IFDEF MACOS}
-  // Need to create an autorelease pool, otherwise any autorelease objects
-  // may leak.
+  // Need to create an autorelease pool, otherwise any autorelease objects may leak.
   // See https://developer.apple.com/library/ios/#documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html#//apple_ref/doc/uid/20000047-CJBFBEDI
   lPool := TNSAutoreleasePool.Create;
   try
@@ -99,15 +98,15 @@ var
   lException: Exception;
 begin
   try
-    if Assigned(FatalException) and Assigned(FOnErrorProc) then
-    begin
+    { if Assigned(FatalException) and Assigned(FOnErrorProc) then
+      begin
       if FatalException is Exception then
-        lException := Exception(FatalException)
+      lException := Exception(FatalException)
       else
-        lException := EAnonymousThreadException.Create(FatalException.ClassName);
+      lException := EAnonymousThreadException.Create(FatalException.ClassName);
       FOnErrorProc(lException)
-    end
-    else if Assigned(FOnFinishedProc) then
+      end
+      else } if Assigned(FOnFinishedProc) then
       FOnFinishedProc(FResult);
   finally
     CRunningThreads.Remove(Self);

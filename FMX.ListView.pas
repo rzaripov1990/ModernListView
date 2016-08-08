@@ -65,32 +65,32 @@ type
     IMessageSender)
   private const
     ChangeRepaintedIncidentDelay = 0.1; // seconds
-    PhysicsProcessingInterval = 8; // 8 ms for ~120 frames per second
-    RecurrentTimerInterval = 16; // 16 ms for ~60 frames per second
-    AutoTapScrollingSpeed = 8; // pixels per frame
-    AutoTapMaxScrollingTime = 1; // seconds
-    TapSelectWaitTime = 0.25; // seconds
-    SelectionFadeInTime = 0.125; // seconds
-    SelectionFadeOutTime = 0.25; // seconds
-    MinScrollThreshold = 10;
-    MinSwypeThreshold = 40;
+    PhysicsProcessingInterval    = 8; // 8 ms for ~120 frames per second
+    RecurrentTimerInterval       = 16; // 16 ms for ~60 frames per second
+    AutoTapScrollingSpeed        = 8; // pixels per frame
+    AutoTapMaxScrollingTime      = 1; // seconds
+    TapSelectWaitTime            = 0.25; // seconds
+    SelectionFadeInTime          = 0.125; // seconds
+    SelectionFadeOutTime         = 0.25; // seconds
+    MinScrollThreshold           = 10;
+    MinSwypeThreshold            = 40;
 
     DefaultDeleteButtonWidth = 72;
 
-    ItemSeparatorTop = 1;
+    ItemSeparatorTop    = 1;
     ItemSeparatorBottom = 2;
 
     EditModeSelectionAlpha = 0.25;
     // how bright the checked items are in editmode
 
-    EditModeAnimationDuration = 0.1; // in seconds
+    EditModeAnimationDuration   = 0.1; // in seconds
     DeleteModeAnimationDuration = 0.15; // in seconds
-    DefaultDeleteButtonText = 'Delete';
+    DefaultDeleteButtonText     = 'Delete';
 
     PullRefreshIndicatorStrengthStart = 16;
-    PullRefreshIndicatorMaxSteps = 12;
+    PullRefreshIndicatorMaxSteps      = 12;
 
-    DefaultLeftMargin = 10;
+    DefaultLeftMargin  = 10;
     DefaultRightMargin = 11;
 
   public type
@@ -249,6 +249,8 @@ type
     FItemSelectedBeforeChange: TListItem;
     FEstimatedHeights: TEstimatedHeights;
 
+    FTopItemIndex: Integer; // ZuBy
+
     FSeparatorLeftOffset: Single; // ZuBy
     FSeparatorRightOffset: Single; // ZuBy
 
@@ -315,6 +317,7 @@ type
     procedure SetItemIndexInternal(const Value: Integer; const DisableSelection: Boolean = False;
       const DisableCrossfade: Boolean = False);
     function GetMaxScrollViewPos: Integer;
+    procedure RecalcTopViewItemIndex; // ZuBy
     procedure UpdateScrollViewPos(const Value: Single);
     procedure UpdateSearchEditPos;
     procedure SetScrollViewPos(const Value: Single);
@@ -2443,13 +2446,13 @@ end;
 
 procedure TListViewBase.PaintPullRefreshIndicator(const ACanvas: TCanvas; const AStrength, AOpacity: Single);
 const
-  IndicatorMinRadius = 6.5;
-  IndicatorMaxRadius = 13.5;
-  IndicatorThickness = 2;
-  IndicatorRotation = 2;
+  IndicatorMinRadius         = 6.5;
+  IndicatorMaxRadius         = 13.5;
+  IndicatorThickness         = 2;
+  IndicatorRotation          = 2;
   IndicatorDisappearFraction = 0.7;
-  PiMulTwo = 2 * Pi;
-  PiByTwo = Pi / 2;
+  PiMulTwo                   = 2 * Pi;
+  PiByTwo                    = Pi / 2;
 var
   Stroke: TStrokeBrush;
   I, LineCount: Integer;
@@ -2540,8 +2543,8 @@ function TListViewBase.GetPullRefreshStrokeWidth: Single;
 const
   StrokeCollapseSpeed1 = 4;
   StrokeCollapseSpeed2 = 256;
-  StrokeCollapsePower = 0.75;
-  StrokeGrowthSpeed = 0.25;
+  StrokeCollapsePower  = 0.75;
+  StrokeGrowthSpeed    = 0.25;
 begin
   if FPullRefreshAnimation = TPullRefreshAnimation.Playing then
   begin
@@ -2938,6 +2941,7 @@ begin
     if Assigned(FOnScrollViewChange) then
       FOnScrollViewChange(Self);
   end;
+  RecalcTopViewItemIndex;
 end;
 
 procedure TListViewBase.UpdateSearchEditPos;
@@ -3141,6 +3145,8 @@ begin
       FScrollBar.Visible := False;
     FScrollBar.Value := FScrollViewPos;
     FScrollBar.ViewportSize := ViewSize;
+
+    RecalcTopViewItemIndex;
   finally
     FScrollBar.EndUpdate;
   end;
@@ -3936,6 +3942,14 @@ procedure TListViewBase.AfterPaint;
 begin
   inherited;
   Exclude(FStateFlags, TStateFlag.Invalid);
+end;
+
+procedure TListViewBase.RecalcTopViewItemIndex; // ZuBy
+var
+  TopViewIndex: Integer;
+begin
+  TopViewIndex := Trunc(FScrollViewPos - FSideSpace);
+  FTopItemIndex := Min(Max(FindItemAbsoluteAt(TopViewIndex), 0), Adapter.Count - 1);
 end;
 
 procedure TListViewBase.RecreateNativePresentation;
@@ -5594,6 +5608,7 @@ begin
   // Create our own adapter
   Items := TAppearanceListViewItems.Create(Self);
 
+  FTopItemIndex := -1; // ZuBy
   FSeparatorLeftOffset := 0; // ZuBy
   FSeparatorRightOffset := 0; // ZuBy
   FMakeSelectedItemVisible := True; // ZuBy
@@ -5714,11 +5729,8 @@ begin
 end;
 
 function TAppearanceListView.getFirstVisibleItemIndex: Integer; // ZuBy
-var
-  TopViewIndex: Integer;
 begin
-  TopViewIndex := Trunc(TListViewBase(Self).FScrollViewPos - TListViewBase(Self).FSideSpace);
-  Result := Min(Max(TListViewBase(Self).FindItemAbsoluteAt(TopViewIndex), 0), TListViewBase(Self).Adapter.Count - 1);
+  Result := FTopItemIndex;
 end;
 
 function TAppearanceListView.getLastVisibleItemindex: Integer; // ZuBy
@@ -5727,30 +5739,11 @@ begin
 end;
 
 function TAppearanceListView.getVisibleCount: Integer; // ZuBy
-var
-  I, c, n: Integer;
 begin
-  Result := 0;
-  n := 0;
-  c := ItemCount;
-  if c > 1 then
-  begin
-    for I := getFirstVisibleItemIndex to c - 1 do
-    begin
-      n := n + GetItemHeight(I);
-      Result := Result + 1;
-      if FHorizontal then
-      begin
-        if n >= Width then
-          break;
-      end
-      else
-      begin
-        if n >= Height then
-          break;
-      end;
-    end;
-  end;
+  if FHorizontal then
+    Result := Round(Width / GetItemAppearanceProperties.Height)
+  else
+    Result := Round(Height / GetItemAppearanceProperties.Height);
 end;
 
 function TAppearanceListView.GetScrollWidth: Single; // ZuBy
