@@ -3,9 +3,12 @@ unit uForm4;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ListView.Types, FMX.ListView.Appearances,
-  FMX.ListView.Adapters.Base, FMX.Controls.Presentation, FMX.StdCtrls, FMX.ListView, FMX.Objects;
+  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
+  FMX.ListView.Types, FMX.ListView.Appearances,
+  FMX.ListView.Adapters.Base, FMX.Controls.Presentation, FMX.StdCtrls,
+  FMX.ListView, FMX.Objects;
 
 type
   TForm4 = class(TForm)
@@ -13,7 +16,8 @@ type
     Label1: TLabel;
     Text1: TText;
     procedure FormActivate(Sender: TObject);
-    procedure ListView1Paint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
+    procedure ListView1Paint(Sender: TObject; Canvas: TCanvas;
+      const ARect: TRectF);
     procedure ListView1ScrollViewChange(Sender: TObject);
   private
     { Private declarations }
@@ -44,10 +48,11 @@ begin
   end;
 end;
 
-procedure TForm4.ListView1Paint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
+procedure TForm4.ListView1Paint(Sender: TObject; Canvas: TCanvas;
+  const ARect: TRectF);
 begin
-  Text1.Text := string.Join(':', [ListView1.getFirstVisibleItemIndex, ListView1.getVisibleCount,
-    ListView1.getLastVisibleItemindex]);
+  Text1.Text := string.Join(':', [ListView1.getFirstVisibleItemIndex,
+    ListView1.getVisibleCount, ListView1.getLastVisibleItemindex]);
   inc(Counter);
   Caption := Counter.ToString;
 end;

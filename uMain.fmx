@@ -76,7 +76,7 @@ object FormMain: TFormMain
     Size.Height = 44.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 7
-    Text = 'Button1'
+    Text = 'Parameters'
     OnClick = Button1Click
   end
 end
