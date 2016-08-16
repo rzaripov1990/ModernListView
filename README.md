@@ -2,6 +2,7 @@
 Modern ListView - Colorizer, Vertical\Horizontal mode, Columns and other
 
 ## Colorizer
+ [colorizer] (screenshots/colorizer.png)
   * ListView1.SetColorItemSelected(TAlphaColorRec.Orangered);
   * ListView1.SetColorItemFill(TAlphaColorRec.Whitesmoke);
   * ListView1.SetColorItemFillAlt(TAlphaColorRec.Lightgrey);
@@ -26,9 +27,11 @@ Modern ListView - Colorizer, Vertical\Horizontal mode, Columns and other
 ```
 
 ## Horizontal Mode
+[horizontal mode] (screenshots/horizontal.png)
   * ListView1.Horizontal := true;
   
 ## Columns Mode (only vertical)
+[colorizer] (screenshots/autocolumns.png)
   * ListView1.ColumnWidth := 160;
   * ListView1.AutoColumns := true;
   
