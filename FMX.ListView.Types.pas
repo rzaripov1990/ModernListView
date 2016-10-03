@@ -14,8 +14,10 @@ interface
 {$SCOPEDENUMS ON}
 
 uses
-  System.Types, System.UITypes, System.Classes, System.Generics.Collections, System.Generics.Defaults, System.SysUtils,
-  FMX.Types, FMX.Controls, FMX.TextLayout, System.Math.Vectors, System.Rtti, FMX.Objects, FMX.Graphics, FMX.ActnList,
+  System.Types, System.UITypes, System.Classes, System.Generics.Collections,
+  System.Generics.Defaults, System.SysUtils,
+  FMX.Types, FMX.Controls, FMX.TextLayout, System.Math.Vectors, System.Rtti, FMX.Objects,
+  FMX.Graphics, FMX.ActnList,
   FMX.Styles.Objects, FMX.ImgList;
 
 {$IF DEFINED(IOS) OR DEFINED(ANDROID)}
@@ -62,7 +64,8 @@ type
   strict private
     FPlaceOffsetX: TPosition;
   protected type
-    TStyleResource = (FontSize, FontFamily, FontStyle, TextColor, SelectedTextColor, TextShadowColor, PressedTextColor);
+    TStyleResource = (FontSize, FontFamily, FontStyle, TextColor, SelectedTextColor,
+      TextShadowColor, PressedTextColor);
     TStyleResources = set of TStyleResource;
   protected const
     TextResources: set of TStyleResource = [TStyleResource.FontFamily, TStyleResource.FontSize,
@@ -116,11 +119,13 @@ type
     function ObjectAtPoint(const Point: TPointF): TControl; virtual;
 
     /// <summary>Called by host TListItem.MouseDown</summary>
-    function MouseDown(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF): Boolean; virtual;
+    function MouseDown(const Button: TMouseButton; const Shift: TShiftState;
+      const MousePos: TPointF): Boolean; virtual;
     /// <summary>Called by host TListItem.MouseMove</summary>
     procedure MouseMove(const Shift: TShiftState; const MousePos: TPointF); virtual;
     /// <summary>Called by host TListItem.MouseUp</summary>
-    procedure MouseUp(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF); virtual;
+    procedure MouseUp(const Button: TMouseButton; const Shift: TShiftState;
+      const MousePos: TPointF); virtual;
 
     procedure DoUpdateValuesFromResources(const Resources: TListItemStyleResources;
       const Purpose: TListItemPurpose); virtual;
@@ -139,15 +144,17 @@ type
     /// <summary>Request repaint</summary>
     procedure Invalidate;
     /// <summary>Render this drawable</summary>
-    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer; const DrawStates: TListItemDrawStates;
-      const Resources: TListItemStyleResources; const Params: TParams; const SubPassNo: Integer = 0); virtual; abstract;
+    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer;
+      const DrawStates: TListItemDrawStates; const Resources: TListItemStyleResources;
+      const Params: TParams; const SubPassNo: Integer = 0); virtual; abstract;
     procedure UpdateValuesFromStyle;
     /// <summary>Begin bulk change</summary>
     procedure BeginUpdate;
     /// <summary>End bulk change</summary>
     procedure EndUpdate;
 
-    procedure UpdateValuesFromResources(const Resources: TListItemStyleResources; const Purpose: TListItemPurpose);
+    procedure UpdateValuesFromResources(const Resources: TListItemStyleResources;
+      const Purpose: TListItemPurpose);
 
     /// <summary>Local width of list item inside its designated area.</summary>
     property Width: Single index 0 read FWidth write SetOneDimension;
@@ -244,9 +251,9 @@ type
 
     procedure CalculateLocalRect(const DestRect: TRectF; const SceneScale: Single;
       const DrawStates: TListItemDrawStates; const Item: TListItem); override;
-    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer; const DrawStates: TListItemDrawStates;
-      const Resources: TListItemStyleResources; const Params: TListItemDrawable.TParams;
-      const SubPassNo: Integer = 0); override;
+    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer;
+      const DrawStates: TListItemDrawStates; const Resources: TListItemStyleResources;
+      const Params: TListItemDrawable.TParams; const SubPassNo: Integer = 0); override;
 
     property Font: TFont read GetFont;
     property Text: string read FText write SetText;
@@ -274,16 +281,17 @@ type
 
   TListItemDummy = class(TListItemDrawable)
   public
-    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer; const DrawStates: TListItemDrawStates;
-      const Resources: TListItemStyleResources; const Params: TListItemDrawable.TParams;
-      const SubPassNo: Integer = 0); override;
+    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer;
+      const DrawStates: TListItemDrawStates; const Resources: TListItemStyleResources;
+      const Params: TListItemDrawable.TParams; const SubPassNo: Integer = 0); override;
   end;
 
   TImageScalingMode = (StretchWithAspect, Original, Stretch);
 
   TImageScalingModeHelper = record helper for TImageScalingMode
   const
-    smStretchWithAspect = TImageScalingMode.StretchWithAspect deprecated 'Use TImageScalingMode.StretchWithAspect';
+    smStretchWithAspect = TImageScalingMode.StretchWithAspect deprecated
+      'Use TImageScalingMode.StretchWithAspect';
     smOriginal = TImageScalingMode.Original deprecated 'Use TImageScalingMode.Original';
     smStretch = TImageScalingMode.Stretch deprecated 'Use TImageScalingMode.Stretch';
   end;
@@ -313,9 +321,9 @@ type
     destructor Destroy; override;
     procedure CalculateLocalRect(const DestRect: TRectF; const SceneScale: Single;
       const DrawStates: TListItemDrawStates; const Item: TListItem); override;
-    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer; const DrawStates: TListItemDrawStates;
-      const Resources: TListItemStyleResources; const Params: TListItemDrawable.TParams;
-      const SubPassNo: Integer = 0); override;
+    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer;
+      const DrawStates: TListItemDrawStates; const Resources: TListItemStyleResources;
+      const Params: TListItemDrawable.TParams; const SubPassNo: Integer = 0); override;
 
     property Bitmap: TBitmap read GetBitmap write SetBitmap;
 
@@ -399,9 +407,9 @@ type
     constructor Create(const AOwner: TListItem); override;
     destructor Destroy; override;
 
-    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer; const DrawStates: TListItemDrawStates;
-      const Resources: TListItemStyleResources; const Params: TListItemDrawable.TParams;
-      const SubPassNo: Integer = 0); override;
+    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer;
+      const DrawStates: TListItemDrawStates; const Resources: TListItemStyleResources;
+      const Params: TListItemDrawable.TParams; const SubPassNo: Integer = 0); override;
 
     property Container: TListItemControlContainer read FContainer;
   end;
@@ -417,10 +425,11 @@ type
     procedure SetEnabled(const Value: Boolean);
   protected
     function IsClickOpaque: Boolean; virtual;
-    function MouseDown(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF): Boolean;
-      override;
+    function MouseDown(const Button: TMouseButton; const Shift: TShiftState;
+      const MousePos: TPointF): Boolean; override;
     procedure MouseMove(const Shift: TShiftState; const MousePos: TPointF); override;
-    procedure MouseUp(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF); override;
+    procedure MouseUp(const Button: TMouseButton; const Shift: TShiftState;
+      const MousePos: TPointF); override;
     procedure DoClick; virtual;
     procedure DoEnabledChange; virtual;
   public
@@ -450,9 +459,9 @@ type
 
     procedure CalculateLocalRect(const DestRect: TRectF; const SceneScale: Single;
       const DrawStates: TListItemDrawStates; const Item: TListItem); override;
-    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer; const DrawStates: TListItemDrawStates;
-      const Resources: TListItemStyleResources; const Params: TListItemDrawable.TParams;
-      const SubPassNo: Integer = 0); override;
+    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer;
+      const DrawStates: TListItemDrawStates; const Resources: TListItemStyleResources;
+      const Params: TListItemDrawable.TParams; const SubPassNo: Integer = 0); override;
 
     property AccessoryType: TAccessoryType read FAccessoryType write SetAccessoryType;
   end;
@@ -480,8 +489,8 @@ type
   protected
     procedure DoSelect; override;
     procedure DoClick; override;
-    function MouseDown(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF): Boolean;
-      override;
+    function MouseDown(const Button: TMouseButton; const Shift: TShiftState;
+      const MousePos: TPointF): Boolean; override;
     procedure SetData(const AValue: TValue); override;
   public
     constructor Create(const AOwner: TListItem); override;
@@ -489,9 +498,9 @@ type
 
     procedure CalculateLocalRect(const DestRect: TRectF; const SceneScale: Single;
       const DrawStates: TListItemDrawStates; const Item: TListItem); override;
-    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer; const DrawStates: TListItemDrawStates;
-      const Resources: TListItemStyleResources; const Params: TListItemDrawable.TParams;
-      const SubPassNo: Integer = 0); override;
+    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer;
+      const DrawStates: TListItemDrawStates; const Resources: TListItemStyleResources;
+      const Params: TListItemDrawable.TParams; const SubPassNo: Integer = 0); override;
 
     property ButtonType: TGlyphButtonType read FButtonType write SetButtonType;
 
@@ -550,9 +559,9 @@ type
     function GetRenderPassCount: Integer; override;
     procedure CalculateLocalRect(const DestRect: TRectF; const SceneScale: Single;
       const DrawStates: TListItemDrawStates; const Item: TListItem); override;
-    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer; const DrawStates: TListItemDrawStates;
-      const Resources: TListItemStyleResources; const Params: TListItemDrawable.TParams;
-      const SubPassNo: Integer = 0); override;
+    procedure Render(const Canvas: TCanvas; const DrawItemIndex: Integer;
+      const DrawStates: TListItemDrawStates; const Resources: TListItemStyleResources;
+      const Params: TListItemDrawable.TParams; const SubPassNo: Integer = 0); override;
 
     property ButtonType: TTextButtonType read FButtonType write SetButtonType;
     property TintColor: TAlphaColor read FTintColor write SetTintColor;
@@ -640,7 +649,8 @@ type
     function GetIndex: Integer; virtual;
     procedure SetIndex(const Value: Integer); virtual;
   public
-    constructor Create(const AAdapter: IListViewAdapter; const AController: IListViewController = nil);
+    constructor Create(const AAdapter: IListViewAdapter;
+      const AController: IListViewController = nil);
     destructor Destroy; override;
     function ToString: string; override;
 
@@ -652,9 +662,11 @@ type
     procedure WillBePainted; virtual;
 
     function ObjectAtPoint(const Point: TPointF): TControl;
-    function MouseDown(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF): Boolean;
+    function MouseDown(const Button: TMouseButton; const Shift: TShiftState;
+      const MousePos: TPointF): Boolean;
     procedure MouseMove(const Shift: TShiftState; const MousePos: TPointF);
-    procedure MouseUp(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF);
+    procedure MouseUp(const Button: TMouseButton; const Shift: TShiftState;
+      const MousePos: TPointF);
     procedure MouseSelect;
     function HasClickOnSelectItems: Boolean;
 
@@ -773,8 +785,8 @@ type
     function GetControlOpacity: Single;
   end;
 
-  TListViewModeFlag = (Edit, Enabled, Visible, Deletion, PullRefresh, Buttons, Search, SearchOnTop, PullRefreshWait,
-    SwipeDelete);
+  TListViewModeFlag = (Edit, Enabled, Visible, Deletion, PullRefresh, Buttons, Search, SearchOnTop,
+    PullRefreshWait, SwipeDelete);
   TListViewModeFlags = set of TListViewModeFlag;
 
   TListViewNativeOption = (Grouped, Indexed, Styled);
@@ -965,7 +977,8 @@ type
     /// <summary>Get drawable of text button for item at Index</summary>
     function GetTextButtonDrawable(const Index: Integer): TListItemTextButton;
     /// <summary>Drawable of text button for item at Index</summary>
-    property TextButtonDrawable[const Index: Integer]: TListItemTextButton read GetTextButtonDrawable;
+    property TextButtonDrawable[const Index: Integer]: TListItemTextButton
+      read GetTextButtonDrawable;
   end;
 
   /// <summary>Extension of IListViewAdapter for items with glyph buttons.
@@ -975,7 +988,8 @@ type
     /// <summary>Get drawable of ןהםחנ button for item at Index</summary>
     function GetGlyphButtonDrawable(const Index: Integer): TListItemGlyphButton;
     /// <summary>Drawable of ןהםחנ button for item at Index</summary>
-    property GlyphButtonDrawable[const Index: Integer]: TListItemGlyphButton read GetGlyphButtonDrawable;
+    property GlyphButtonDrawable[const Index: Integer]: TListItemGlyphButton
+      read GetGlyphButtonDrawable;
   end;
 
   /// <summary>Extension of IListViewAdapter for items with data.
@@ -994,7 +1008,8 @@ type
     procedure SetItemTag(const Index: Integer; const AValue: NativeInt);
 
     /// <summary>Indexed data DataIndex of item at Index</summary>
-    property Data[const Index: Integer; const DataIndex: string]: TValue read GetItemData write SetItemData;
+    property Data[const Index: Integer; const DataIndex: string]: TValue read GetItemData
+      write SetItemData;
     /// <summary>Tag of item at Index</summary>
     property Tag[const Index: Integer]: NativeInt read GetItemTag write SetItemTag;
     /// <summary>True if item at Index has Indexed data DataIndex</summary>
@@ -1032,7 +1047,8 @@ type
 implementation
 
 uses
-  System.RTLConsts, System.UIConsts, System.Math, System.Messaging, System.TypInfo, FMX.Consts, FMX.Styles,
+  System.RTLConsts, System.UIConsts, System.Math, System.Messaging, System.TypInfo, FMX.Consts,
+  FMX.Styles,
   FMX.Platform;
 
 {$REGION 'Global Functions'}
@@ -1081,10 +1097,14 @@ function Blend(const Color1, Color2: TAlphaColor; const Alpha: Single): TAlphaCo
   end;
 
 begin
-  TAlphaColorRec(Result).R := BlendComponent(TAlphaColorRec(Color1).R, TAlphaColorRec(Color2).R, Alpha);
-  TAlphaColorRec(Result).G := BlendComponent(TAlphaColorRec(Color1).G, TAlphaColorRec(Color2).G, Alpha);
-  TAlphaColorRec(Result).B := BlendComponent(TAlphaColorRec(Color1).B, TAlphaColorRec(Color2).B, Alpha);
-  TAlphaColorRec(Result).A := BlendComponent(TAlphaColorRec(Color1).A, TAlphaColorRec(Color2).A, Alpha);
+  TAlphaColorRec(Result).R := BlendComponent(TAlphaColorRec(Color1).R,
+    TAlphaColorRec(Color2).R, Alpha);
+  TAlphaColorRec(Result).G := BlendComponent(TAlphaColorRec(Color1).G,
+    TAlphaColorRec(Color2).G, Alpha);
+  TAlphaColorRec(Result).B := BlendComponent(TAlphaColorRec(Color1).B,
+    TAlphaColorRec(Color2).B, Alpha);
+  TAlphaColorRec(Result).A := BlendComponent(TAlphaColorRec(Color1).A,
+    TAlphaColorRec(Color2).A, Alpha);
 end;
 
 {$ENDREGION}
@@ -1159,7 +1179,8 @@ begin
   if Adjusted.Y < 0 then
     Adjusted.Y := 0;
 
-  if not SameValue(Adjusted.X, FWidth, TEpsilon.Position) or not SameValue(Adjusted.Y, FHeight, TEpsilon.Position) then
+  if not SameValue(Adjusted.X, FWidth, TEpsilon.Position) or
+    not SameValue(Adjusted.Y, FHeight, TEpsilon.Position) then
   begin
     FWidth := Adjusted.X;
     FHeight := Adjusted.Y;
@@ -1330,7 +1351,8 @@ begin
   LOffset := PlaceOffset;
   if (FWidth > 0) and (FWidth < DestRect.Width) then
   begin
-    AlignValue(FAlign, FLocalRect.Left, FLocalRect.Right, FWidth, DestRect.Left, DestRect.Right, LOffset.X);
+    AlignValue(FAlign, FLocalRect.Left, FLocalRect.Right, FWidth, DestRect.Left, DestRect.Right,
+      LOffset.X);
   end
   else
   begin
@@ -1340,7 +1362,8 @@ begin
 
   if (FHeight > 0) and (FHeight < DestRect.Height) then
   begin
-    AlignValue(FVertAlign, FLocalRect.Top, FLocalRect.Bottom, FHeight, DestRect.Top, DestRect.Bottom, LOffset.Y);
+    AlignValue(FVertAlign, FLocalRect.Top, FLocalRect.Bottom, FHeight, DestRect.Top,
+      DestRect.Bottom, LOffset.Y);
   end
   else
   begin
@@ -1418,7 +1441,8 @@ procedure TListItemDrawable.MouseMove(const Shift: TShiftState; const MousePos: 
 begin
 end;
 
-procedure TListItemDrawable.MouseUp(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF);
+procedure TListItemDrawable.MouseUp(const Button: TMouseButton; const Shift: TShiftState;
+  const MousePos: TPointF);
 begin
 end;
 
@@ -1460,27 +1484,33 @@ begin
     if Purpose <> TListItemPurpose.None then
     begin
       ResourceFont := Resources.HeaderTextFont;
-      if (TStyleResource.TextColor in FStyleValuesNeedUpdate) and (Resources.HeaderTextColor > 0) then
+      if (TStyleResource.TextColor in FStyleValuesNeedUpdate) and (Resources.HeaderTextColor > 0)
+      then
         FTextColor := Resources.HeaderTextColor;
-      if (TStyleResource.TextShadowColor in FStyleValuesNeedUpdate) and (Resources.HeaderTextShadowColor > 0) then
+      if (TStyleResource.TextShadowColor in FStyleValuesNeedUpdate) and
+        (Resources.HeaderTextShadowColor > 0) then
         FTextShadowColor := Resources.HeaderTextShadowColor;
       FTextVertAlign := TTextAlign.Center;
     end
     else if FIsDetailText then
     begin
       ResourceFont := Resources.DetailTextFont;
-      if (TStyleResource.TextColor in FStyleValuesNeedUpdate) and (Resources.DetailTextColor > 0) then
+      if (TStyleResource.TextColor in FStyleValuesNeedUpdate) and (Resources.DetailTextColor > 0)
+      then
         FTextColor := Resources.DetailTextColor;
-      if (TStyleResource.SelectedTextColor in FStyleValuesNeedUpdate) and (Resources.DefaultTextSelectedColor > 0) then
+      if (TStyleResource.SelectedTextColor in FStyleValuesNeedUpdate) and
+        (Resources.DefaultTextSelectedColor > 0) then
         FSelectedTextColor := Resources.DefaultTextSelectedColor;
     end
     else
     begin
       ResourceFont := Resources.DefaultTextFont;
-      if (TStyleResource.TextColor in FStyleValuesNeedUpdate) and (Resources.DefaultTextColor > 0) then
+      if (TStyleResource.TextColor in FStyleValuesNeedUpdate) and (Resources.DefaultTextColor > 0)
+      then
         FTextColor := Resources.DefaultTextColor;
 
-      if (TStyleResource.SelectedTextColor in FStyleValuesNeedUpdate) and (Resources.DefaultTextSelectedColor > 0) then
+      if (TStyleResource.SelectedTextColor in FStyleValuesNeedUpdate) and
+        (Resources.DefaultTextSelectedColor > 0) then
         FSelectedTextColor := Resources.DefaultTextSelectedColor;
     end;
   end;
@@ -1683,7 +1713,8 @@ begin
 
     if Item.Controller <> nil then
     begin
-      DeadSpace := Item.Controller.GetItemEditOffset(Item) * Item.Controller.EditModeTransitionAlpha;
+      DeadSpace := Item.Controller.GetItemEditOffset(Item) *
+        Item.Controller.EditModeTransitionAlpha;
       NewRect.Left := NewRect.Left + DeadSpace;
 
       if FIsDetailText then
@@ -1722,7 +1753,8 @@ begin
   end;
 
   if not LayoutChanged then
-    LayoutChanged := (FTextLayout.MaxSize.X <> FLocalRect.Width) or (FTextLayout.MaxSize.Y <> FLocalRect.Height);
+    LayoutChanged := (FTextLayout.MaxSize.X <> FLocalRect.Width) or
+      (FTextLayout.MaxSize.Y <> FLocalRect.Height);
 
   CurColor := FTextColor;
   LOpacity := Params.AbsoluteOpacity;
@@ -1902,7 +1934,8 @@ begin
 
     if Item.Controller <> nil then
     begin
-      DeadSpace := Item.Controller.GetItemEditOffset(Item) * Item.Controller.EditModeTransitionAlpha;
+      DeadSpace := Item.Controller.GetItemEditOffset(Item) *
+        Item.Controller.EditModeTransitionAlpha;
       NewRect.Left := NewRect.Left + DeadSpace;
     end;
 
@@ -1985,7 +2018,8 @@ begin
         ClipRects(InpRect, DestRect, LocRect);
 
         // Center image
-        DestRect.Offset((FLocalRect.Right - DestRect.Right) / 2, (FLocalRect.Bottom - DestRect.Bottom) / 2);
+        DestRect.Offset((FLocalRect.Right - DestRect.Right) / 2,
+          (FLocalRect.Bottom - DestRect.Bottom) / 2);
       end;
 
     TImageScalingMode.Stretch:
@@ -2014,7 +2048,8 @@ begin
         DestRect.Right := DestRect.Left + InpRect.Width * Aspect;
         DestRect.Bottom := DestRect.Top + InpRect.Height * Aspect;
         // Center image
-        DestRect.Offset((FLocalRect.Right - DestRect.Right) / 2, (FLocalRect.Bottom - DestRect.Bottom) / 2);
+        DestRect.Offset((FLocalRect.Right - DestRect.Right) / 2,
+          (FLocalRect.Bottom - DestRect.Bottom) / 2);
       end;
   end;
 
@@ -2093,7 +2128,8 @@ function TListItemSimpleControl.MouseDown(const Button: TMouseButton; const Shif
 begin
   Result := False;
 
-  if (Button = TMouseButton.mbLeft) and FEnabled and PointInLocalRect(MousePos) and IsClickOpaque then
+  if (Button = TMouseButton.mbLeft) and FEnabled and PointInLocalRect(MousePos) and IsClickOpaque
+  then
   begin
     FPressed := True;
     FMouseOver := True;
@@ -2112,7 +2148,8 @@ begin
   Invalidate;
 end;
 
-procedure TListItemSimpleControl.MouseUp(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF);
+procedure TListItemSimpleControl.MouseUp(const Button: TMouseButton; const Shift: TShiftState;
+  const MousePos: TPointF);
 var
   ShouldClick: Boolean;
 begin
@@ -2313,7 +2350,8 @@ begin
   if FChecked then
   begin
     if FTimerService <> nil then
-      FTransitionAlpha := Min(Abs(FTimerService.GetTick - FTransitionStartTicks) / CheckedAnimationDuration, 1)
+      FTransitionAlpha := Min(Abs(FTimerService.GetTick - FTransitionStartTicks) /
+        CheckedAnimationDuration, 1)
     else
       FTransitionAlpha := FTransitionAlpha + CheckedAnimationIncrement;
 
@@ -2323,7 +2361,8 @@ begin
   else
   begin
     if FTimerService <> nil then
-      FTransitionAlpha := Max(1 - (Abs(FTimerService.GetTick - FTransitionStartTicks) / CheckedAnimationDuration), 0)
+      FTransitionAlpha := Max(1 - (Abs(FTimerService.GetTick - FTransitionStartTicks) /
+        CheckedAnimationDuration), 0)
     else
       FTransitionAlpha := FTransitionAlpha - CheckedAnimationIncrement;
 
@@ -2379,7 +2418,8 @@ begin
     NewRect := DestRect;
 
     if Item.Controller <> nil then
-      NewRect.Offset(Item.Controller.GetItemEditOffset(Item) * (Item.Controller.EditModeTransitionAlpha - 1), 0);
+      NewRect.Offset(Item.Controller.GetItemEditOffset(Item) *
+        (Item.Controller.EditModeTransitionAlpha - 1), 0);
 
     inherited CalculateLocalRect(NewRect, SceneScale, DrawStates, Item);
   end
@@ -2431,7 +2471,8 @@ begin
   begin
     RenderGlyphButtonType := FButtonType;
 
-    if (RenderGlyphButtonType = TGlyphButtonType.Delete) and (not FController.IsDeleteModeAllowed) then
+    if (RenderGlyphButtonType = TGlyphButtonType.Delete) and (not FController.IsDeleteModeAllowed)
+    then
       RenderGlyphButtonType := TGlyphButtonType.Checkbox;
     case RenderGlyphButtonType of
       TGlyphButtonType.Add:
@@ -2452,7 +2493,8 @@ begin
           if Resources.ButtonDeleteItemStyleImage.Pressed <> nil then
           begin
             if FTransitionAlpha <= 0 then
-              Resources.ButtonDeleteItemStyleImage.Pressed.DrawToCanvas(Canvas, LocRect, TempOpacity)
+              Resources.ButtonDeleteItemStyleImage.Pressed.DrawToCanvas(Canvas, LocRect,
+                TempOpacity)
             else
             begin
               PrevMatrix := Canvas.Matrix;
@@ -2461,12 +2503,13 @@ begin
               CenterShift.Y := LocRect.Top + LocRect.Height * 0.5;
 
               M := TMatrix.CreateTranslation(-CenterShift.X, -CenterShift.Y) *
-                TMatrix.CreateRotation(-FTransitionAlpha * Pi * 0.5) * TMatrix.CreateTranslation(CenterShift.X,
-                CenterShift.Y) * PrevMatrix;
+                TMatrix.CreateRotation(-FTransitionAlpha * Pi * 0.5) *
+                TMatrix.CreateTranslation(CenterShift.X, CenterShift.Y) * PrevMatrix;
 
               Canvas.SetMatrix(M);
 
-              Resources.ButtonDeleteItemStyleImage.Pressed.DrawToCanvas(Canvas, LocRect, TempOpacity);
+              Resources.ButtonDeleteItemStyleImage.Pressed.DrawToCanvas(Canvas, LocRect,
+                TempOpacity);
 
               Canvas.SetMatrix(PrevMatrix);
             end;
@@ -2618,7 +2661,8 @@ function TListItemTextButton.IsClickOpaque: Boolean;
 begin
   Result := inherited;
 
-  if Result and (FController <> nil) and (FController.EditModeTransitionAlpha > AnimationDeltaEpsilon) then
+  if Result and (FController <> nil) and
+    (FController.EditModeTransitionAlpha > AnimationDeltaEpsilon) then
     Result := False;
 end;
 
@@ -2658,19 +2702,23 @@ begin
         TTextButtonType.Normal:
           begin
             if (not ReallyPressed) and (Resources.ButtonNormalStyleImage.Normal <> nil) then
-              Resources.ButtonNormalStyleImage.Normal.DrawToCanvas(Canvas, FLocalRect, FTintColor, TempOpacity);
+              Resources.ButtonNormalStyleImage.Normal.DrawToCanvas(Canvas, FLocalRect, FTintColor,
+                TempOpacity);
 
             if ReallyPressed and (Resources.ButtonNormalStyleImage.Pressed <> nil) then
-              Resources.ButtonNormalStyleImage.Pressed.DrawToCanvas(Canvas, FLocalRect, FTintColor, TempOpacity);
+              Resources.ButtonNormalStyleImage.Pressed.DrawToCanvas(Canvas, FLocalRect, FTintColor,
+                TempOpacity);
           end;
 
         TTextButtonType.Delete:
           begin
             if (not ReallyPressed) and (Resources.ButtonDeleteStyleImage.Normal <> nil) then
-              Resources.ButtonDeleteStyleImage.Normal.DrawToCanvas(Canvas, FLocalRect, FTintColor, TempOpacity);
+              Resources.ButtonDeleteStyleImage.Normal.DrawToCanvas(Canvas, FLocalRect, FTintColor,
+                TempOpacity);
 
             if ReallyPressed and (Resources.ButtonDeleteStyleImage.Pressed <> nil) then
-              Resources.ButtonDeleteStyleImage.Pressed.DrawToCanvas(Canvas, FLocalRect, FTintColor, TempOpacity);
+              Resources.ButtonDeleteStyleImage.Pressed.DrawToCanvas(Canvas, FLocalRect, FTintColor,
+                TempOpacity);
           end;
       end;
     end;
@@ -2911,7 +2959,8 @@ begin
   Result := Self;
 end;
 
-procedure TListItemControlScene.ChangeScrollingState(const AControl: TControl; const Active: Boolean);
+procedure TListItemControlScene.ChangeScrollingState(const AControl: TControl;
+  const Active: Boolean);
 begin
 end;
 
@@ -3037,13 +3086,15 @@ end;
 {$ENDREGION}
 {$REGION 'List Item'}
 
-constructor TListItem.Create(const AAdapter: IListViewAdapter; const AController: IListViewController);
+constructor TListItem.Create(const AAdapter: IListViewAdapter;
+  const AController: IListViewController);
 begin
   inherited Create;
   FController := AController;
   FAdapter := AAdapter;
   FView := ListItemObjectsClass.Create(Self);
-  FView.Callback := procedure(View: TListItemView; Drawable: TListItemDrawable; Op: TListItemCallbackOp)
+  FView.Callback :=
+      procedure(View: TListItemView; Drawable: TListItemDrawable; Op: TListItemCallbackOp)
     begin
       case Op of
         TListItemCallbackOp.CreateDrawables:
@@ -3167,7 +3218,8 @@ function TListItem.ToString: string;
   end;
 
 begin
-  Result := Format('%s@%x Purpose=%s |View|=%d', [GetClassName, NativeUInt(Self), GetPurpose, GetViewCount]);
+  Result := Format('%s@%x Purpose=%s |View|=%d', [GetClassName, NativeUInt(Self), GetPurpose,
+    GetViewCount]);
 end;
 
 procedure TListItem.WillBePainted;
@@ -3204,7 +3256,8 @@ begin
   FController.ItemInvalidated(Self);
 end;
 
-function TListItem.MouseDown(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF): Boolean;
+function TListItem.MouseDown(const Button: TMouseButton; const Shift: TShiftState;
+  const MousePos: TPointF): Boolean;
 var
   I: Integer;
 begin
@@ -3228,7 +3281,8 @@ begin
       FView[I].MouseMove(Shift, MousePos);
 end;
 
-procedure TListItem.MouseUp(const Button: TMouseButton; const Shift: TShiftState; const MousePos: TPointF);
+procedure TListItem.MouseUp(const Button: TMouseButton; const Shift: TShiftState;
+  const MousePos: TPointF);
 var
   I: Integer;
 begin
@@ -3437,7 +3491,8 @@ end;
 
 procedure RegisterAliases;
 begin
-  AddEnumElementAliases(TypeInfo(TImageScalingMode), ['smStretchWithAspect', 'smOriginal', 'smStretch']);
+  AddEnumElementAliases(TypeInfo(TImageScalingMode), ['smStretchWithAspect', 'smOriginal',
+    'smStretch']);
 end;
 
 procedure UnregisterAliases;

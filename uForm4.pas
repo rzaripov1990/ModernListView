@@ -46,6 +46,7 @@ begin
       Detail := '';
     end;
   end;
+  ListView1.getAniCalc.BoundsAnimation := false;
 end;
 
 procedure TForm4.ListView1Paint(Sender: TObject; Canvas: TCanvas;

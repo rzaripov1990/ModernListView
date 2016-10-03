@@ -4,8 +4,10 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ListView.Types, FMX.ListView.Appearances,
-  FMX.ListView.Adapters.Base, FMX.Edit, FMX.EditBox, FMX.SpinBox, FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ListView.Types,
+  FMX.ListView.Appearances,
+  FMX.ListView.Adapters.Base, FMX.Edit, FMX.EditBox, FMX.SpinBox, FMX.Controls.Presentation,
+  FMX.StdCtrls, FMX.Layouts,
   FMX.ListView, FMX.Objects;
 
 type
@@ -22,8 +24,10 @@ type
       const AObject: TListItemSimpleControl);
     procedure Button1Click(Sender: TObject);
     procedure Switch1Switch(Sender: TObject);
-    procedure ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem; var AHandled: Boolean);
+    procedure ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem;
+      var AHandled: Boolean);
     procedure FormShow(Sender: TObject);
+    procedure ListView1ApplyStyleLookup(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,10 +58,6 @@ begin
   ListView1.SetColorHeader(TAlphaColorRec.Crimson);
   ListView1.SetColorTextHeader(TAlphaColorRec.Whitesmoke);
   ListView1.SetColorTextHeaderShadow(TAlphaColorRec.grey);
-
-  ListView1.SetColorPullRefresh(TAlphaColorRec.Lime);
-  ListView1.SetColorPullRefreshIndicator(TAlphaColorRec.Limegreen);
-  ListView1.SetColorStretchGlow(TAlphaColorRec.Limegreen);
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
@@ -88,19 +88,27 @@ begin
   end;
 end;
 
+procedure TForm1.ListView1ApplyStyleLookup(Sender: TObject);
+begin
+  ListView1.SetColorPullRefresh(TAlphaColorRec.Lime);
+  ListView1.SetColorPullRefreshIndicator(TAlphaColorRec.Limegreen);
+  ListView1.SetColorStretchGlow(TAlphaColorRec.Limegreen);
+end;
+
 procedure TForm1.ListView1ButtonClick(const Sender: TObject; const AItem: TListItem;
   const AObject: TListItemSimpleControl);
 begin
   if ListView1.IsCustomColorUsed(AItem.Index) then
     ListView1.SetDefaultColorForItem(AItem.Index)
   else
-    ListView1.SetCustomColorForItem(AItem.Index, TAlphaColorF.Create(random(255) / 255, random(255) / 255,
-      random(255) / 255, random(255) / 255).ToAlphaColor);
+    ListView1.SetCustomColorForItem(AItem.Index, TAlphaColorF.Create(random(255) / 255,
+      random(255) / 255, random(255) / 255, random(255) / 255).ToAlphaColor);
 end;
 
-procedure TForm1.ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem; var AHandled: Boolean);
+procedure TForm1.ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem;
+  var AHandled: Boolean);
 begin
-  TListViewTextButtonFix.Rendering(Sender, AItem, AHandled);
+  // TListViewTextButtonFix.Rendering(Sender, AItem, AHandled);
 end;
 
 procedure TForm1.Switch1Switch(Sender: TObject);
