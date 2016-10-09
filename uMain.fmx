@@ -37,7 +37,7 @@ object FormMain: TFormMain
     Position.X = 56.000000000000000000
     Position.Y = 32.000000000000000000
     Size.Width = 209.000000000000000000
-    Size.Height = 31.000000000000000000
+    Size.Height = 34.000000000000000000
     Size.PlatformDefault = False
     TextSettings.Font.Size = 25.000000000000000000
     Text = 'Modern ListView'
@@ -70,6 +70,7 @@ object FormMain: TFormMain
     Text = 'by ZuBy'
   end
   object Button1: TButton
+    Anchors = [akLeft, akTop, akRight]
     Position.X = 56.000000000000000000
     Position.Y = 224.000000000000000000
     Size.Width = 209.000000000000000000
