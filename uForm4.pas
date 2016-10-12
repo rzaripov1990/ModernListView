@@ -16,8 +16,7 @@ type
     Label1: TLabel;
     Text1: TText;
     procedure FormActivate(Sender: TObject);
-    procedure ListView1Paint(Sender: TObject; Canvas: TCanvas;
-      const ARect: TRectF);
+    procedure ListView1Paint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
     procedure ListView1ScrollViewChange(Sender: TObject);
   private
     { Private declarations }
@@ -46,14 +45,14 @@ begin
       Detail := '';
     end;
   end;
-  ListView1.getAniCalc.BoundsAnimation := false;
+  if ListView1.getAniCalc <> nil then
+    ListView1.getAniCalc.BoundsAnimation := false;
 end;
 
-procedure TForm4.ListView1Paint(Sender: TObject; Canvas: TCanvas;
-  const ARect: TRectF);
+procedure TForm4.ListView1Paint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
 begin
-  Text1.Text := string.Join(':', [ListView1.getFirstVisibleItemIndex,
-    ListView1.getVisibleCount, ListView1.getLastVisibleItemindex]);
+  Text1.Text := string.Join(':', [ListView1.getFirstVisibleItemIndex, ListView1.getVisibleCount,
+    ListView1.getLastVisibleItemindex]);
   inc(Counter);
   Caption := Counter.ToString;
 end;

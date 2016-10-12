@@ -1,4 +1,4 @@
-{ ******************************************************* }
+п»ї{ ******************************************************* }
 { }
 { Delphi FireMonkey Platform }
 { }
@@ -69,32 +69,32 @@ type
     IMessageSender)
   private const
     ChangeRepaintedIncidentDelay = 0.1; // seconds
-    PhysicsProcessingInterval = 8; // 8 ms for ~120 frames per second
-    RecurrentTimerInterval = 16; // 16 ms for ~60 frames per second
-    AutoTapScrollingSpeed = 8; // pixels per frame
-    AutoTapMaxScrollingTime = 1; // seconds
-    TapSelectWaitTime = 0.25; // seconds
-    SelectionFadeInTime = 0.125; // seconds
-    SelectionFadeOutTime = 0.25; // seconds
-    MinScrollThreshold = 10;
-    MinSwypeThreshold = 40;
+    PhysicsProcessingInterval    = 8; // 8 ms for ~120 frames per second
+    RecurrentTimerInterval       = 16; // 16 ms for ~60 frames per second
+    AutoTapScrollingSpeed        = 8; // pixels per frame
+    AutoTapMaxScrollingTime      = 1; // seconds
+    TapSelectWaitTime            = 0.25; // seconds
+    SelectionFadeInTime          = 0.125; // seconds
+    SelectionFadeOutTime         = 0.25; // seconds
+    MinScrollThreshold           = 10;
+    MinSwypeThreshold            = 40;
 
     DefaultDeleteButtonWidth = 72;
 
-    ItemSeparatorTop = 1;
+    ItemSeparatorTop    = 1;
     ItemSeparatorBottom = 2;
 
     EditModeSelectionAlpha = 0.25;
     // how bright the checked items are in editmode
 
-    EditModeAnimationDuration = 0.1; // in seconds
+    EditModeAnimationDuration   = 0.1; // in seconds
     DeleteModeAnimationDuration = 0.15; // in seconds
-    DefaultDeleteButtonText = 'Delete';
+    DefaultDeleteButtonText     = 'Delete';
 
     PullRefreshIndicatorStrengthStart = 16;
-    PullRefreshIndicatorMaxSteps = 12;
+    PullRefreshIndicatorMaxSteps      = 12;
 
-    DefaultLeftMargin = 10;
+    DefaultLeftMargin  = 10;
     DefaultRightMargin = 11;
 
   public type
@@ -1216,17 +1216,19 @@ end;
 function TListViewBase.HasTouchTracking: Boolean;
 begin
   // *** ZuBy
-  Result := {$IF not defined(MSWINDOWS)} True
-{$ELSE} (FAniCalc <> nil) or ((FSystemInformationService <> nil) and
-    (TScrollingBehaviour.TouchTracking in FSystemInformationService.GetScrollingBehaviour));
-{$ENDIF}
+  Result :=
+{$IFNDEF MSWINDOWS}
+    True
+{$ELSE}
+    (FAniCalc <> nil) or ((FSystemInformationService <> nil) and (TScrollingBehaviour.TouchTracking
+    in FSystemInformationService.GetScrollingBehaviour))
+{$ENDIF};
   // *** ZuBy
 end;
 
 function TListViewBase.HasSearchFeatures: Boolean;
 begin
   Result := ((FListingService <> nil) and (FListingService.GetSearchFeatures <> [])) or (csDesigning in ComponentState);
-
 end;
 
 function TListViewBase.HasSearchAsItem: Boolean;
@@ -1250,10 +1252,13 @@ end;
 
 function TListViewBase.HasStretchyScrolling: Boolean;
 begin
-  Result := {$IF not defined(MSWINDOWS)} True
-{$ELSE} HasTouchTracking and (FSystemInformationService <> nil) and
-    (TScrollingBehaviour.BoundsAnimation in FSystemInformationService.GetScrollingBehaviour);
-{$ENDIF}
+  Result :=
+{$IFNDEF MSWINDOWS}
+    True
+{$ELSE}
+    HasTouchTracking and (FSystemInformationService <> nil) and
+    (TScrollingBehaviour.BoundsAnimation in FSystemInformationService.GetScrollingBehaviour)
+{$ENDIF};
 end;
 
 function TListViewBase.HasButtonsInCells: Boolean;
@@ -2457,13 +2462,13 @@ end;
 
 procedure TListViewBase.PaintPullRefreshIndicator(const ACanvas: TCanvas; const AStrength, AOpacity: Single);
 const
-  IndicatorMinRadius = 6.5;
-  IndicatorMaxRadius = 13.5;
-  IndicatorThickness = 2;
-  IndicatorRotation = 2;
+  IndicatorMinRadius         = 6.5;
+  IndicatorMaxRadius         = 13.5;
+  IndicatorThickness         = 2;
+  IndicatorRotation          = 2;
   IndicatorDisappearFraction = 0.7;
-  PiMulTwo = 2 * Pi;
-  PiByTwo = Pi / 2;
+  PiMulTwo                   = 2 * Pi;
+  PiByTwo                    = Pi / 2;
 var
   Stroke: TStrokeBrush;
   I, LineCount: Integer;
@@ -2554,8 +2559,8 @@ function TListViewBase.GetPullRefreshStrokeWidth: Single;
 const
   StrokeCollapseSpeed1 = 4;
   StrokeCollapseSpeed2 = 256;
-  StrokeCollapsePower = 0.75;
-  StrokeGrowthSpeed = 0.25;
+  StrokeCollapsePower  = 0.75;
+  StrokeGrowthSpeed    = 0.25;
 begin
   if FPullRefreshAnimation = TPullRefreshAnimation.Playing then
   begin
@@ -3520,12 +3525,12 @@ begin
     // ZuBy ***
     if FItemBoxLight <> nil then
       DrawRect.Top := DrawRect.Top + 1;
-    { ю$IFDEF MSWINDOWS }
+    { Гѕ$IFDEF MSWINDOWS }
     // The selection seems to be broken on Windows (looks ugly, needs fixing). Meanwhile, attempt a temporal fix.
     // if FItemBoxLight <> nil then
     // DrawRect.Bottom := DrawRect.Bottom + 1
     // else
-    { ю$ENDIF }
+    { Гѕ$ENDIF }
     DrawRect.Bottom := DrawRect.Bottom - 2;
     if FAutoColumns then
     begin
@@ -6000,7 +6005,7 @@ begin
   end;
 end;
 
-/// <summary> устанавливаем кастомной цвет для Item'a </summary>
+/// <summary> ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ ГЄГ Г±ГІГ®Г¬Г­Г®Г© Г¶ГўГҐГІ Г¤Г«Гї Item'a </summary>
 procedure TAppearanceListView.SetCustomColorForItem(const ItemIndex: Integer; const aColor: TAlphaColor); // ZuBy
 begin
   with Items[ItemIndex] do
@@ -6011,7 +6016,7 @@ begin
   Repaint;
 end;
 
-/// <summary> выключаем отрисовку кастомного цвета у Item'a </summary>
+/// <summary> ГўГ»ГЄГ«ГѕГ·Г ГҐГ¬ Г®ГІГ°ГЁГ±Г®ГўГЄГі ГЄГ Г±ГІГ®Г¬Г­Г®ГЈГ® Г¶ГўГҐГІГ  Гі Item'a </summary>
 procedure TAppearanceListView.SetDefaultColorForItem(const ItemIndex: Integer); // ZuBy
 begin
   Items[ItemIndex].Data['aUseCustomColor'] := False;
