@@ -23,7 +23,6 @@ object Form4: TForm4
     Size.Height = 383.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    OnPaint = ListView1Paint
     OnScrollViewChange = ListView1ScrollViewChange
   end
   object Label1: TLabel

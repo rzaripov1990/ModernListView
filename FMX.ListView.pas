@@ -69,32 +69,32 @@ type
     IMessageSender)
   private const
     ChangeRepaintedIncidentDelay = 0.1; // seconds
-    PhysicsProcessingInterval    = 8; // 8 ms for ~120 frames per second
-    RecurrentTimerInterval       = 16; // 16 ms for ~60 frames per second
-    AutoTapScrollingSpeed        = 8; // pixels per frame
-    AutoTapMaxScrollingTime      = 1; // seconds
-    TapSelectWaitTime            = 0.25; // seconds
-    SelectionFadeInTime          = 0.125; // seconds
-    SelectionFadeOutTime         = 0.25; // seconds
-    MinScrollThreshold           = 10;
-    MinSwypeThreshold            = 40;
+    PhysicsProcessingInterval = 8; // 8 ms for ~120 frames per second
+    RecurrentTimerInterval = 16; // 16 ms for ~60 frames per second
+    AutoTapScrollingSpeed = 8; // pixels per frame
+    AutoTapMaxScrollingTime = 1; // seconds
+    TapSelectWaitTime = 0.25; // seconds
+    SelectionFadeInTime = 0.125; // seconds
+    SelectionFadeOutTime = 0.25; // seconds
+    MinScrollThreshold = 10;
+    MinSwypeThreshold = 40;
 
     DefaultDeleteButtonWidth = 72;
 
-    ItemSeparatorTop    = 1;
+    ItemSeparatorTop = 1;
     ItemSeparatorBottom = 2;
 
     EditModeSelectionAlpha = 0.25;
     // how bright the checked items are in editmode
 
-    EditModeAnimationDuration   = 0.1; // in seconds
+    EditModeAnimationDuration = 0.1; // in seconds
     DeleteModeAnimationDuration = 0.15; // in seconds
-    DefaultDeleteButtonText     = 'Delete';
+    DefaultDeleteButtonText = 'Delete';
 
     PullRefreshIndicatorStrengthStart = 16;
-    PullRefreshIndicatorMaxSteps      = 12;
+    PullRefreshIndicatorMaxSteps = 12;
 
-    DefaultLeftMargin  = 10;
+    DefaultLeftMargin = 10;
     DefaultRightMargin = 11;
 
   public type
@@ -2462,13 +2462,13 @@ end;
 
 procedure TListViewBase.PaintPullRefreshIndicator(const ACanvas: TCanvas; const AStrength, AOpacity: Single);
 const
-  IndicatorMinRadius         = 6.5;
-  IndicatorMaxRadius         = 13.5;
-  IndicatorThickness         = 2;
-  IndicatorRotation          = 2;
+  IndicatorMinRadius = 6.5;
+  IndicatorMaxRadius = 13.5;
+  IndicatorThickness = 2;
+  IndicatorRotation = 2;
   IndicatorDisappearFraction = 0.7;
-  PiMulTwo                   = 2 * Pi;
-  PiByTwo                    = Pi / 2;
+  PiMulTwo = 2 * Pi;
+  PiByTwo = Pi / 2;
 var
   Stroke: TStrokeBrush;
   I, LineCount: Integer;
@@ -2559,8 +2559,8 @@ function TListViewBase.GetPullRefreshStrokeWidth: Single;
 const
   StrokeCollapseSpeed1 = 4;
   StrokeCollapseSpeed2 = 256;
-  StrokeCollapsePower  = 0.75;
-  StrokeGrowthSpeed    = 0.25;
+  StrokeCollapsePower = 0.75;
+  StrokeGrowthSpeed = 0.25;
 begin
   if FPullRefreshAnimation = TPullRefreshAnimation.Playing then
   begin
@@ -2955,10 +2955,10 @@ begin
   begin
     FScrollViewPos := Value;
     DoUpdateScrollViewPos(Value);
+    RecalcTopViewItemIndex; // ZuBy
     if Assigned(FOnScrollViewChange) then
       FOnScrollViewChange(Self);
   end;
-  RecalcTopViewItemIndex;
 end;
 
 procedure TListViewBase.UpdateSearchEditPos;
@@ -3154,20 +3154,18 @@ begin
   try
     FScrollBar.Max := FSideSpace * 2 + FMaxKnownHeight;
     FScrollBar.SmallChange := Adapter.GetDefaultViewHeight * 0.5;
+    // Don't show at design time
     if not(csDesigning in ComponentState) then
-      // Don't show at design time
       FScrollBar.Visible := ((FMaxKnownHeight > LocalHeight) or
-        (HasTouchTracking and (TStateFlag.ScrollingActive in FStateFlags))) and FShowScrollBar
-      // ZuBy
+        (HasTouchTracking and (TStateFlag.ScrollingActive in FStateFlags))) and FShowScrollBar // ZuBy
     else
       FScrollBar.Visible := False;
     FScrollBar.Value := FScrollViewPos;
     FScrollBar.ViewportSize := ViewSize;
-
-    RecalcTopViewItemIndex;
   finally
     FScrollBar.EndUpdate;
   end;
+  RecalcTopViewItemIndex; // ZuBy
 end;
 
 procedure TListViewBase.UpdateScrollingLimits;
