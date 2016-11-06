@@ -35,12 +35,17 @@ Modern ListView - Colorizer, Vertical\Horizontal mode, Columns and other
   * ListView1.ColumnWidth := 160;
   * ListView1.AutoColumns := true;
   
-  **Add Notify for column click _OnColumnClick_**
+**Events**
+Event for AutoColumn mode
 ```
-  property OnColumnClick(const Column: Integer; const X, Y: Single; const AItem: TListViewItem; const DrawebleName: string);
+  procedure OnColumnClick(const Column: Integer; const X, Y: Single; const AItem: TListViewItem; const DrawebleName: string);
+```
+called when end of list
+```
+  procedure OnScrollEnd(Sender: TObject);
 ```
   
-## Other
+## Methods
   * Style for ListView Columns Mode
   * ListView1.ShowScrollBar - _hide/show scrollbar_
   * ListView1.ItemsClearTrue - _correct delete items_
@@ -51,3 +56,5 @@ Modern ListView - Colorizer, Vertical\Horizontal mode, Columns and other
   * ListView1.getLastVisibleItemindex - _first visible ItemIndex + amount of visible items_
   * ListView1.SeparatorLeftOffset - _indent for separator line_
   * ListView1.SeparatorRightOffset - _indent for separator line_
+  * ListView1.EnableTouchAnimation - enable/disable touch animation
+ 
