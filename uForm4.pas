@@ -19,13 +19,13 @@ type
     procedure ListView1ScrollViewChange(Sender: TObject);
   private
     { Private declarations }
+    procedure OnScrollEnd(Sender: TObject);
   public
     { Public declarations }
   end;
 
 var
   Form4: TForm4;
-  Counter: Integer = 0;
 
 implementation
 
@@ -35,6 +35,7 @@ procedure TForm4.FormActivate(Sender: TObject);
 var
   I: Integer;
 begin
+  ListView1.OnScrollEnd := OnScrollEnd;
   ListView1.ItemsClearTrue;
   for I := 0 to 49 do
   begin
@@ -53,6 +54,11 @@ procedure TForm4.ListView1ScrollViewChange(Sender: TObject);
 begin
   Text1.Text := string.Join(':', [ListView1.getFirstVisibleItemIndex, ListView1.getVisibleCount,
     ListView1.getLastVisibleItemindex]);
+end;
+
+procedure TForm4.OnScrollEnd(Sender: TObject);
+begin
+  Text1.Text := 'OnScrollEnd';
 end;
 
 end.

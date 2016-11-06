@@ -36,20 +36,64 @@ implementation
 {$R *.fmx}
 
 uses
-  System.Threading, System.Math, System.IOUtils,
+  System.Threading, System.Math, System.IOUtils, System.Net.HTTPClient,
   FMX.FireMonkey.Parser,
-  uForm2, FMX.Devgear.Extentions;
+  uForm2;
 
 const
-  colTitle         = 'title';
-  colBitmap        = 'bitmap';
-  colLogo          = 'logo';
-  colLoading       = 'loading';
+  colTitle = 'title';
+  colBitmap = 'bitmap';
+  colLogo = 'logo';
+  colLoading = 'loading';
   ColumnStartIndex = 1;
 
 function getRealIndex(const Row, Column, Columns: Integer): Integer;
 begin
   Result := (((Row + 1) * Columns) - 1) - (Columns - Column);
+end;
+
+procedure LoadBitmapFromURL(const aURL: string; aBitmap: TBitmap);
+// System.Net.HTTPClient
+var
+  thread: TThread;
+begin
+  thread := TThread.CreateAnonymousThread(
+    procedure
+    var
+      Http: THTTPClient;
+      Result: TMemoryStream;
+    begin
+      Result := TMemoryStream.Create;
+      Http := THTTPClient.Create;
+      try
+        try
+          Http.HandleRedirects := true;
+          Http.Get(aURL, Result);
+          TThread.Synchronize(TThread.CurrentThread,
+            procedure
+            var
+              aSourceBmp: TBitmap;
+            begin
+              aSourceBmp := TBitmap.Create;
+              aSourceBmp.LoadFromStream(Result);
+              if not aSourceBmp.IsEmpty then
+              begin
+                aBitmap.Clear(TAlphaColorRec.White);
+                aBitmap.SetSize(aSourceBmp.Width, aSourceBmp.Height);
+                aBitmap.CopyFromBitmap(aSourceBmp);
+              end;
+              FreeAndNil(aSourceBmp);
+            end);
+        except
+          FreeAndNil(Result);
+        end;
+      finally
+        FreeAndNil(Result);
+        FreeAndNil(Http);
+      end;
+    end);
+  thread.FreeOnTerminate := true;
+  thread.start;
 end;
 
 procedure TForm3.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -71,6 +115,7 @@ begin
   ListView1.StyleLookup := 'listviewstyle_panel';
   ListView1.OnColumnClick := OnColumnClick;
   ListView1.ShowScrollBar := false;
+  ListView1.EnableTouchAnimation(false);
 
   TTask.Run(
     procedure
@@ -91,17 +136,17 @@ procedure TForm3.ListView1Paint(Sender: TObject; Canvas: TCanvas; const ARect: T
 var
   I, J, RowColumns: Integer;
   iBitmap: TListItemImage;
+  aFirst, aLast: Integer;
 begin
-  // string.Join(':', [ListView1.getFirstVisibleItemIndex, ListView1.getVisibleCount,
-  // ListView1.getLastVisibleItemindex]);
+  if ListView1.Items.Count <= 0 then
+    exit;
 
-  // Label1.Text := IntToStr(FAnonThreadsCount);
-  // if (ListView1.Tag <> FUniqueTag) or (ListView1.Items.Count <= 0) then
-  // exit;
+  aFirst := Max(0, ListView1.getFirstVisibleItemIndex);
+  aLast := aFirst + ListView1.getVisibleCount;
 
-  for I := ListView1.getFirstVisibleItemIndex to ListView1.getLastVisibleItemindex do
+  for I := aFirst to aLast do
   begin
-    if InRange(I, 0, ListView1.Items.Count) then
+    if InRange(I, 0, ListView1.Items.Count - 1) then
     begin
       Label1.Text := string.Join(':', [I, ListView1.getFirstVisibleItemIndex, ListView1.getVisibleCount,
         ListView1.getLastVisibleItemindex]);
@@ -116,8 +161,7 @@ begin
           if Assigned(iBitmap.Bitmap) and (ListView1.Items[I].Data[colLoading + IntToStr(J)].AsInteger = 1) then
           begin
             ListView1.Items[I].Data[colLoading + IntToStr(J)] := 0;
-            iBitmap.Bitmap.LoadFromURL(ListView1.Items[I].Data[colLogo + IntToStr(J)].AsString,
-              FMembersList[getRealIndex(I, J, ListView1.Columns)].FileName, iBitmap.Bitmap);
+            LoadBitmapFromURL(ListView1.Items[I].Data[colLogo + IntToStr(J)].AsString, iBitmap.Bitmap);
           end;
         end;
       end;
@@ -154,9 +198,6 @@ begin
     iBitmap.OwnsBitmap := true;
     if (iBitmap.Bitmap = nil) then
       iBitmap.Bitmap := TBitmap.Create;
-    // realIndex := getRealIndex(AItem.Index, I, ListView1.Columns);
-    // if FileExists(FMembersList[realIndex].FileName) then
-    // iBitmap.Bitmap.LoadFromFile(FMembersList[realIndex].FileName);
 
     // заголовок
     iTitle := AItem.Objects.FindObjectT<TListItemText>(colTitle + IntToStr(I));
@@ -181,12 +222,13 @@ end;
 
 procedure TForm3.OnColumnClick(const Sender: TObject; const Column: Integer; const X, Y: Single;
 const AItem: TListViewItem; const DrawebleName: string);
-var
-  realIndex: Integer;
+// var
+// realIndex: Integer;
 begin
-  realIndex := getRealIndex(AItem.Index, Column, ListView1.Columns);
-  ShowMessage(DrawebleName + #13#10 + realIndex.ToString + '  ' + FMembersList[realIndex].FileName + #13#10 +
-    AItem.Data[colLogo + IntToStr(Column)].AsString);
+  ShowMessage(AItem.Data[colLogo + IntToStr(Column)].AsString);
+  // realIndex := getRealIndex(AItem.Index, Column, ListView1.Columns);
+  // ShowMessage(DrawebleName + #13#10 + realIndex.ToString + '  ' + FMembersList[realIndex].FileName + #13#10 +
+  // AItem.Data[colLogo + IntToStr(Column)].AsString);
 end;
 
 procedure TForm3.ReLoadLV;

@@ -104,6 +104,7 @@ type
       const ItemObject: TListItemDrawable) of object;
     TColumnClick = procedure(const Sender: TObject; const Column: Integer; const X, Y: Single;
       const AItem: TListViewItem; const DrawebleName: string) of object; // ZuBy
+    TScrollEnd = procedure(Sender: TObject) of object; // ZuBy
     TUpdateItemViewEvent = TListItemEvent;
     TUpdatingItemViewEvent = procedure(const Sender: TObject; const AItem: TListItem; var AHandled: Boolean) of object;
     TDeletingItemEvent = procedure(Sender: TObject; AIndex: Integer; var ACanDelete: Boolean) of object;
@@ -220,6 +221,7 @@ type
     FOnDeleteItem: TDeleteItemEvent;
     FOnPullRefresh: TNotifyEvent;
     FOnColumnClick: TColumnClick; // ZuBy
+    FOnScrollEnd: TScrollEnd; // ZuBy
     FDeleteButtonText: string;
     FEditMode: Boolean;
     FCanSwipeDelete: Boolean;
@@ -524,6 +526,7 @@ type
     procedure ScrollTo(const AItemIndex: Integer);
 
     procedure RebuildOrientation; // ZuBy
+    procedure EnableTouchAnimation(Value: Boolean); // ZuBy
 
     property ItemIndex: Integer read GetItemIndex write SetItemIndex default -1;
     property Selected: TListItem read GetSelected write SetSelected;
@@ -559,6 +562,7 @@ type
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property OnChangeRepainted: TNotifyEvent read FOnChangeRepainted write FOnChangeRepainted;
     property OnColumnClick: TColumnClick read FOnColumnClick write FOnColumnClick; // ZuBy
+    property OnScrollEnd: TScrollEnd read FOnScrollEnd write FOnScrollEnd; // ZuBy
     /// <summary> This event occurs after list of items has been changed. </summary>
     property OnItemsChange: TNotifyEvent read FOnItemsChange write FOnItemsChange;
     /// <summary> This is called when ScrollViewPos has changed as a result of list being scrolled or manually in
@@ -2955,10 +2959,17 @@ begin
   begin
     FScrollViewPos := Value;
     DoUpdateScrollViewPos(Value);
-    RecalcTopViewItemIndex; // ZuBy
     if Assigned(FOnScrollViewChange) then
       FOnScrollViewChange(Self);
+    // ZuBy ***
+    if FScrollViewPos >= GetMaxScrollViewPos then
+    begin
+      if Assigned(FOnScrollEnd) then
+        FOnScrollEnd(Self);
+    end;
+    // *** ZuBy
   end;
+  RecalcTopViewItemIndex;
 end;
 
 procedure TListViewBase.UpdateSearchEditPos;
@@ -4043,6 +4054,7 @@ begin
       RebuildList;
     FStateFlags := FStateFlags - [TStateFlag.NeedsScrollingLimitsUpdate, TStateFlag.NeedsRebuild];
   end;
+  // RecalcTopViewItemIndex; // ZuBy
 end;
 
 function TListViewBase.ObjectAtPoint(P: TPointF): IControl;
@@ -4884,6 +4896,31 @@ begin
   Result := 'listviewstyle';
 end;
 
+procedure TListViewBase.EnableTouchAnimation(Value: Boolean);
+var
+  TouchAnimation: TCustomStyleObject;
+begin
+  if (Value) and (FTouchAnimationObject <> nil) then
+    exit;
+
+  if Value then
+  begin
+    // Touch Animation
+    if FindStyleResource<TCustomStyleObject>('touchanimation', TouchAnimation) then
+    begin
+      Supports(TouchAnimation, ITouchAnimationObject, FTouchAnimationObject);
+      if FTouchAnimationObject <> nil then
+        FTouchAnimationObject.TouchAnimation.CustomPaint := Repaint;
+    end;
+  end
+  else
+  begin
+    if FTouchAnimationObject <> nil then
+      FTouchAnimationObject.TouchAnimation.CustomPaint := nil;
+    FTouchAnimationObject := nil;
+  end;
+end;
+
 procedure TListViewBase.ApplyStyle;
 
   function GetColorFromStyle(const ObjectName: string; const DefaultColor: TAlphaColor): TAlphaColor;
@@ -4920,8 +4957,6 @@ procedure TListViewBase.ApplyStyle;
       Result := nil;
   end;
 
-var
-  TouchAnimation: TCustomStyleObject;
 begin
   inherited;
 
@@ -4972,15 +5007,9 @@ begin
   FHeaderStyleImage := GetStyleObjectFromStyle('header');
   if FHeaderStyleImage = nil then
     FHeaderStyleColor := claWhite;
-  // ZuBy ***
 
-  // Touch Animation
-  if FindStyleResource<TCustomStyleObject>('touchanimation', TouchAnimation) then
-  begin
-    Supports(TouchAnimation, ITouchAnimationObject, FTouchAnimationObject);
-    if FTouchAnimationObject <> nil then
-      FTouchAnimationObject.TouchAnimation.CustomPaint := Repaint;
-  end;
+  EnableTouchAnimation(True);
+  // ZuBy ***
 
   FStyleResources.ButtonAddItemStyleImage.Normal := GetStyleObjectFromStyle('additembutton');
   FStyleResources.ButtonAddItemStyleImage.Pressed := GetStyleObjectFromStyle('additembuttonpressed');

@@ -11,9 +11,7 @@ uses
   FMX.ListView.Types in 'FMX.ListView.Types.pas',
   FMX.ListView.TextButtonFix in 'comps\FMX.ListView.TextButtonFix.pas',
   FMX.FireMonkey.Parser in 'comps\FMX.FireMonkey.Parser.pas',
-  uForm4 in 'uForm4.pas' {Form4},
-  AnonThread in 'comps\AnonThread.pas',
-  FMX.Devgear.Extentions in 'comps\FMX.Devgear.Extentions.pas';
+  uForm4 in 'uForm4.pas' {Form4};
 
 {$R *.res}
 
