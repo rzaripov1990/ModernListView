@@ -35,8 +35,8 @@ Modern ListView - Colorizer, Vertical\Horizontal mode, Columns and other
   * ListView1.ColumnWidth := 160;
   * ListView1.AutoColumns := true;
   
-**Events**
-Event for AutoColumn mode
+## Events
+event for AutoColumn mode
 ```
   procedure OnColumnClick(const Column: Integer; const X, Y: Single; const AItem: TListViewItem; const DrawebleName: string);
 ```
