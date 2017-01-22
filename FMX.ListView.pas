@@ -25,6 +25,8 @@ uses
   FMX.Presentation.Messages, FMX.Controls.Presentation, FMX.ListView.DynamicAppearance;
 
 type
+  TSwipeDirection = (ToLeft, ToRight); // ZuBy
+
   /// <summary>List view class that provides members that subclasses may use to
   /// communicate with a list view adapter that contains the actual items of the
   /// list view.</summary>
@@ -105,6 +107,7 @@ type
     TColumnClick = procedure(const Sender: TObject; const Column: Integer; const X, Y: Single;
       const AItem: TListViewItem; const DrawebleName: string) of object; // ZuBy
     TScrollEnd = procedure(Sender: TObject) of object; // ZuBy
+    TSwipeDirectionEvent = procedure(Sender: TObject; const Direction: TSwipeDirection) of object; // ZuBy
     TUpdateItemViewEvent = TListItemEvent;
     TUpdatingItemViewEvent = procedure(const Sender: TObject; const AItem: TListItem; var AHandled: Boolean) of object;
     TDeletingItemEvent = procedure(Sender: TObject; AIndex: Integer; var ACanDelete: Boolean) of object;
@@ -167,6 +170,8 @@ type
     FMouseDownAt: TPointF;
     FMouseClickPrev: TPointF;
     FMouseClickDelta: TPointF;
+    FMouseClickSwipeEventSend: Boolean; // ZuBy
+    FMouseClickSwipeStart: TPointF; // ZuBy
     FMouseClicked: Boolean;
     FMouseClickIndex: Integer;
     FMouseEventIndex: Integer;
@@ -222,6 +227,7 @@ type
     FOnPullRefresh: TNotifyEvent;
     FOnColumnClick: TColumnClick; // ZuBy
     FOnScrollEnd: TScrollEnd; // ZuBy
+    FOnSwipe: TSwipeDirectionEvent; // ZuBy
     FDeleteButtonText: string;
     FEditMode: Boolean;
     FCanSwipeDelete: Boolean;
@@ -255,7 +261,12 @@ type
     FItemSelectedBeforeChange: TListItem;
     FEstimatedHeights: TEstimatedHeights;
 
+    FTransparentSeparator: Boolean; // ZuBy
+    FTransparentItems: Boolean; // ZuBy
+    FAutoPositionToItem: Boolean; // ZuBy
     FTopItemIndex: Integer; // ZuBy
+
+    FCanSwipeDirection: Boolean; // ZuBy
 
     FSeparatorLeftOffset: Single; // ZuBy
     FSeparatorRightOffset: Single; // ZuBy
@@ -267,10 +278,13 @@ type
     FShowScrollBar: Boolean; // ZuBy
 
     FColumnWidth: Single; // ZuBy
+
+    FTopOffset: Integer; // ZuBy
     FBottomOffset: Integer; // ZuBy
+    FItemBottomOffset: Integer; // ZuBy
+
     FColumns: Integer; // ZuBy
     FMarg: Integer; // ZuBy
-    FTopOffset: Integer; // ZuBy
     FAutoColumns: Boolean; // ZuBy
 
     function IsRunningOnDesktop: Boolean;
@@ -563,6 +577,7 @@ type
     property OnChangeRepainted: TNotifyEvent read FOnChangeRepainted write FOnChangeRepainted;
     property OnColumnClick: TColumnClick read FOnColumnClick write FOnColumnClick; // ZuBy
     property OnScrollEnd: TScrollEnd read FOnScrollEnd write FOnScrollEnd; // ZuBy
+    property OnSwipeDirection: TSwipeDirectionEvent read FOnSwipe write FOnSwipe; // ZuBy
     /// <summary> This event occurs after list of items has been changed. </summary>
     property OnItemsChange: TNotifyEvent read FOnItemsChange write FOnItemsChange;
     /// <summary> This is called when ScrollViewPos has changed as a result of list being scrolled or manually in
@@ -730,7 +745,13 @@ type
     procedure SetAutoColumns(const Value: Boolean); // ZuBy
     procedure SetBottomOffset(const Value: Integer); // ZuBy
     procedure SetColumnWidth(const Value: Single); // ZuBy
-    procedure SetTopOffset(const Value: Integer); // ZuBy
+    procedure SetTopOffset(const Value: Integer);
+    procedure SetItemBottomOffset(const Value: Integer);
+    procedure SetTransparentSeparator(const Value: Boolean);
+    procedure SetTransparentItems(const Value: Boolean); // ZuBy
+
+    function getTextSize(const aText: string; aFont: TFont; const aWordWrap: Boolean; aWidth, aHeight: Single): TSizeF;
+    // ZuBy
   protected
     procedure ApplyStyle; override;
     procedure ObjectsNotify(Sender: TObject; const Item: TListItem; Action: TCollectionNotification);
@@ -852,6 +873,12 @@ type
     // Get Item Height
     function getHeightByIndex(Index: Integer): Integer; // ZuBy
 
+    function getItemTextHeight(const AItem: TListItemText; const aWidth: Single = 0): Integer; // ZuBy
+    function getItemTextButtonHeight(const AItem: TListItemTextButton; const aWidth: Single = 0): Integer; // ZuBy
+
+    function getItemTextWidth(const AItem: TListItemText; const aHeight: Single = 0): Integer; // ZuBy
+    function getItemTextButtonWidth(const AItem: TListItemTextButton; const aHeight: Single = 0): Integer; // ZuBy
+
     // Ani Calculaction
     function getAniCalc: TAniCalculations; // ZuBy
 
@@ -862,12 +889,20 @@ type
     function getLastVisibleItemindex: Integer; // ZuBy
     function getVisibleCount: Integer; // ZuBy
 
+    property TransparentSeparators: Boolean read FTransparentSeparator write SetTransparentSeparator default False;
+    // ZuBy
+    property TransparentItems: Boolean read FTransparentItems write SetTransparentItems default False; // ZuBy
+    property AutoPositionToItem: Boolean read FAutoPositionToItem write FAutoPositionToItem default False; // ZuBy
     // Separator Draw
     property SeparatorLeftOffset: Single read FSeparatorLeftOffset write SetSeparatorLeftOffset;
     // ZuBy
     property SeparatorRightOffset: Single read FSeparatorRightOffset write SetSeparatorRightOffset;
     // ZuBy
 
+    property ItemBottomOffset: Integer read FItemBottomOffset write SetItemBottomOffset;
+    // ZuBy
+
+    property CanSwipeDirection: Boolean read FCanSwipeDirection write FCanSwipeDirection default False; // ZuBy
     property Horizontal: Boolean read FHorizontal write SetHorizontal default False; // ZuBy
     property MakeSelectedItemVisible: Boolean read FMakeSelectedItemVisible write FMakeSelectedItemVisible default True;
 
@@ -947,8 +982,12 @@ type
     property ParentShowHint;
     property ShowHint;
 
+    property TransparentSeparators;
+    property TransparentItems;
+    property AutoPositionToItem;
     property SeparatorLeftOffset;
     property SeparatorRightOffset;
+    property ItemBottomOffset;
     property Horizontal;
 
     { events }
@@ -1037,6 +1076,9 @@ uses
   FMX.Dialogs
 {$IFDEF IOS}, FMX.ListView.iOS{$ENDIF};
 
+var
+  LVTextLayout: TTextLayout;
+
 {$REGION 'Types, constants and helper functions'}
 
 const
@@ -1124,6 +1166,7 @@ begin
   AutoCapture := True;
   ClipChildren := True;
 
+  FItemBottomOffset := 0; // ZuBy
   FHorizontal := False; // ZuBy
   FTopOffset := 0; // ZuBy
   FBottomOffset := 0; // ZuBy
@@ -2959,8 +3002,10 @@ begin
   begin
     FScrollViewPos := Value;
     DoUpdateScrollViewPos(Value);
+
     if Assigned(FOnScrollViewChange) then
       FOnScrollViewChange(Self);
+
     // ZuBy ***
     if FScrollViewPos >= GetMaxScrollViewPos then
     begin
@@ -3140,7 +3185,14 @@ begin
     Scene.ChangeScrollingState(nil, False);
 
   if ScrollPixelAlign and (FScrollScale > TEpsilon.Scale) then
-    SetScrollViewPos(Round(FScrollViewPos * FScrollScale) / FScrollScale);
+  begin
+    // ZuBy ***
+    if FAutoPositionToItem then
+      ScrollTo(TAppearanceListView(Self).getFirstVisibleItemIndex)
+    else
+      SetScrollViewPos(Round(FScrollViewPos * FScrollScale) / FScrollScale);
+    // *** ZuBy
+  end;
 end;
 
 procedure TListViewBase.UpdateScrollBar;
@@ -3279,8 +3331,9 @@ begin
   end
   else
   begin
-    Result := RectF(LocRect.Left + FSideSpace + SideSpace, LocRect.Top + FSideSpace + FHeightSums[Index] -
-      FScrollViewPos, LocRect.Width - ((SideSpace + FSideSpace) * 2), GetItemHeight(Index));
+    Result := RectF(LocRect.Left + FSideSpace + SideSpace, FItemBottomOffset + LocRect.Top + FSideSpace +
+      FHeightSums[Index] - FScrollViewPos, LocRect.Width - ((SideSpace + FSideSpace) * 2),
+      GetItemHeight(Index) - FItemBottomOffset);
 
     if (FScrollBar <> nil) and (not HasTouchTracking) and FScrollBar.Visible then
       Result.Right := Result.Right - FScrollBar.Width;
@@ -3392,6 +3445,7 @@ begin
       if (ListItem <> nil) and ((ListItem.Count > 0) or HeaderBefore) then
       begin
         DrawRect := GetItemRelRect(I, LocRect);
+
         if ListItem.Purpose = TListItemPurpose.None then
         begin
           // ZuBy ***
@@ -3412,29 +3466,41 @@ begin
           end
           else
           begin
-            FBrush.Color := FItemStyleFillColor;
-
-            if ListItem.HeaderRef <> -1 then
-              AltIndex := Max((I - ListItem.HeaderRef) - 1, 0)
-            else
-              AltIndex := I;
-
-            if FAlternatingColors and (AltIndex mod 2 = 1) then
-              FBrush.Color := FItemStyleFillAltColor;
-
             // ZuBy ***
-            if TListViewItem(ListItem).Data['aUseCustomColor'].AsBoolean then
-              FBrush.Color := TListViewItem(ListItem).Data['aCustomColor'].AsInteger;
-            // *** ZuBy
+            if not FTransparentItems then
+            begin
+              FBrush.Color := FItemStyleFillColor;
 
+              if ListItem.HeaderRef <> -1 then
+                AltIndex := Max((I - ListItem.HeaderRef) - 1, 0)
+              else
+                AltIndex := I;
+
+              if FAlternatingColors and (AltIndex mod 2 = 1) then
+                FBrush.Color := FItemStyleFillAltColor;
+
+              // ZuBy ***
+              if TListViewItem(ListItem).Data['aUseCustomColor'].AsBoolean then
+                FBrush.Color := TListViewItem(ListItem).Data['aCustomColor'].AsInteger;
+              // *** ZuBy
+            end
+            else
+              FBrush.Kind := TBrushKind.None;
             Canvas.FillRect(DrawRect, 0, 0, AllCorners, Opacity, FBrush);
+            FBrush.Kind := FBrush.DefaultKind;
+            // *** ZuBy
           end;
           // *** ZuBy
         end;
 
         Sep := GetItemGroupSeparators(I);
+        // ZuBy ***
+        if not FTransparentSeparator then
+          FBrush.Color := FItemStyleFrameColor
+        else
+          FBrush.Kind := TBrushKind.None;
+        // *** ZuBy
 
-        FBrush.Color := FItemStyleFrameColor;
         if (Sep and ItemSeparatorTop > 0) and (ListItem.Purpose = TListItemPurpose.None) then
         begin
           // ZuBy ***
@@ -3455,30 +3521,39 @@ begin
           // *** ZuBy
 
           Canvas.FillRect(SepRect, 0, 0, AllCorners, Opacity, FBrush);
+          FBrush.Kind := FBrush.DefaultKind;
         end;
+      end;
 
-        if (ListItem.Purpose = TListItemPurpose.None) and
-          ((I >= Adapter.Count - 1) or (Adapter[I + 1].Purpose = TListItemPurpose.None)) then
+      if (ListItem.Purpose = TListItemPurpose.None) and
+        ((I >= Adapter.Count - 1) or (Adapter[I + 1].Purpose = TListItemPurpose.None)) then
+      begin
+        // ZuBy ***
+        if not FTransparentSeparator then
+          FBrush.Color := FItemStyleFrameColor
+        else
+          FBrush.Kind := TBrushKind.None;
+        // *** ZuBy
+
+        // ZuBy ***
+        if FHorizontal then
         begin
-          // ZuBy ***
-          if FHorizontal then
-          begin
-            SepRect.Left := AlignValueToPixel(DrawRect.Left);
-            SepRect.Right := SepRect.Left + 1;
-            SepRect.Top := (DrawRect.Top - 1) + FSeparatorLeftOffset;
-            SepRect.Bottom := (DrawRect.Bottom + 1) - FSeparatorRightOffset;
-          end
-          else
-          begin
-            SepRect.Left := (DrawRect.Left - 1) + FSeparatorLeftOffset;
-            SepRect.Right := (DrawRect.Right + 1) - FSeparatorRightOffset;
-            SepRect.Top := AlignValueToPixel(DrawRect.Bottom - SepHeight);
-            SepRect.Bottom := SepRect.Top + SepHeight;
-          end;
-          // *** ZuBy
-
-          Canvas.FillRect(SepRect, 0, 0, AllCorners, Opacity, FBrush);
+          SepRect.Left := AlignValueToPixel(DrawRect.Left);
+          SepRect.Right := SepRect.Left + 1;
+          SepRect.Top := (DrawRect.Top - 1) + FSeparatorLeftOffset;
+          SepRect.Bottom := (DrawRect.Bottom + 1) - FSeparatorRightOffset;
+        end
+        else
+        begin
+          SepRect.Left := (DrawRect.Left - 1) + FSeparatorLeftOffset;
+          SepRect.Right := (DrawRect.Right + 1) - FSeparatorRightOffset;
+          SepRect.Top := AlignValueToPixel(DrawRect.Bottom - SepHeight);
+          SepRect.Bottom := SepRect.Top + SepHeight;
         end;
+        // *** ZuBy
+
+        Canvas.FillRect(SepRect, 0, 0, AllCorners, Opacity, FBrush);
+        FBrush.Kind := FBrush.DefaultKind;
       end;
     end;
 
@@ -3491,6 +3566,7 @@ begin
       if (ListItem <> nil) and ((ListItem.Count > 0) or HeaderBefore) then
       begin
         DrawRect := GetItemRelRect(I, LocRect);
+
         if ListItem.Purpose <> TListItemPurpose.None then
         begin
           DrawSubRect := DrawRect;
@@ -4421,6 +4497,10 @@ begin
       FMouseDownAt := TPointF.Create(X, Y);
       FMouseClickPrev := FMouseDownAt;
       FMouseClickDelta := TPointF.Zero;
+      // ZuBy ***
+      FMouseClickSwipeEventSend := False;
+      FMouseClickSwipeStart := FMouseDownAt;
+      // *** ZuBy
       FMousePrevScrollPos := FScrollViewPos;
     end;
   end;
@@ -4454,9 +4534,23 @@ begin
 
     if FDragListMode = TInternalDragMode.None then
     begin
-      if HasTouchTracking and (Abs(FMouseClickDelta.X) > MinSwypeThreshold) and FCanSwipeDelete and
-        (FTapSelectNewIndexApplied = -1) then
-        FDragListMode := TInternalDragMode.Swype
+      if HasTouchTracking and (Abs(FMouseClickDelta.X) > MinSwypeThreshold) and (FCanSwipeDelete or FCanSwipeDirection)
+        and (FTapSelectNewIndexApplied = -1) then
+      begin
+        if FCanSwipeDirection then
+        begin
+          if Assigned(FOnSwipe) and (not FMouseClickSwipeEventSend) then
+          begin
+            FMouseClickSwipeEventSend := True;
+            if Abs(FMouseClickSwipeStart.X) > (X + MinSwypeThreshold) then
+              FOnSwipe(Self, TSwipeDirection.ToLeft)
+            else if Abs(FMouseClickSwipeStart.X) < (X + MinSwypeThreshold) then
+              FOnSwipe(Self, TSwipeDirection.ToRight);
+          end;
+        end
+        else
+          FDragListMode := TInternalDragMode.Swype;
+      end
       else
       begin
         // ZuBy ***
@@ -4582,6 +4676,9 @@ var
   NewIndex: Integer;
 begin
   inherited;
+
+  FMouseClickSwipeEventSend := False;
+  FMouseClickSwipeStart := TPoint.Zero;
 
   if ((not FEditMode) and (FDeleteButtonIndex <> -1)) or (not ShouldHandleEvents) then
     exit;
@@ -4799,7 +4896,7 @@ begin
       begin
         if I > 0 then
         begin
-          PrevItemHeight := GetItemHeight(I - 1);
+          PrevItemHeight := GetItemHeight(I - 1) + FItemBottomOffset;
           Inc(TotalHeight, PrevItemHeight);
 
           FHeightSums.Add(TotalHeight);
@@ -5686,6 +5783,9 @@ begin
   // Create our own adapter
   Items := TAppearanceListViewItems.Create(Self);
 
+  FTransparentSeparator := False;
+  FTransparentItems := False;
+  FAutoPositionToItem := False;
   FTopItemIndex := -1; // ZuBy
   FSeparatorLeftOffset := 0; // ZuBy
   FSeparatorRightOffset := 0; // ZuBy
@@ -5818,9 +5918,96 @@ begin
   Result := FTopItemIndex;
 end;
 
+function TAppearanceListView.getItemTextButtonHeight(const AItem: TListItemTextButton;
+const aWidth: Single = 0): Integer;
+// ZuBy
+var
+  aItemWidth: Single;
+begin
+  if AItem.Text.IsEmpty then
+    Result := Ceil(AItem.Height);
+
+  aItemWidth := 0;
+  if ShowScrollBar then
+    aItemWidth := DefaultScrollBarWidth;
+
+  if SameValue(0, aWidth) then
+    aItemWidth := Width - (aItemWidth + ItemSpaces.Left + ItemSpaces.Right + (SideSpace * 2))
+  else
+    aItemWidth := aWidth;
+
+  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, aItemWidth, 0).Height);
+end;
+
+function TAppearanceListView.getItemTextButtonWidth(const AItem: TListItemTextButton; const aHeight: Single): Integer;
+begin
+  if AItem.Text.IsEmpty then
+    Result := Ceil(AItem.Width);
+
+  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, 0, 0).Width);
+end;
+
+function TAppearanceListView.getItemTextHeight(const AItem: TListItemText; const aWidth: Single = 0): Integer; // ZuBy
+var
+  aItemWidth: Single;
+begin
+  if AItem.Text.IsEmpty then
+    Result := Ceil(AItem.Height);
+
+  aItemWidth := 0;
+  if ShowScrollBar then
+    aItemWidth := DefaultScrollBarWidth;
+
+  if SameValue(0, aWidth) then
+    aItemWidth := Width - (aItemWidth + ItemSpaces.Left + ItemSpaces.Right + (SideSpace * 2))
+  else
+    aItemWidth := aWidth;
+
+  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, aItemWidth, 0).Height);
+
+end;
+
+function TAppearanceListView.getItemTextWidth(const AItem: TListItemText; const aHeight: Single): Integer;
+begin
+  if AItem.Text.IsEmpty then
+    Result := Ceil(AItem.Width);
+
+  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, 0, 0).Width);
+end;
+
 function TAppearanceListView.getLastVisibleItemindex: Integer; // ZuBy
 begin
   Result := Min(getFirstVisibleItemIndex + getVisibleCount, TListViewBase(Self).Adapter.Count - 1);
+end;
+
+function TAppearanceListView.getTextSize(const aText: string; aFont: TFont; const aWordWrap: Boolean;
+aWidth, aHeight: Single): TSizeF; // ZuBy
+var
+  aMaxSize: TPointF;
+begin
+  LVTextLayout.BeginUpdate;
+  try
+    LVTextLayout.Text := aText;
+
+    aMaxSize := PointF(aWidth, aHeight);
+    if aWidth = 0 then
+      aMaxSize.X := 9999;
+    if aHeight = 0 then
+      aMaxSize.Y := 9999;
+
+    LVTextLayout.MaxSize := aMaxSize;
+    LVTextLayout.Font.Assign(aFont);
+    LVTextLayout.Font.Size := aFont.Size;
+    LVTextLayout.WordWrap := aWordWrap;
+    LVTextLayout.Trimming := TTextTrimming.None;
+    LVTextLayout.HorizontalAlign := TTextAlign.Leading;
+    LVTextLayout.VerticalAlign := TTextAlign.Leading;
+  finally
+    LVTextLayout.EndUpdate;
+  end;
+
+  Result.Height := LVTextLayout.TextHeight;
+  Result.Width := LVTextLayout.TextWidth;
 end;
 
 function TAppearanceListView.getVisibleCount: Integer; // ZuBy
@@ -6074,6 +6261,17 @@ begin
   // Do nothing
 end;
 
+procedure TAppearanceListView.SetItemBottomOffset(const Value: Integer);
+begin
+  if FItemBottomOffset <> Value then
+  begin
+    FItemBottomOffset := Value;
+    InvalidateHeights;
+    UpdateItemLookups;
+    Invalidate;
+  end;
+end;
+
 procedure TAppearanceListView.SetItemObjectsClassName(const Value: string);
 begin
   FItemAppearanceProperties.AppearanceClassName := Value;
@@ -6122,6 +6320,18 @@ begin
     UpdateItemLookups;
     Invalidate;
   end;
+end;
+
+procedure TAppearanceListView.SetTransparentItems(const Value: Boolean);
+begin
+  FTransparentItems := Value;
+  Invalidate;
+end;
+
+procedure TAppearanceListView.SetTransparentSeparator(const Value: Boolean);
+begin
+  FTransparentSeparator := Value;
+  Invalidate;
 end;
 
 procedure TAppearanceListView.SetItemEditObjectsClassName(const Value: string);
@@ -6682,6 +6892,11 @@ end;
 
 initialization
 
+LVTextLayout := TTextLayoutManager.DefaultTextLayout.Create;
 RegisterFmxClasses([TCustomListView, TListView]);
+
+finalization
+
+LVTextLayout.Free;
 
 end.

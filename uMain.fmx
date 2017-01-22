@@ -37,7 +37,7 @@ object FormMain: TFormMain
     Position.X = 56.000000000000000000
     Position.Y = 32.000000000000000000
     Size.Width = 209.000000000000000000
-    Size.Height = 34.000000000000000000
+    Size.Height = 31.000000000000000000
     Size.PlatformDefault = False
     TextSettings.Font.Size = 25.000000000000000000
     Text = 'Modern ListView'
@@ -69,15 +69,26 @@ object FormMain: TFormMain
     TextSettings.HorzAlign = Trailing
     Text = 'by ZuBy'
   end
-  object Button1: TButton
+  object btnParameters: TButton
     Anchors = [akLeft, akTop, akRight]
     Position.X = 56.000000000000000000
     Position.Y = 224.000000000000000000
     Size.Width = 209.000000000000000000
     Size.Height = 44.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 7
+    TabOrder = 8
     Text = 'Parameters'
-    OnClick = Button1Click
+    OnClick = btnParametersClick
+  end
+  object btnTransparent: TButton
+    Anchors = [akLeft, akTop, akRight]
+    Position.X = 56.000000000000000000
+    Position.Y = 272.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 44.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    Text = 'Transparent'
+    OnClick = btnTransparentClick
   end
 end

@@ -20,14 +20,19 @@ type
     Layout2: TLayout;
     Label2: TLabel;
     Switch1: TSwitch;
+    cbTransSepar: TCheckBox;
+    cbTransItems: TCheckBox;
+    cbTransBackg: TCheckBox;
     procedure ListView1ButtonClick(const Sender: TObject; const AItem: TListItem;
       const AObject: TListItemSimpleControl);
     procedure Button1Click(Sender: TObject);
     procedure Switch1Switch(Sender: TObject);
-    procedure ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem;
-      var AHandled: Boolean);
+    procedure ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem; var AHandled: Boolean);
     procedure FormShow(Sender: TObject);
     procedure ListView1ApplyStyleLookup(Sender: TObject);
+    procedure cbTransBackgChange(Sender: TObject);
+    procedure cbTransItemsChange(Sender: TObject);
+    procedure cbTransSeparChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -58,6 +63,21 @@ begin
   ListView1.SetColorHeader(TAlphaColorRec.Crimson);
   ListView1.SetColorTextHeader(TAlphaColorRec.Whitesmoke);
   ListView1.SetColorTextHeaderShadow(TAlphaColorRec.grey);
+end;
+
+procedure TForm1.cbTransBackgChange(Sender: TObject);
+begin
+  ListView1.Transparent := cbTransBackg.IsChecked;
+end;
+
+procedure TForm1.cbTransItemsChange(Sender: TObject);
+begin
+  ListView1.TransparentItems := cbTransItems.IsChecked;
+end;
+
+procedure TForm1.cbTransSeparChange(Sender: TObject);
+begin
+  ListView1.TransparentSeparators := cbTransSepar.IsChecked;
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
@@ -101,12 +121,11 @@ begin
   if ListView1.IsCustomColorUsed(AItem.Index) then
     ListView1.SetDefaultColorForItem(AItem.Index)
   else
-    ListView1.SetCustomColorForItem(AItem.Index, TAlphaColorF.Create(random(255) / 255,
-      random(255) / 255, random(255) / 255, random(255) / 255).ToAlphaColor);
+    ListView1.SetCustomColorForItem(AItem.Index, TAlphaColorF.Create(random(255) / 255, random(255) / 255,
+      random(255) / 255, random(255) / 255).ToAlphaColor);
 end;
 
-procedure TForm1.ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem;
-  var AHandled: Boolean);
+procedure TForm1.ListView1UpdatingObjects(const Sender: TObject; const AItem: TListViewItem; var AHandled: Boolean);
 begin
   // TListViewTextButtonFix.Rendering(Sender, AItem, AHandled);
 end;

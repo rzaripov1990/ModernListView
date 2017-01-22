@@ -11,7 +11,8 @@ uses
   FMX.ListView.Types in 'FMX.ListView.Types.pas',
   FMX.ListView.TextButtonFix in 'comps\FMX.ListView.TextButtonFix.pas',
   FMX.FireMonkey.Parser in 'comps\FMX.FireMonkey.Parser.pas',
-  uForm4 in 'uForm4.pas' {Form4};
+  uForm4 in 'uForm4.pas' {Form4},
+  uForm5 in 'uForm5.pas' {Form5};
 
 {$R *.res}
 
@@ -24,6 +25,7 @@ begin
   Application.CreateForm(TForm2, Form2);
   Application.CreateForm(TForm3, Form3);
   Application.CreateForm(TForm4, Form4);
+  Application.CreateForm(TForm5, Form5);
   Application.Run;
 
 end.
