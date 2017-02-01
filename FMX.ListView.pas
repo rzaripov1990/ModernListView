@@ -263,6 +263,8 @@ type
 
     FTransparentSeparator: Boolean; // ZuBy
     FTransparentItems: Boolean; // ZuBy
+    FTransparentHeaders: Boolean; // ZuBy
+
     FAutoPositionToItem: Boolean; // ZuBy
     FTopItemIndex: Integer; // ZuBy
 
@@ -286,6 +288,7 @@ type
     FColumns: Integer; // ZuBy
     FMarg: Integer; // ZuBy
     FAutoColumns: Boolean; // ZuBy
+    FCanScroll: Boolean; // sinuke
 
     function IsRunningOnDesktop: Boolean;
     function HasTouchTracking: Boolean;
@@ -751,6 +754,8 @@ type
     procedure SetTransparentItems(const Value: Boolean); // ZuBy
 
     function getTextSize(const aText: string; aFont: TFont; const aWordWrap: Boolean; aWidth, aHeight: Single): TSizeF;
+    procedure SetTransparentHeader(const Value: Boolean);
+    procedure SetCanScroll(const Value: Boolean);
     // ZuBy
   protected
     procedure ApplyStyle; override;
@@ -892,7 +897,9 @@ type
     property TransparentSeparators: Boolean read FTransparentSeparator write SetTransparentSeparator default False;
     // ZuBy
     property TransparentItems: Boolean read FTransparentItems write SetTransparentItems default False; // ZuBy
+    property TransparentHeaders: Boolean read FTransparentHeaders write SetTransparentHeader default False; // ZuBy
     property AutoPositionToItem: Boolean read FAutoPositionToItem write FAutoPositionToItem default False; // ZuBy
+    property CanScroll: Boolean read FCanScroll write SetCanScroll default True; // sinuke
     // Separator Draw
     property SeparatorLeftOffset: Single read FSeparatorLeftOffset write SetSeparatorLeftOffset;
     // ZuBy
@@ -1174,6 +1181,7 @@ begin
   FColumnWidth := 180; // ZuBy
   FColumns := 1; // ZuBy
   FMarg := 0; // ZuBy
+  FCanScroll := True; // sinuke
 
   FScrollBar := TScrollBar.Create(nil);
   FScrollBar.Stored := False;
@@ -2998,7 +3006,7 @@ end;
 
 procedure TListViewBase.UpdateScrollViewPos(const Value: Single);
 begin
-  if not SameValue(FScrollViewPos, Value, TEpsilon.Vector) then
+  if (not SameValue(FScrollViewPos, Value, TEpsilon.Vector) and FCanScroll) then // sinuke
   begin
     FScrollViewPos := Value;
     DoUpdateScrollViewPos(Value);
@@ -3575,13 +3583,20 @@ begin
             DrawSubRect.Top := DrawSubRect.Top + 1;
 
           // ZuBy ***
-          if FHeaderStyleImage <> nil then
-            FHeaderStyleImage.DrawToCanvas(Canvas, DrawSubRect, Opacity)
-          else
+          if not FTransparentHeaders then
           begin
-            FBrush.Color := FHeaderStyleColor;
-            Canvas.FillRect(DrawSubRect, 0, 0, AllCorners, Opacity, FBrush);
-          end;
+            // ZuBy ***
+            if FHeaderStyleImage <> nil then
+              FHeaderStyleImage.DrawToCanvas(Canvas, DrawSubRect, Opacity)
+            else
+            begin
+              FBrush.Color := FHeaderStyleColor;
+              Canvas.FillRect(DrawSubRect, 0, 0, AllCorners, Opacity, FBrush);
+            end;
+            // *** ZuBy
+          end
+          else
+            FBrush.Kind := TBrushKind.None;
           // *** ZuBy
         end;
       end;
@@ -4537,6 +4552,7 @@ begin
       if HasTouchTracking and (Abs(FMouseClickDelta.X) > MinSwypeThreshold) and (FCanSwipeDelete or FCanSwipeDirection)
         and (FTapSelectNewIndexApplied = -1) then
       begin
+        // ZuBy ***
         if FCanSwipeDirection then
         begin
           if Assigned(FOnSwipe) and (not FMouseClickSwipeEventSend) then
@@ -4547,7 +4563,7 @@ begin
             else if Abs(FMouseClickSwipeStart.X) < (X + MinSwypeThreshold) then
               FOnSwipe(Self, TSwipeDirection.ToRight);
           end;
-        end
+        end // *** ZuBy
         else
           FDragListMode := TInternalDragMode.Swype;
       end
@@ -6106,6 +6122,13 @@ begin
   end;
 end;
 
+// sinuke ***
+procedure TAppearanceListView.SetCanScroll(const Value: Boolean);
+begin
+  FCanScroll := Value;
+end;
+// *** sinuke
+
 procedure TAppearanceListView.SetColorBackground(aColor: TAlphaColor); // ZuBy
 begin
   FBackgroundStyleColor := aColor;
@@ -6320,6 +6343,12 @@ begin
     UpdateItemLookups;
     Invalidate;
   end;
+end;
+
+procedure TAppearanceListView.SetTransparentHeader(const Value: Boolean);
+begin
+  FTransparentHeaders := Value;
+  Invalidate;
 end;
 
 procedure TAppearanceListView.SetTransparentItems(const Value: Boolean);

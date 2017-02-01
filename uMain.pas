@@ -16,11 +16,13 @@ type
     Label2: TLabel;
     btnParameters: TButton;
     btnTransparent: TButton;
+    btnScroll: TButton;
     procedure btnColorizerClick(Sender: TObject);
     procedure btnHorizontalClick(Sender: TObject);
     procedure btnColumnsClick(Sender: TObject);
     procedure btnParametersClick(Sender: TObject);
     procedure btnTransparentClick(Sender: TObject);
+    procedure btnScrollClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -35,7 +37,7 @@ implementation
 {$R *.fmx}
 
 uses
-  uForm1, uForm2, uForm3, uForm4, uForm5;
+  uForm1, uForm2, uForm3, uForm4, uForm5, uForm6;
 
 procedure TFormMain.btnColorizerClick(Sender: TObject);
 begin
@@ -55,6 +57,11 @@ end;
 procedure TFormMain.btnParametersClick(Sender: TObject);
 begin
   Form4.Show;
+end;
+
+procedure TFormMain.btnScrollClick(Sender: TObject);
+begin
+  Form6.Show;
 end;
 
 procedure TFormMain.btnTransparentClick(Sender: TObject);

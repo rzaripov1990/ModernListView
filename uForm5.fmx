@@ -1,9 +1,9 @@
 object Form5: TForm5
   Left = 0
   Top = 0
-  Caption = 'Form5'
-  ClientHeight = 425
-  ClientWidth = 351
+  Caption = 'Transparent'
+  ClientHeight = 480
+  ClientWidth = 320
   Fill.Bitmap.Bitmap.PNG = {
     89504E470D0A1A0A0000000D49484452000000F000000140080600000082E8F1
     53000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
@@ -937,9 +937,9 @@ object Form5: TForm5
     FooterAppearanceClassName = 'TListHeaderObjects'
     Anchors = [akLeft, akTop, akRight, akBottom]
     Position.X = 8.000000000000000000
-    Position.Y = 88.000000000000000000
-    Size.Width = 337.000000000000000000
-    Size.Height = 329.000000000000000000
+    Position.Y = 112.000000000000000000
+    Size.Width = 306.000000000000000000
+    Size.Height = 360.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
   end
@@ -949,7 +949,7 @@ object Form5: TForm5
     Size.Width = 217.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 3
+    TabOrder = 4
     Text = 'Transparent Background'
     OnChange = cbTransBackgChange
   end
@@ -959,7 +959,7 @@ object Form5: TForm5
     Size.Width = 217.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 2
+    TabOrder = 3
     Text = 'Transparent Items'
     OnChange = cbTransItemsChange
   end
@@ -969,8 +969,18 @@ object Form5: TForm5
     Size.Width = 217.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 1
+    TabOrder = 2
     Text = 'Transparent Separators'
     OnChange = cbTransSeparChange
+  end
+  object cbTransHeader: TCheckBox
+    Position.X = 8.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 217.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Text = 'Transparent Headers'
+    OnChange = cbTransHeaderChange
   end
 end

@@ -13,10 +13,12 @@ type
     cbTransBackg: TCheckBox;
     cbTransItems: TCheckBox;
     cbTransSepar: TCheckBox;
+    cbTransHeader: TCheckBox;
     procedure FormActivate(Sender: TObject);
     procedure cbTransBackgChange(Sender: TObject);
     procedure cbTransItemsChange(Sender: TObject);
     procedure cbTransSeparChange(Sender: TObject);
+    procedure cbTransHeaderChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -33,6 +35,11 @@ implementation
 procedure TForm5.cbTransBackgChange(Sender: TObject);
 begin
   ListView1.Transparent := cbTransBackg.IsChecked;
+end;
+
+procedure TForm5.cbTransHeaderChange(Sender: TObject);
+begin
+  ListView1.TransparentHeaders := cbTransHeader.IsChecked;
 end;
 
 procedure TForm5.cbTransItemsChange(Sender: TObject);
@@ -54,6 +61,8 @@ begin
   begin
     with ListView1.Items.Add do
     begin
+      if I mod 5 = 0 then
+        Purpose := TlistItemPurpose.header;
       Text := 'Item ' + I.ToString;
       Detail := '';
       Height := 50 + random(99);

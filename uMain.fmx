@@ -13,7 +13,7 @@ object FormMain: TFormMain
     Position.X = 56.000000000000000000
     Position.Y = 87.000000000000000000
     Size.Width = 209.000000000000000000
-    Size.Height = 40.000000000000000000
+    Size.Height = 44.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 6
     Text = 'Colorizer'
@@ -22,9 +22,9 @@ object FormMain: TFormMain
   object btnHorizontal: TButton
     Anchors = [akLeft, akTop, akRight]
     Position.X = 56.000000000000000000
-    Position.Y = 132.000000000000000000
+    Position.Y = 135.000000000000000000
     Size.Width = 209.000000000000000000
-    Size.Height = 40.000000000000000000
+    Size.Height = 44.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 5
     Text = 'Horizontal mode'
@@ -45,9 +45,9 @@ object FormMain: TFormMain
   object btnColumns: TButton
     Anchors = [akLeft, akTop, akRight]
     Position.X = 56.000000000000000000
-    Position.Y = 177.000000000000000000
+    Position.Y = 183.000000000000000000
     Size.Width = 209.000000000000000000
-    Size.Height = 40.000000000000000000
+    Size.Height = 44.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
     Text = 'AutoColumns Mode'
@@ -72,23 +72,34 @@ object FormMain: TFormMain
   object btnParameters: TButton
     Anchors = [akLeft, akTop, akRight]
     Position.X = 56.000000000000000000
-    Position.Y = 224.000000000000000000
+    Position.Y = 231.000000000000000000
     Size.Width = 209.000000000000000000
     Size.Height = 44.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 8
+    TabOrder = 9
     Text = 'Parameters'
     OnClick = btnParametersClick
   end
   object btnTransparent: TButton
     Anchors = [akLeft, akTop, akRight]
     Position.X = 56.000000000000000000
-    Position.Y = 272.000000000000000000
+    Position.Y = 279.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 44.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 8
+    Text = 'Transparent'
+    OnClick = btnTransparentClick
+  end
+  object btnScroll: TButton
+    Anchors = [akLeft, akTop, akRight]
+    Position.X = 56.000000000000000000
+    Position.Y = 327.000000000000000000
     Size.Width = 209.000000000000000000
     Size.Height = 44.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 7
-    Text = 'Transparent'
-    OnClick = btnTransparentClick
+    Text = 'Scroll'
+    OnClick = btnScrollClick
   end
 end
