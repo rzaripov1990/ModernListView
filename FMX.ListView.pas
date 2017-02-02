@@ -542,6 +542,7 @@ type
     // Scrolls the view (instantly) to the desired item placing it within the view.
     procedure ScrollTo(const AItemIndex: Integer);
 
+    function FindItemByPosition(X, Y: Single): Integer; // ZuBy
     procedure RebuildOrientation; // ZuBy
     procedure EnableTouchAnimation(Value: Boolean); // ZuBy
 
@@ -4087,6 +4088,16 @@ procedure TListViewBase.AfterPaint;
 begin
   inherited;
   Exclude(FStateFlags, TStateFlag.Invalid);
+end;
+
+function TListViewBase.FindItemByPosition(X, Y: Single): Integer; // ZuBy
+begin
+  // ZuBy ***
+  if FHorizontal then
+    Result := FindItemAbsoluteAtWithCheck(Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
+  else
+    Result := FindItemAbsoluteAtWithCheck(Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
+  // *** ZuBy
 end;
 
 procedure TListViewBase.RecalcTopViewItemIndex; // ZuBy
