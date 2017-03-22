@@ -1,4 +1,4 @@
-# ModernListView (only for Berlin)
+# ModernListView (Berlin, Tokyo [with fix])
 Modern ListView - Colorizer, Vertical\Horizontal mode, Columns and other
 
 ## Colorizer
