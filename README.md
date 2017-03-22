@@ -27,7 +27,7 @@ Modern ListView - Colorizer, Vertical\Horizontal mode, Columns and other
 ```
 
 ## Horizontal Mode
-![horizontal mode] (screenshots/horizontal.png)
+![horizontal mode] (.screenshots/horizontal.png?raw=true)
   * ListView1.Horizontal := true;
   
 ## Columns Mode (only vertical)
