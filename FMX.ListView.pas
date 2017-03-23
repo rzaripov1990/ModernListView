@@ -569,6 +569,8 @@ type
     // Scroll Width
     function GetScrollWidth: Single; // ZuBy
 
+    function FindItemByPosition(X, Y: Single): Integer; // ZuBy
+
     // Get Item Height
     function getHeightByIndex(Index: Integer): Integer; // ZuBy
 
@@ -5006,6 +5008,16 @@ begin
   end;
 end;
 
+function TListViewBase.FindItemByPosition(X, Y: Single): Integer;
+begin
+  // ZuBy ***
+  if FHorizontal then
+    Result := FindItemAbsoluteAtWithCheck(Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
+  else
+    Result := FindItemAbsoluteAtWithCheck(Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
+  // *** ZuBy
+end;
+
 function TListViewBase.GetDefaultStyleLookupName: string;
 begin
   Result := 'listviewstyle';
@@ -6137,8 +6149,8 @@ end;
 
 procedure TListViewBase.SetCanScroll(const Value: Boolean); // sinuke
 begin
-  FCanScroll := Value;
   StopPropertyAnimation('ScrollViewPos');
+  FCanScroll := Value;
 end;
 
 procedure TAppearanceListView.SetColorBackground(aColor: TAlphaColor); // ZuBy
