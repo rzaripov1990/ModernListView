@@ -14,20 +14,15 @@ interface
 {$SCOPEDENUMS ON}
 
 uses
-  System.Types, System.UITypes, System.SysUtils, System.Classes,
-  System.Generics.Collections,
+  System.Types, System.UITypes, System.SysUtils, System.Classes, System.Generics.Collections,
   System.Generics.Defaults,
-  System.UIConsts, System.ImageList, FMX.Types, FMX.Controls,
-  FMX.InertialMovement, FMX.TextLayout,
+  System.UIConsts, System.ImageList, FMX.Types, FMX.Controls, FMX.InertialMovement, FMX.TextLayout,
   FMX.ListView.Types,
-  FMX.ListView.Adapters.Base, FMX.ListView.Appearances, FMX.Styles, FMX.Objects,
-  FMX.StdCtrls,
+  FMX.ListView.Adapters.Base, FMX.ListView.Appearances, FMX.Styles, FMX.Objects, FMX.StdCtrls,
   System.Rtti,
-  FMX.Graphics, FMX.Layouts, FMX.Styles.Objects, FMX.Edit, FMX.Platform,
-  FMX.SearchBox,
+  FMX.Graphics, FMX.Layouts, FMX.Styles.Objects, FMX.Edit, FMX.Platform, FMX.SearchBox,
   FMX.ActnList, FMX.ImgList,
-  FMX.Presentation.Messages, FMX.Controls.Presentation,
-  FMX.ListView.DynamicAppearance;
+  FMX.Presentation.Messages, FMX.Controls.Presentation, FMX.ListView.DynamicAppearance;
 
 type
   TSwipeDirection = (ToLeft, ToRight); // ZuBy
@@ -64,8 +59,7 @@ type
     /// Called when item views need to be recreated
     procedure DoResetView(const Sender: TListItem); virtual;
 
-    property HeightSumsNeedUpdate: Boolean read FHeightSumsNeedUpdate
-      write FHeightSumsNeedUpdate;
+    property HeightSumsNeedUpdate: Boolean read FHeightSumsNeedUpdate write FHeightSumsNeedUpdate;
   public
     property Adapter: IListViewAdapter read FAdapter write SetAdapter;
   end;
@@ -73,8 +67,8 @@ type
   /// <summary>The minimal ListView that's actually a real UI control. It implements all scrolling and drawing
   /// functionality. It needs a valid IListViewAdapter to provide item views. See TAdapterListView.Adapter.
   /// </summary>
-  TListViewBase = class(TAdapterListView, ISearchResponder,
-    IListItemStyleResources, IListViewController, IGlyph, IMessageSender)
+  TListViewBase = class(TAdapterListView, ISearchResponder, IListItemStyleResources, IListViewController, IGlyph,
+    IMessageSender)
   private const
     ChangeRepaintedIncidentDelay = 0.1; // seconds
     PhysicsProcessingInterval = 8; // 8 ms for ~120 frames per second
@@ -106,27 +100,19 @@ type
     DefaultRightMargin = 11;
 
   public type
-    THandleChangeEvent = procedure(const Sender: TObject; var AHandled: Boolean)
-      of object;
-    TListItemEvent = procedure(const Sender: TObject; const AItem: TListItem)
-      of object;
-    TListItemClickEventEx = procedure(const Sender: TObject; ItemIndex: Integer;
-      const LocalClickPos: TPointF; const ItemObject: TListItemDrawable)
-      of object;
-    TColumnClick = procedure(const Sender: TObject; const Column: Integer;
-      const X, Y: Single; const AItem: TListViewItem;
-      const DrawebleName: string) of object; // ZuBy
+    THandleChangeEvent = procedure(const Sender: TObject; var AHandled: Boolean) of object;
+    TListItemEvent = procedure(const Sender: TObject; const AItem: TListItem) of object;
+    TListItemClickEventEx = procedure(const Sender: TObject; ItemIndex: Integer; const LocalClickPos: TPointF;
+      const ItemObject: TListItemDrawable) of object;
+    TColumnClick = procedure(const Sender: TObject; const Column: Integer; const X, Y: Single;
+      const AItem: TListViewItem; const DrawebleName: string) of object; // ZuBy
     TScrollEnd = procedure(Sender: TObject) of object; // ZuBy
-    TSwipeDirectionEvent = procedure(Sender: TObject;
-      const Direction: TSwipeDirection) of object; // ZuBy
+    TSwipeDirectionEvent = procedure(Sender: TObject; const Direction: TSwipeDirection) of object; // ZuBy
     TUpdateItemViewEvent = TListItemEvent;
-    TUpdatingItemViewEvent = procedure(const Sender: TObject;
-      const AItem: TListItem; var AHandled: Boolean) of object;
-    TDeletingItemEvent = procedure(Sender: TObject; AIndex: Integer;
-      var ACanDelete: Boolean) of object;
+    TUpdatingItemViewEvent = procedure(const Sender: TObject; const AItem: TListItem; var AHandled: Boolean) of object;
+    TDeletingItemEvent = procedure(Sender: TObject; AIndex: Integer; var ACanDelete: Boolean) of object;
     TDeleteItemEvent = procedure(Sender: TObject; AIndex: Integer) of object;
-    TDeleteChangeVisibilityEvent = procedure(Sender: TObject; AValue: Boolean)
-      of object;
+    TDeleteChangeVisibilityEvent = procedure(Sender: TObject; AValue: Boolean) of object;
 
   private type
     TItemHeightSums = TList<Integer>;
@@ -152,15 +138,14 @@ type
       Alpha: Single;
       StartAlpha: Single;
 
-      class function Create(const StartTime: Double;
-        const Alpha, StartAlpha: Single): TItemSelectionAlpha; static; inline;
+      class function Create(const StartTime: Double; const Alpha, StartAlpha: Single): TItemSelectionAlpha;
+        static; inline;
     end;
 
     TItemSelectionAlphas = TDictionary<Integer, TItemSelectionAlpha>;
     TPullRefreshAnimation = (NotPlaying, Playing, Finished);
-    TStateFlag = (NeedsRebuild, NeedsScrollingLimitsUpdate, Invalid, Painting,
-      ResettingObjects, ScrollingActive, ScrollingMouseTouch,
-      NeedsScrollBarDisplay);
+    TStateFlag = (NeedsRebuild, NeedsScrollingLimitsUpdate, Invalid, Painting, ResettingObjects, ScrollingActive,
+      ScrollingMouseTouch, NeedsScrollBarDisplay);
     TStateFlags = set of TStateFlag;
 
     TEstimatedHeights = record
@@ -186,7 +171,7 @@ type
     FMouseClickPrev: TPointF;
     FMouseClickDelta: TPointF;
     FMouseClickSwipeEventSend: Boolean; // ZuBy
-    FMouseClickSwipeStart: TPointF; // ZuBy
+    // FMouseClickSwipeStart: TPointF; // ZuBy
     FMouseClicked: Boolean;
     FMouseClickIndex: Integer;
     FMouseEventIndex: Integer;
@@ -278,6 +263,7 @@ type
 
     FTransparentSeparator: Boolean; // ZuBy
     FTransparentItems: Boolean; // ZuBy
+    FTransparentHeaders: Boolean; // ZuBy
     FAutoPositionToItem: Boolean; // ZuBy
     FTopItemIndex: Integer; // ZuBy
 
@@ -301,6 +287,7 @@ type
     FColumns: Integer; // ZuBy
     FMarg: Integer; // ZuBy
     FAutoColumns: Boolean; // ZuBy
+    FCanScroll: Boolean; // sinuke
 
     function IsRunningOnDesktop: Boolean;
     function HasTouchTracking: Boolean;
@@ -312,27 +299,23 @@ type
     function HasScrollingStretchGlow: Boolean;
     function HasPullRefreshStroke: Boolean;
 
-    function CanDisplaySelectionForItem(const Index: Integer;
-      const Item: TListItem = nil; const IncludeMultiSelect: Boolean = False;
-      const IncludeCrossFaded: Boolean = False): Boolean;
+    function CanDisplaySelectionForItem(const Index: Integer; const Item: TListItem = nil;
+      const IncludeMultiSelect: Boolean = False; const IncludeCrossFaded: Boolean = False): Boolean;
     function GetDefaultSelectionAlpha: Single;
     function GetItemSelectionAlpha(const Index: Integer): Single;
     procedure DestroyRecurrentTimer;
     procedure UpdateRecurrentTimer;
     function HasRecurrentTimerEvents: Boolean;
     procedure RecurrentTimerEvent;
-    procedure StartIncident(const Incident: TDelayedIncident;
-      const Triggered: Boolean = True; const TimeToWait: Single = 0;
-      const CustomData: NativeInt = 0);
+    procedure StartIncident(const Incident: TDelayedIncident; const Triggered: Boolean = True;
+      const TimeToWait: Single = 0; const CustomData: NativeInt = 0);
     procedure ProcessIncident(const Entry: TDelayedIncidentEntry);
-    procedure TriggerIncidents(const Incident: TDelayedIncident;
-      const ResetStartupTime: Boolean = True);
+    procedure TriggerIncidents(const Incident: TDelayedIncident; const ResetStartupTime: Boolean = True);
     procedure ProcessDelayedIncidents;
     procedure ProcessTransitionAnimation;
     procedure ProcessTapSelectItem;
     procedure ProcessSelectionAlphas;
-    procedure InsertItemCrossFade(const Index: Integer;
-      const ShowAnimation: Boolean);
+    procedure InsertItemCrossFade(const Index: Integer; const ShowAnimation: Boolean);
     procedure RemoveItemCrossFade(const Index: Integer);
     procedure StartPullRefreshAnimation;
     procedure ProcessPullRefreshAnimation;
@@ -340,12 +323,9 @@ type
     function GetPullRefreshIndicatorSteps: Integer;
     function GetPullRefreshIndicatorAlpha: Single;
     function GetPullRefreshStrokeWidth: Single;
-    procedure PaintPullRefreshIndicator(const ACanvas: TCanvas;
-      const AStrength, AOpacity: Single);
-    procedure PaintPullRefreshStroke(const ACanvas: TCanvas;
-      const AStrength, AOpacity: Single);
-    procedure PaintScrollingStretchGlow(const ACanvas: TCanvas;
-      const AIntensity, AOpacity: Single);
+    procedure PaintPullRefreshIndicator(const ACanvas: TCanvas; const AStrength, AOpacity: Single);
+    procedure PaintPullRefreshStroke(const ACanvas: TCanvas; const AStrength, AOpacity: Single);
+    procedure PaintScrollingStretchGlow(const ACanvas: TCanvas; const AIntensity, AOpacity: Single);
     procedure UpdatePullRefreshState;
     procedure UpdateScrollStretchStrength(const NewValue: Single);
     procedure DeleteButtonClicked(Sender: TObject);
@@ -356,8 +336,7 @@ type
     procedure AniCalcStop(Sender: TObject);
     function GetItemIndex: Integer;
     procedure SetItemIndex(const Value: Integer);
-    procedure SetItemIndexInternal(const Value: Integer;
-      const DisableSelection: Boolean = False;
+    procedure SetItemIndexInternal(const Value: Integer; const DisableSelection: Boolean = False;
       const DisableCrossfade: Boolean = False);
     function GetMaxScrollViewPos: Integer;
     procedure RecalcTopViewItemIndex; // ZuBy
@@ -366,29 +345,22 @@ type
     procedure SetScrollViewPos(const Value: Single);
     procedure UpdateScrollingLimits;
     procedure UpdateScrollBar;
-    procedure GetNumberOfRenderingPasses(const StartItem, EndItem: Integer;
-      var Passes, Subpasses: Integer);
+    procedure GetNumberOfRenderingPasses(const StartItem, EndItem: Integer; var Passes, Subpasses: Integer);
     function GetItemHeight(const Index: Integer): Integer; overload; virtual;
-    function GetItemRelRect(const Index: Integer; const LocRect: TRectF;
-      const SideSpace: Integer = 0): TRectF; inline;
+    function GetItemRelRect(const Index: Integer; const LocRect: TRectF; const SideSpace: Integer = 0): TRectF; inline;
     function GetItemGroupSeparators(const Index: Integer): Integer; inline;
-    function FindLocalItemObjectAtPosition(const ItemIndex: Integer;
-      const Position: TPointF): TListItemDrawable;
+    function FindLocalItemObjectAtPosition(const ItemIndex: Integer; const Position: TPointF): TListItemDrawable;
 
     function GetSeparatorLineHeight: Single;
     function AlignValueToPixel(const Value: Single): Single;
-    procedure DrawItemsFill(const StartItem, EndItem: Integer;
-      const LocRect: TRectF; const Opacity: Single;
+    procedure DrawItemsFill(const StartItem, EndItem: Integer; const LocRect: TRectF; const Opacity: Single;
       const HeaderIndex: Integer = -1);
-    procedure DrawIndexFill(const AIndex: Integer; const LocRect: TRectF;
-      const Opacity: Single);
-    procedure DrawTouchAnimation(const Index: Integer; const LocRect: TRectF;
-      const Opacity: Single);
+    procedure DrawIndexFill(const AIndex: Integer; const LocRect: TRectF; const Opacity: Single);
+    procedure DrawTouchAnimation(const Index: Integer; const LocRect: TRectF; const Opacity: Single);
 
-    function GetHeaderRelRect(const StartItem, HeaderIndex: Integer;
-      const LocRect: TRectF; const SideSpace: Integer = 0): TRectF;
-    procedure DrawHeaderItem(const LocRect: TRectF;
-      const StartItem, HeaderIndex: Integer; const Opacity: Single);
+    function GetHeaderRelRect(const StartItem, HeaderIndex: Integer; const LocRect: TRectF;
+      const SideSpace: Integer = 0): TRectF;
+    procedure DrawHeaderItem(const LocRect: TRectF; const StartItem, HeaderIndex: Integer; const Opacity: Single);
 
     procedure DrawListItems(const AbsOpacity: Single);
 
@@ -432,11 +404,26 @@ type
     procedure RequestReindexing(const Item: TListItem);
     procedure ItemResized(const Item: TListItem);
     procedure ItemInvalidated(const Item: TListItem);
-    procedure ControlClicked(const Item: TListItem;
-      const Control: TListItemDrawable);
-    procedure CheckStateChanged(const Item: TListItem;
-      const Control: TListItemDrawable);
+    procedure ControlClicked(const Item: TListItem; const Control: TListItemDrawable);
+    procedure CheckStateChanged(const Item: TListItem; const Control: TListItemDrawable);
     function GetScene: IScene;
+
+    procedure SetSeparatorLeftOffset(const Value: Single); // ZuBy
+    procedure SetSeparatorRightOffset(const Value: Single); // ZuBy
+    procedure SetHorizontal(const Value: Boolean); // ZuBy
+    procedure SetShowScrollBar(const Value: Boolean); // ZuBy
+    procedure SetAutoColumns(const Value: Boolean); // ZuBy
+    procedure SetBottomOffset(const Value: Integer); // ZuBy
+    procedure SetColumnWidth(const Value: Single); // ZuBy
+    procedure SetTopOffset(const Value: Integer);
+    procedure SetItemBottomOffset(const Value: Integer);
+    procedure SetTransparentSeparator(const Value: Boolean);
+    procedure SetTransparentItems(const Value: Boolean); // ZuBy
+
+    function getTextSize(const aText: string; aFont: TFont; const aWordWrap: Boolean; aWidth, aHeight: Single): TSizeF;
+    // ZuBy
+    procedure SetTransparentHeader(const Value: Boolean); // ZuBy
+    procedure SetCanScroll(const Value: Boolean); // ZuBy
   protected
     procedure DefineProperties(Filer: TFiler); override;
     function IsEditMode: Boolean; virtual;
@@ -473,18 +460,15 @@ type
     function GetItemDeleteCutoff(const Item: TListItem): Single;
     function GetClientMargins: TRectF;
     function GetItemCurrentSelectionAlpha(const Item: TListItem): Single;
-    function IListViewController.GetItemSelectionAlpha =
-      GetItemCurrentSelectionAlpha;
+    function IListViewController.GetItemSelectionAlpha = GetItemCurrentSelectionAlpha;
     function GetImages: TCustomImageList;
     procedure SetImages(const Value: TCustomImageList);
 
     procedure DoRequestReindexing(const Item: TListItem); virtual;
     procedure DoItemResized(const Item: TListItem); virtual;
     procedure DoItemInvalidated(const Item: TListItem); virtual;
-    procedure DoCheckStateChanged(const Item: TListItem;
-      const Control: TListItemDrawable); virtual;
-    procedure DoControlClicked(const Item: TListItem;
-      const Control: TListItemDrawable); virtual;
+    procedure DoCheckStateChanged(const Item: TListItem; const Control: TListItemDrawable); virtual;
+    procedure DoControlClicked(const Item: TListItem; const Control: TListItemDrawable); virtual;
 
     { IGlyph }
     function GetImageIndex: TImageIndex;
@@ -514,15 +498,11 @@ type
     procedure Paint; override;
     procedure AfterPaint; override;
     procedure Loaded; override;
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Single); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Single); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Single); override;
-    procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Single); override;
-    procedure MouseWheel(Shift: TShiftState; WheelDelta: Integer;
-      var Handled: Boolean); override;
-    procedure KeyDown(var Key: Word; var KeyChar: System.WideChar;
-      Shift: TShiftState); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Single); override;
+    procedure MouseWheel(Shift: TShiftState; WheelDelta: Integer; var Handled: Boolean); override;
+    procedure KeyDown(var Key: Word; var KeyChar: System.WideChar; Shift: TShiftState); override;
     function ObjectAtPoint(P: TPointF): IControl; override;
     procedure DoMouseLeave; override;
     procedure Resize; override;
@@ -551,29 +531,22 @@ type
     function DeleteItem(const ItemIndex: Integer): Boolean;
     /// <summary>Perform actual item deletion. Called from DeleteItem: Boolean</summary>
     procedure DoDeleteItem(const ItemIndex: Integer); virtual;
-    function GetFinalItemSpaces(const ForceIncludeScrollBar: Boolean = True)
-      : TRectF; virtual;
-    function GetFinalItemSize(const ForceIncludeScrollBar: Boolean = True)
-      : TSizeF; virtual;
+    function GetFinalItemSpaces(const ForceIncludeScrollBar: Boolean = True): TRectF; virtual;
+    function GetFinalItemSize(const ForceIncludeScrollBar: Boolean = True): TSizeF; virtual;
     function CanObserve(const ID: Integer): Boolean; override;
     procedure ObserversBeforeSelection(out LAllowSelection: Boolean);
     function ShouldHandleEvents: Boolean; virtual;
 
     // Invoke OnUpdatingItemView
-    procedure DoUpdatingItemView(const AListItem: TListItem;
-      var AHandled: Boolean); virtual;
+    procedure DoUpdatingItemView(const AListItem: TListItem; var AHandled: Boolean); virtual;
     // Invoke OnUpdateItemView
     procedure DoUpdateItemView(const AListItem: TListItem); virtual;
     function GetGlyphButton(const Index: Integer): TListItemGlyphButton;
 
-    property OnUpdatingItemView: TUpdatingItemViewEvent read FOnUpdatingItemView
-      write FOnUpdatingItemView;
-    property OnUpdateItemView: TUpdateItemViewEvent read FOnUpdateItemView
-      write FOnUpdateItemView;
-    property OnEditModeChange: TNotifyEvent read FOnEditModeChange
-      write FOnEditModeChange;
-    property OnEditModeChanging: THandleChangeEvent read FOnEditModeChanging
-      write FOnEditModeChanging;
+    property OnUpdatingItemView: TUpdatingItemViewEvent read FOnUpdatingItemView write FOnUpdatingItemView;
+    property OnUpdateItemView: TUpdateItemViewEvent read FOnUpdateItemView write FOnUpdateItemView;
+    property OnEditModeChange: TNotifyEvent read FOnEditModeChange write FOnEditModeChange;
+    property OnEditModeChanging: THandleChangeEvent read FOnEditModeChanging write FOnEditModeChanging;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -585,7 +558,6 @@ type
     // Scrolls the view (instantly) to the desired item placing it within the view.
     procedure ScrollTo(const AItemIndex: Integer);
 
-    function FindItemByPosition(X, Y: Single): Integer; // ZuBy
     procedure RebuildOrientation; // ZuBy
     procedure EnableTouchAnimation(Value: Boolean); // ZuBy
 
@@ -593,6 +565,52 @@ type
     property Selected: TListItem read GetSelected write SetSelected;
     property ScrollViewPos: Single read FScrollViewPos write SetScrollViewPos;
     function GetItemRect(const AItemIndex: Integer): TRectF;
+
+    // Scroll Width
+    function GetScrollWidth: Single; // ZuBy
+
+    // Get Item Height
+    function getHeightByIndex(Index: Integer): Integer; // ZuBy
+
+    function getItemTextHeight(const AItem: TListItemText; const aWidth: Single = 0): Integer; // ZuBy
+    function getItemTextButtonHeight(const AItem: TListItemTextButton; const aWidth: Single = 0): Integer; // ZuBy
+
+    function getItemTextWidth(const AItem: TListItemText; const aHeight: Single = 0): Integer; // ZuBy
+    function getItemTextButtonWidth(const AItem: TListItemTextButton; const aHeight: Single = 0): Integer; // ZuBy
+
+    // Ani Calculaction
+    function getAniCalc: TAniCalculations; // ZuBy
+
+    procedure SearchBoxClear; // ZuBy
+
+    property TransparentSeparators: Boolean read FTransparentSeparator write SetTransparentSeparator default False;
+    // ZuBy
+    property TransparentItems: Boolean read FTransparentItems write SetTransparentItems default False; // ZuBy
+    property TransparentHeaders: Boolean read FTransparentHeaders write SetTransparentHeader default False; // ZuBy
+    property AutoPositionToItem: Boolean read FAutoPositionToItem write FAutoPositionToItem default False; // ZuBy
+    // Separator Draw
+    property SeparatorLeftOffset: Single read FSeparatorLeftOffset write SetSeparatorLeftOffset;
+    // ZuBy
+    property SeparatorRightOffset: Single read FSeparatorRightOffset write SetSeparatorRightOffset;
+    // ZuBy
+
+    property ItemBottomOffset: Integer read FItemBottomOffset write SetItemBottomOffset;
+    // ZuBy
+
+    property CanSwipeDirection: Boolean read FCanSwipeDirection write FCanSwipeDirection default False; // ZuBy
+    property Horizontal: Boolean read FHorizontal write SetHorizontal default False; // ZuBy
+    property MakeSelectedItemVisible: Boolean read FMakeSelectedItemVisible write FMakeSelectedItemVisible default True;
+
+    property OffsetTop: Integer read FTopOffset write SetTopOffset; // ZuBy
+    property OffsetBottom: Integer read FBottomOffset write SetBottomOffset; // ZuBy
+    property AutoColumns: Boolean read FAutoColumns write SetAutoColumns; // ZuBy
+    property CanScroll: Boolean read FCanScroll write SetCanScroll default True; // sinuke
+    property Columns: Integer read FColumns; // ZuBy
+    property ColumnOffset: Integer read FMarg; // ZuBy
+    property ColumnWidth: Single read FColumnWidth write SetColumnWidth; // ZuBy
+
+    // ZuBy
+    property ShowScrollBar: Boolean read FShowScrollBar write SetShowScrollBar default True; // ZuBy
 
     /// <summary>This method should be called when "pull to refresh" mode has been triggered to stop spinning wheel.
     /// This has only effect in native iOS control and only when PullRefreshWait property is set to True.</summary>
@@ -607,82 +625,53 @@ type
     property Transparent: Boolean read FTransparent write SetTransparent;
     { Determines whether the items are used selectable or not. If items are not selectable, user will still be
       able to click on embedded controls. }
-    property AllowSelection: Boolean read FAllowSelection write FAllowSelection
-      default True;
+    property AllowSelection: Boolean read FAllowSelection write FAllowSelection default True;
     // Enabling this will switch fill colors for odd and even elements.
-    property AlternatingColors: Boolean read FAlternatingColors
-      write SetAlternatingColors default False;
+    property AlternatingColors: Boolean read FAlternatingColors write SetAlternatingColors default False;
     // Determines whether the selection is visible when selecting items. It may be disabled when using list of checkboxes.
-    property ShowSelection: Boolean read FShowSelection write SetShowSelection
-      default True;
-    property CanSwipeDelete: Boolean read FCanSwipeDelete
-      write SetCanSwipeDelete default True;
-    property AutoTapScroll: Boolean read FAutoTapScroll write FAutoTapScroll
-      default False;
-    property AutoTapTreshold: Integer read FAutoTapTreshold
-      write FAutoTapTreshold default 8;
-    property DisableMouseWheel: Boolean read FDisableMouseWheel
-      write FDisableMouseWheel default False;
+    property ShowSelection: Boolean read FShowSelection write SetShowSelection default True;
+    property CanSwipeDelete: Boolean read FCanSwipeDelete write SetCanSwipeDelete default True;
+    property AutoTapScroll: Boolean read FAutoTapScroll write FAutoTapScroll default False;
+    property AutoTapTreshold: Integer read FAutoTapTreshold write FAutoTapTreshold default 8;
+    property DisableMouseWheel: Boolean read FDisableMouseWheel write FDisableMouseWheel default False;
     property ItemCount: Integer read GetItemCount;
-    property OnListItemClick: TListItemEvent read FOnListItemClick
-      write FOnListItemClick;
-    property OnItemClickEx: TListItemClickEventEx read FOnItemClickEx
-      write FOnItemClickEx;
-    property OnItemChange: TListItemEvent read FOnItemChange
-      write FOnItemChange;
+    property OnListItemClick: TListItemEvent read FOnListItemClick write FOnListItemClick;
+    property OnItemClickEx: TListItemClickEventEx read FOnItemClickEx write FOnItemClickEx;
+    property OnItemChange: TListItemEvent read FOnItemChange write FOnItemChange;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
-    property OnChangeRepainted: TNotifyEvent read FOnChangeRepainted
-      write FOnChangeRepainted;
-    property OnColumnClick: TColumnClick read FOnColumnClick
-      write FOnColumnClick; // ZuBy
-    property OnScrollEnd: TScrollEnd read FOnScrollEnd write FOnScrollEnd;
-    // ZuBy
-    property OnSwipeDirection: TSwipeDirectionEvent read FOnSwipe
-      write FOnSwipe; // ZuBy
+    property OnChangeRepainted: TNotifyEvent read FOnChangeRepainted write FOnChangeRepainted;
+    property OnColumnClick: TColumnClick read FOnColumnClick write FOnColumnClick; // ZuBy
+    property OnScrollEnd: TScrollEnd read FOnScrollEnd write FOnScrollEnd; // ZuBy
+    property OnSwipeDirection: TSwipeDirectionEvent read FOnSwipe write FOnSwipe; // ZuBy
     /// <summary> This event occurs after list of items has been changed. </summary>
-    property OnItemsChange: TNotifyEvent read FOnItemsChange
-      write FOnItemsChange;
+    property OnItemsChange: TNotifyEvent read FOnItemsChange write FOnItemsChange;
     /// <summary> This is called when ScrollViewPos has changed as a result of list being scrolled or manually in
     /// code. </summary>
-    property OnScrollViewChange: TNotifyEvent read FOnScrollViewChange
-      write FOnScrollViewChange;
-    property OnDeletingItem: TDeletingItemEvent read FOnDeletingItem
-      write FOnDeletingItem;
-    property OnDeleteItem: TDeleteItemEvent read FOnDeleteItem
-      write FOnDeleteItem;
-    property OnDeleteChangeVisible: TDeleteChangeVisibilityEvent
-      read FOnDeleteChange write FOnDeleteChange;
-    property OnSearchChange: TNotifyEvent read FOnSearchChange
-      write FOnSearchChange;
+    property OnScrollViewChange: TNotifyEvent read FOnScrollViewChange write FOnScrollViewChange;
+    property OnDeletingItem: TDeletingItemEvent read FOnDeletingItem write FOnDeletingItem;
+    property OnDeleteItem: TDeleteItemEvent read FOnDeleteItem write FOnDeleteItem;
+    property OnDeleteChangeVisible: TDeleteChangeVisibilityEvent read FOnDeleteChange write FOnDeleteChange;
+    property OnSearchChange: TNotifyEvent read FOnSearchChange write FOnSearchChange;
     /// <summary>Event handler for setting custom filter on text of <c>TListView</c>.</summary>
     property OnFilter: TFilterEvent read FOnFilter write SetOnFilter;
-    property OnPullRefresh: TNotifyEvent read FOnPullRefresh
-      write FOnPullRefresh;
-    property DeleteButtonText: string read GetDeleteButtonText
-      write SetDeleteButtonText stored DeleteButtonTextStored nodefault;
+    property OnPullRefresh: TNotifyEvent read FOnPullRefresh write FOnPullRefresh;
+    property DeleteButtonText: string read GetDeleteButtonText write SetDeleteButtonText
+      stored DeleteButtonTextStored nodefault;
     property EditMode: Boolean read FEditMode write SetEditMode default False;
-    property SearchVisible: Boolean read FSearchVisible write SetSearchVisible
-      default False;
-    property SearchAlwaysOnTop: Boolean read FSearchAlwaysOnTop
-      write SetSearchAlwaysOnTop default True;
-    property SelectionCrossfade: Boolean read FSelectionCrossfade
-      write SetSelectionCrossfade default False;
-    property PullToRefresh: Boolean read FPullToRefresh write SetPullToRefresh
-      default False;
+    property SearchVisible: Boolean read FSearchVisible write SetSearchVisible default False;
+    property SearchAlwaysOnTop: Boolean read FSearchAlwaysOnTop write SetSearchAlwaysOnTop default True;
+    property SelectionCrossfade: Boolean read FSelectionCrossfade write SetSelectionCrossfade default False;
+    property PullToRefresh: Boolean read FPullToRefresh write SetPullToRefresh default False;
     /// <summary>When set to True, the spinning wheel does not disappear automatically and StopPullRefresh method needs
     /// to be called after refresh operation is done. If this is set to False (default), then spinning wheel disappears
     /// automatically shortly after triggering the effect. This option works only in native iOS control and has no
     /// effect otherwise.</summary>
-    property PullRefreshWait: Boolean read FPullRefreshWait
-      write FPullRefreshWait default False;
-    property ControlType: TControlType read FControlType write SetControlType
-      default TControlType.Styled;
-    property NativeOptions: TListViewNativeOptions read FNativeOptions
-      write SetNativeOptions default [];
+    property PullRefreshWait: Boolean read FPullRefreshWait write FPullRefreshWait default False;
+    property ControlType: TControlType read FControlType write SetControlType default TControlType.Styled;
+    property NativeOptions: TListViewNativeOptions read FNativeOptions write SetNativeOptions default [];
   end;
 
-  TPresentedListView = class(TListViewBase, IListViewPresentationParent,
-    IListViewDesignPresentationParent)
+  TPresentedListView = class(TListViewBase, IListViewPresentationParent, IListViewDesignPresentationParent)
   strict private
     FPresentation: IListViewPresentation;
     FPresentationLocked: Integer;
@@ -702,8 +691,7 @@ type
     procedure DoItemsChange; override;
     procedure DoItemsInvalidate; override;
     procedure DoItemInvalidated(const Item: TListItem); override;
-    procedure DoCheckStateChanged(const AItem: TListItem;
-      const Control: TListItemDrawable); override;
+    procedure DoCheckStateChanged(const AItem: TListItem; const Control: TListItemDrawable); override;
     procedure DoUpdateScrollViewPos(const Value: Single); override;
     procedure DoSetScrollViewPos(const Value: Single); override;
     procedure DoDeleteItem(const ItemIndex: Integer); override;
@@ -711,8 +699,7 @@ type
     procedure DoUpdateScrollingLimits; override;
     procedure DoAbsoluteChanged; override;
     // Presentation
-    procedure PMAncesstorPresentationLoaded(var AMessage
-      : TDispatchMessageWithValue<Boolean>);
+    procedure PMAncesstorPresentationLoaded(var AMessage: TDispatchMessageWithValue<Boolean>);
       message PM_ANCESTOR_PRESENTATION_LOADED;
     procedure RecreateNativePresentation; override;
     function ShouldHandleEvents: Boolean; override;
@@ -752,14 +739,12 @@ type
     procedure RecalcOpacity; override;
   end;
 
-  TAppearanceListView = class(TPresentedListView, IAppearanceItemOwner,
-    IPublishedAppearanceOwner)
+  TAppearanceListView = class(TPresentedListView, IAppearanceItemOwner, IPublishedAppearanceOwner)
   public type
-    TItemEvent = procedure(const Sender: TObject; const AItem: TListViewItem)
-      of object;
+    TItemEvent = procedure(const Sender: TObject; const AItem: TListViewItem) of object;
     TUpdateObjectsEvent = TItemEvent;
-    TUpdatingObjectsEvent = procedure(const Sender: TObject;
-      const AItem: TListViewItem; var AHandled: Boolean) of object;
+    TUpdatingObjectsEvent = procedure(const Sender: TObject; const AItem: TListViewItem; var AHandled: Boolean)
+      of object;
 
   strict private
     FAppearanceViewItems: TAppearanceListViewItems;
@@ -813,37 +798,18 @@ type
     function GetItemEditAppearanceProperties: TItemAppearanceProperties;
 
     procedure EditorBeforeItemAdded(Sender: IListViewEditor);
-    procedure EditorAfterItemAdded(Sender: IListViewEditor;
-      const Item: TListItem);
-    procedure EditorBeforeItemDeleted(Sender: IListViewEditor;
-      const Index: Integer);
+    procedure EditorAfterItemAdded(Sender: IListViewEditor; const Item: TListItem);
+    procedure EditorBeforeItemDeleted(Sender: IListViewEditor; const Index: Integer);
     procedure EditorAfterItemDeleted(Sender: IListViewEditor);
     procedure ResetViewAppearance(const AItem: TListViewItem);
 
-    procedure SetSeparatorLeftOffset(const Value: Single); // ZuBy
-    procedure SetSeparatorRightOffset(const Value: Single); // ZuBy
-    procedure SetHorizontal(const Value: Boolean); // ZuBy
-    procedure SetShowScrollBar(const Value: Boolean); // ZuBy
-    procedure SetAutoColumns(const Value: Boolean); // ZuBy
-    procedure SetBottomOffset(const Value: Integer); // ZuBy
-    procedure SetColumnWidth(const Value: Single); // ZuBy
-    procedure SetTopOffset(const Value: Integer);
-    procedure SetItemBottomOffset(const Value: Integer);
-    procedure SetTransparentSeparator(const Value: Boolean);
-    procedure SetTransparentItems(const Value: Boolean); // ZuBy
-
-    function getTextSize(const aText: string; aFont: TFont;
-      const aWordWrap: Boolean; aWidth, aHeight: Single): TSizeF;
-    // ZuBy
   protected
     procedure ApplyStyle; override;
-    procedure ObjectsNotify(Sender: TObject; const Item: TListItem;
-      Action: TCollectionNotification);
+    procedure ObjectsNotify(Sender: TObject; const Item: TListItem; Action: TCollectionNotification);
     /// <summary>TAppearanceListView needs adapter to be TAppearanceListViewItems or derivative.
     /// If TAppearanceListView is used with a custom adapter, use Items property to set it instead of Adapter property
     /// of the base class.</summary>
-    procedure SetAppearanceListViewItems(const AItems
-      : TAppearanceListViewItems);
+    procedure SetAppearanceListViewItems(const AItems: TAppearanceListViewItems);
     /// An item needs its views recreated
     procedure DoResetView(const Item: TListItem); override;
 
@@ -855,8 +821,7 @@ type
     procedure SetHeaderHeight(const Value: Integer); virtual;
     procedure SetFooterHeight(const Value: Integer); virtual;
 
-    function GetAppearanceListViewItem(const Index: Integer)
-      : TListViewItem; virtual;
+    function GetAppearanceListViewItem(const Index: Integer): TListViewItem; virtual;
     function GetItemHeight(const Index: Integer): Integer; overload; override;
     function GetItemHeight: Integer; overload; virtual;
     function GetItemEditHeight: Integer; overload; virtual;
@@ -870,81 +835,66 @@ type
     // hooks from IListViewController
     procedure DoRequestReindexing(const Item: TListItem); override;
     procedure DoItemResized(const Item: TListItem); override;
-    procedure DoCheckStateChanged(const AItem: TListItem;
-      const Control: TListItemDrawable); override;
-    procedure DoControlClicked(const Item: TListItem;
-      const Control: TListItemDrawable); override;
+    procedure DoCheckStateChanged(const AItem: TListItem; const Control: TListItemDrawable); override;
+    procedure DoControlClicked(const Item: TListItem; const Control: TListItemDrawable); override;
 
     function GetAppearanceProperties: TArray<TItemAppearanceProperties>;
     procedure RefreshAppearances(const APurposes: TListItemPurposes = []);
     procedure UpdateAppearanceStyleResources;
     procedure ItemAppearanceChange(const Sender: TItemAppearanceProperties);
-    procedure ItemAppearanceChangeObjects(const Sender
-      : TItemAppearanceProperties);
-    procedure ItemAppearanceChangeHeight(const Sender
-      : TItemAppearanceProperties);
+    procedure ItemAppearanceChangeObjects(const Sender: TItemAppearanceProperties);
+    procedure ItemAppearanceChangeHeight(const Sender: TItemAppearanceProperties);
     procedure EditModeAppearances;
-    procedure InitializeItemAppearance(const AAppearance
-      : TItemAppearanceProperties); virtual;
+    procedure InitializeItemAppearance(const AAppearance: TItemAppearanceProperties); virtual;
 
     procedure DoListItemClick(const AItem: TListItem); override;
-    procedure DoUpdatingItemView(const AListItem: TListItem;
-      var AHandled: Boolean); override;
+    procedure DoUpdatingItemView(const AListItem: TListItem; var AHandled: Boolean); override;
     procedure DoUpdateItemView(const AListItem: TListItem); override;
 
     // General compatibility properties
     property ItemHeight: Integer read GetItemHeight write SetItemHeight;
-    property ItemEditHeight: Integer read GetItemEditHeight
-      write SetItemEditHeight;
+    property ItemEditHeight: Integer read GetItemEditHeight write SetItemEditHeight;
     property HeaderHeight: Integer read GetHeaderHeight write SetHeaderHeight;
     property FooterHeight: Integer read GetFooterHeight write SetFooterHeight;
 
     // Appearance related properties
     // Must be loaded prior to other Item, header and footer properties
-    property ItemEditAppearanceClassName: string
-      read GetItemEditObjectsClassName write SetItemEditObjectsClassName;
-    property ItemAppearanceClassName: string read GetItemObjectsClassName
-      write SetItemObjectsClassName;
-    property HeaderAppearanceClassName: string read GetHeaderAppearanceClassName
-      write SetHeaderAppearanceClassName;
-    property FooterAppearanceClassName: string read GetFooterAppearanceClassName
-      write SetFooterAppearanceClassName;
+    property ItemEditAppearanceClassName: string read GetItemEditObjectsClassName write SetItemEditObjectsClassName;
+    property ItemAppearanceClassName: string read GetItemObjectsClassName write SetItemObjectsClassName;
+    property HeaderAppearanceClassName: string read GetHeaderAppearanceClassName write SetHeaderAppearanceClassName;
+    property FooterAppearanceClassName: string read GetFooterAppearanceClassName write SetFooterAppearanceClassName;
 
-    property ItemAppearanceName: string read GetItemAppearanceName
-      write SetItemAppearanceName stored False;
-    property ItemEditAppearanceName: string read GetItemEditAppearanceName
-      write SetItemEditAppearanceName stored False;
-    property HeaderAppearanceName: string read GetHeaderAppearanceName
-      write SetHeaderAppearanceName stored False;
-    property FooterAppearanceName: string read GetFooterAppearanceName
-      write SetFooterAppearanceName stored False;
+    property ItemAppearanceName: string read GetItemAppearanceName write SetItemAppearanceName stored False;
+    property ItemEditAppearanceName: string read GetItemEditAppearanceName write SetItemEditAppearanceName stored False;
+    property HeaderAppearanceName: string read GetHeaderAppearanceName write SetHeaderAppearanceName stored False;
+    property FooterAppearanceName: string read GetFooterAppearanceName write SetFooterAppearanceName stored False;
 
-    property ItemAppearance: TPublishedAppearance read FAppearanceProperties
-      write SetAppearanceProperties;
-    property ItemAppearanceObjects: TPublishedObjects
-      read GetItemAppearanceObjects write SetItemAppearanceObjects;
+    property ItemAppearance: TPublishedAppearance read FAppearanceProperties write SetAppearanceProperties;
+    property ItemAppearanceObjects: TPublishedObjects read GetItemAppearanceObjects write SetItemAppearanceObjects;
 
-    property OnButtonChange: TItemControlEvent read FOnButtonChange
-      write FOnButtonChange;
-    property OnButtonClick: TItemControlEvent read FOnButtonClick
-      write FOnButtonClick;
+    property OnButtonChange: TItemControlEvent read FOnButtonChange write FOnButtonChange;
+    property OnButtonClick: TItemControlEvent read FOnButtonClick write FOnButtonClick;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure BeginUpdate; override;
     procedure EndUpdate; override;
     procedure Resize; override;
-    property Items: TAppearanceListViewItems read FAppearanceViewItems
-      write SetAppearanceListViewItems;
+    property Items: TAppearanceListViewItems read FAppearanceViewItems write SetAppearanceListViewItems;
     property OnItemClick: TItemEvent read FOnItemClick write FOnItemClick;
-    property OnUpdatingObjects: TUpdatingObjectsEvent read FOnUpdatingObjects
-      write FOnUpdatingObjects;
-    property OnUpdateObjects: TUpdateObjectsEvent read FOnUpdateObjects
-      write FOnUpdateObjects;
+    property OnUpdatingObjects: TUpdatingObjectsEvent read FOnUpdatingObjects write FOnUpdatingObjects;
+    property OnUpdateObjects: TUpdateObjectsEvent read FOnUpdateObjects write FOnUpdateObjects;
+
+    // True Items Clear
+    procedure ItemsClearTrue; // ZuBy
+
+    // Scroll
+    function getFirstVisibleItemIndex: Integer; // ZuBy
+    function getLastVisibleItemindex: Integer; // ZuBy
+    function getVisibleCount: Integer; // ZuBy
 
     // Custom Item Draw
-    procedure SetCustomColorForItem(const ItemIndex: Integer;
-      const aColor: TAlphaColor); // ZuBy
+    procedure SetCustomColorForItem(const ItemIndex: Integer; const aColor: TAlphaColor); // ZuBy
     procedure SetDefaultColorForItem(const ItemIndex: Integer); // ZuBy
     function IsCustomColorUsed(const ItemIndex: Integer): Boolean; // ZuBy
 
@@ -972,74 +922,6 @@ type
     procedure SetColorPullRefresh(aColor: TAlphaColor); // ZuBy
     procedure SetColorPullRefreshIndicator(aColor: TAlphaColor); // ZuBy
     procedure SetColorStretchGlow(aColor: TAlphaColor); // ZuBy
-
-    // True Items Clear
-    procedure ItemsClearTrue; // ZuBy
-
-    // Scroll Width
-    function GetScrollWidth: Single; // ZuBy
-
-    // Get Item Height
-    function getHeightByIndex(Index: Integer): Integer; // ZuBy
-
-    function getItemTextHeight(const AItem: TListItemText;
-      const aWidth: Single = 0): Integer; // ZuBy
-    function getItemTextButtonHeight(const AItem: TListItemTextButton;
-      const aWidth: Single = 0): Integer; // ZuBy
-
-    function getItemTextWidth(const AItem: TListItemText;
-      const aHeight: Single = 0): Integer; // ZuBy
-    function getItemTextButtonWidth(const AItem: TListItemTextButton;
-      const aHeight: Single = 0): Integer; // ZuBy
-
-    // Ani Calculaction
-    function getAniCalc: TAniCalculations; // ZuBy
-
-    procedure SearchBoxClear; // ZuBy
-
-    // Scroll
-    function getFirstVisibleItemIndex: Integer; // ZuBy
-    function getLastVisibleItemindex: Integer; // ZuBy
-    function getVisibleCount: Integer; // ZuBy
-
-    property TransparentSeparators: Boolean read FTransparentSeparator
-      write SetTransparentSeparator default False;
-    // ZuBy
-    property TransparentItems: Boolean read FTransparentItems
-      write SetTransparentItems default False; // ZuBy
-    property AutoPositionToItem: Boolean read FAutoPositionToItem
-      write FAutoPositionToItem default False; // ZuBy
-    // Separator Draw
-    property SeparatorLeftOffset: Single read FSeparatorLeftOffset
-      write SetSeparatorLeftOffset;
-    // ZuBy
-    property SeparatorRightOffset: Single read FSeparatorRightOffset
-      write SetSeparatorRightOffset;
-    // ZuBy
-
-    property ItemBottomOffset: Integer read FItemBottomOffset
-      write SetItemBottomOffset;
-    // ZuBy
-
-    property CanSwipeDirection: Boolean read FCanSwipeDirection
-      write FCanSwipeDirection default False; // ZuBy
-    property Horizontal: Boolean read FHorizontal write SetHorizontal
-      default False; // ZuBy
-    property MakeSelectedItemVisible: Boolean read FMakeSelectedItemVisible
-      write FMakeSelectedItemVisible default True;
-
-    property OffsetTop: Integer read FTopOffset write SetTopOffset; // ZuBy
-    property OffsetBottom: Integer read FBottomOffset write SetBottomOffset;
-    // ZuBy
-    property AutoColumns: Boolean read FAutoColumns write SetAutoColumns;
-    // ZuBy
-    property Columns: Integer read FColumns; // ZuBy
-    property ColumnOffset: Integer read FMarg; // ZuBy
-    property ColumnWidth: Single read FColumnWidth write SetColumnWidth; // ZuBy
-
-    // ZuBy
-    property ShowScrollBar: Boolean read FShowScrollBar write SetShowScrollBar
-      default True; // ZuBy
   end;
 
   TCustomListView = class(TAppearanceListView)
@@ -1047,8 +929,7 @@ type
 
   TListView = class(TCustomListView)
   protected
-    procedure InitializeItemAppearance(const AAppearance
-      : TItemAppearanceProperties); override;
+    procedure InitializeItemAppearance(const AAppearance: TItemAppearanceProperties); override;
   public
     // Hoist protected appearance properties
     property ItemAppearanceName;
@@ -1225,8 +1106,8 @@ const
 type
   TOpenBitmap = class(TBitmap);
   TOpenReader = class(TReader);
-  TEditModeOption = (DisallowSelection, HideSelection, RadioButtonMode,
-    UncheckMode, ModalMode, ClearWhenStart, MultiSelect);
+  TEditModeOption = (DisallowSelection, HideSelection, RadioButtonMode, UncheckMode, ModalMode, ClearWhenStart,
+    MultiSelect);
   TEditModeOptions = set of TEditModeOption;
 
 function RectF(X, Y, Width, Height: Single): TRectF; inline;
@@ -1251,8 +1132,8 @@ end;
 {$ENDREGION}
 {$REGION 'TListViewBase'}
 
-class function TListViewBase.TItemSelectionAlpha.Create(const StartTime: Double;
-  const Alpha, StartAlpha: Single): TItemSelectionAlpha;
+class function TListViewBase.TItemSelectionAlpha.Create(const StartTime: Double; const Alpha, StartAlpha: Single)
+  : TItemSelectionAlpha;
 begin
   Result.StartTime := StartTime;
   Result.Alpha := Alpha;
@@ -1268,16 +1149,13 @@ constructor TListViewBase.Create(AOwner: TComponent);
 begin
   inherited;
 
-  if not TPlatformServices.Current.SupportsPlatformService(IFMXTimerService,
-    FTimerService) then
+  if not TPlatformServices.Current.SupportsPlatformService(IFMXTimerService, FTimerService) then
     raise EUnsupportedPlatformService.Create('IFMXTimerService');
 
   FImageLink := TGlyphImageLink.Create(Self);
   FImageLink.IgnoreIndex := True;
-  TPlatformServices.Current.SupportsPlatformService
-    (IFMXSystemInformationService, FSystemInformationService);
-  TPlatformServices.Current.SupportsPlatformService(IFMXListingService,
-    FListingService);
+  TPlatformServices.Current.SupportsPlatformService(IFMXSystemInformationService, FSystemInformationService);
+  TPlatformServices.Current.SupportsPlatformService(IFMXListingService, FListingService);
 
   FDragListMode := TInternalDragMode.None;
   FDeleteButtonIndex := -1;
@@ -1301,6 +1179,7 @@ begin
   FBottomOffset := 0; // ZuBy
   FAutoColumns := False; // ZuBy
   FColumnWidth := 180; // ZuBy
+  FCanScroll := True; // sinuke
   FColumns := 1; // ZuBy
   FMarg := 0; // ZuBy
 
@@ -1396,8 +1275,7 @@ begin
 {$IFNDEF MSWINDOWS}
     True
 {$ELSE}
-    (FAniCalc <> nil) or ((FSystemInformationService <> nil) and
-    (TScrollingBehaviour.TouchTracking
+    (FAniCalc <> nil) or ((FSystemInformationService <> nil) and (TScrollingBehaviour.TouchTracking
     in FSystemInformationService.GetScrollingBehaviour))
 {$ENDIF};
   // *** ZuBy
@@ -1405,24 +1283,21 @@ end;
 
 function TListViewBase.HasSearchFeatures: Boolean;
 begin
-  Result := ((FListingService <> nil) and (FListingService.GetSearchFeatures <>
-    [])) or (csDesigning in ComponentState);
+  Result := ((FListingService <> nil) and (FListingService.GetSearchFeatures <> [])) or (csDesigning in ComponentState);
 end;
 
 function TListViewBase.HasSearchAsItem: Boolean;
 begin
   Result := (FSearchVisible and (csDesigning in ComponentState)) or
-    (FSearchVisible and (FListingService <> nil) and
-    ((not FSearchAlwaysOnTop) or (not(TListingSearchFeature.StayOnTop
-    in FListingService.GetSearchFeatures))) and
+    (FSearchVisible and (FListingService <> nil) and ((not FSearchAlwaysOnTop) or
+    (not(TListingSearchFeature.StayOnTop in FListingService.GetSearchFeatures))) and
     (TListingSearchFeature.AsFirstItem in FListingService.GetSearchFeatures) and
     ((FSearchEdit = nil) or (FSearchEdit.Text.Length < 1)));
 end;
 
 function TListViewBase.IsDeleteModeAllowed: Boolean;
 begin
-  Result := TListingEditModeFeature.Delete
-    in FListingService.GetEditModeFeatures;
+  Result := TListingEditModeFeature.Delete in FListingService.GetEditModeFeatures;
 end;
 
 function TListViewBase.IsEditMode: Boolean;
@@ -1437,8 +1312,7 @@ begin
     True
 {$ELSE}
     HasTouchTracking and (FSystemInformationService <> nil) and
-    (TScrollingBehaviour.BoundsAnimation
-    in FSystemInformationService.GetScrollingBehaviour)
+    (TScrollingBehaviour.BoundsAnimation in FSystemInformationService.GetScrollingBehaviour)
 {$ENDIF};
 end;
 
@@ -1465,22 +1339,18 @@ end;
 function TListViewBase.HasScrollingStretchGlow: Boolean;
 begin
   Result := (FListingService <> nil) and
-    (TListingTransitionFeature.ScrollGlow
-    in FListingService.GetTransitionFeatures);
+    (TListingTransitionFeature.ScrollGlow in FListingService.GetTransitionFeatures);
 end;
 
 function TListViewBase.HasPullRefreshStroke: Boolean;
 begin
-  Result := (FListingService <> nil) and
-    not(TListingTransitionFeature.PullToRefresh
-    in FListingService.GetTransitionFeatures) and
-    ((FPullRefreshAnimation = TPullRefreshAnimation.Playing) or
+  Result := (FListingService <> nil) and not(TListingTransitionFeature.PullToRefresh
+    in FListingService.GetTransitionFeatures) and ((FPullRefreshAnimation = TPullRefreshAnimation.Playing) or
     (GetPullRefreshStrength > 0));
 end;
 
-function TListViewBase.CanDisplaySelectionForItem(const Index: Integer;
-  const Item: TListItem; const IncludeMultiSelect, IncludeCrossFaded
-  : Boolean): Boolean;
+function TListViewBase.CanDisplaySelectionForItem(const Index: Integer; const Item: TListItem;
+  const IncludeMultiSelect, IncludeCrossFaded: Boolean): Boolean;
 var
   ItemAlpha: TItemSelectionAlpha;
   Checkable: IListViewCheckProvider;
@@ -1489,12 +1359,10 @@ begin
   LItem := Item;
   if LItem = nil then
     LItem := Adapter[Index];
-  Result := ((FItemIndex = Index) and FShowSelection and
-    LItem.View.Initialized and (LItem.Purpose = TListItemPurpose.None) and
-    (not FEditMode) and (FDeleteButtonIndex = -1)) or
-    (HasCheckboxMode and IncludeMultiSelect and LItem.View.Initialized and
-    Supports(Adapter, IListViewCheckProvider, Checkable) and
-    Checkable.Checked[Index]);
+  Result := ((FItemIndex = Index) and FShowSelection and LItem.View.Initialized and
+    (LItem.Purpose = TListItemPurpose.None) and (not FEditMode) and (FDeleteButtonIndex = -1)) or
+    (HasCheckboxMode and IncludeMultiSelect and LItem.View.Initialized and Supports(Adapter, IListViewCheckProvider,
+    Checkable) and Checkable.Checked[Index]);
 
   if (not Result) and IncludeCrossFaded and (FSelectionAlphas <> nil) then
     if FSelectionAlphas.TryGetValue(Index, ItemAlpha) then
@@ -1540,11 +1408,10 @@ var
   SelectionChanged: Boolean;
 begin
   inherited;
-  SelectionChanged := (Selected <> nil) and (FItemSelectedBeforeChange <> nil)
-    and (Selected <> FItemSelectedBeforeChange);
+  SelectionChanged := (Selected <> nil) and (FItemSelectedBeforeChange <> nil) and
+    (Selected <> FItemSelectedBeforeChange);
 
-  if (FItemSelectedBeforeChange <> nil) and
-    (FItemSelectedBeforeChange.Index >= 0) and
+  if (FItemSelectedBeforeChange <> nil) and (FItemSelectedBeforeChange.Index >= 0) and
     (FItemSelectedBeforeChange.Index < Adapter.Count) and
     (Adapter[FItemSelectedBeforeChange.Index] = FItemSelectedBeforeChange) then
     ItemIndex := FItemSelectedBeforeChange.Index
@@ -1633,15 +1500,15 @@ begin
   FClickEventControl := nil;
   FClickEventItemIndex := NewItemIndex;
   FClickEventMousePos := TPointF.Zero;
-  StartIncident(TDelayedIncident.ClickEvent);
+  if not FMouseClickSwipeEventSend then // ZuBy
+    StartIncident(TDelayedIncident.ClickEvent);
 end;
 
 procedure TListViewBase.UnselectItem(const ItemIndex: Integer);
 var
   Checkable: IListViewCheckProvider;
 begin
-  if (ItemIndex >= 0) and (ItemIndex < Adapter.Count) and
-    Supports(Adapter, IListViewCheckProvider, Checkable) then
+  if (ItemIndex >= 0) and (ItemIndex < Adapter.Count) and Supports(Adapter, IListViewCheckProvider, Checkable) then
     Checkable[ItemIndex] := False;
 end;
 
@@ -1654,8 +1521,7 @@ begin
   end;
 end;
 
-procedure TListViewBase.SetItemIndexInternal(const Value: Integer;
-  const DisableSelection, DisableCrossfade: Boolean);
+procedure TListViewBase.SetItemIndexInternal(const Value: Integer; const DisableSelection, DisableCrossfade: Boolean);
 var
   NewValue: Integer;
 begin
@@ -1666,8 +1532,7 @@ begin
 
   if NewValue <> FItemIndex then
   begin
-    if (not FEditMode) and InRange(FItemIndex, 0, Adapter.Count - 1) and not DisableCrossfade
-    then
+    if (not FEditMode) and InRange(FItemIndex, 0, Adapter.Count - 1) and not DisableCrossfade then
       InsertItemCrossFade(FItemIndex, False);
 
     FItemIndex := NewValue;
@@ -1680,8 +1545,7 @@ begin
     end;
     // *** ZuBy
 
-    if (not DisableSelection) and (FItemIndex >= 0) and
-      (FItemIndex < Adapter.Count) then
+    if (not DisableSelection) and (FItemIndex >= 0) and (FItemIndex < Adapter.Count) then
       Adapter[FItemIndex].MouseSelect;
 
     if (not FEditMode) and (FItemIndex <> -1) and not DisableCrossfade then
@@ -1711,8 +1575,7 @@ var
   LHandled: Boolean;
   Checkable: IListViewCheckProvider;
 begin
-  if (FEditMode <> Value) and Supports(Adapter, IListViewCheckProvider,
-    Checkable) then
+  if (FEditMode <> Value) and Supports(Adapter, IListViewCheckProvider, Checkable) then
   begin
     BeginUpdate;
     try
@@ -1737,9 +1600,8 @@ begin
         if FSearchEdit <> nil then
           FSearchEdit.Enabled := not FEditMode;
 
-        if (FListingService <> nil) and
-          (TListingTransitionFeature.EditMode
-          in FListingService.GetTransitionFeatures) then
+        if (FListingService <> nil) and (TListingTransitionFeature.EditMode in FListingService.GetTransitionFeatures)
+        then
         begin // Animated Edit Mode
           if EditMode then
             WillEnterEditMode(True); // EditModeAppearances;
@@ -1858,8 +1720,7 @@ var
   Drawable: TListItemGlyphButton;
 begin
   Result := 0;
-  if (Item <> nil) and Supports(Adapter, IListViewGlyphButtonProvider, Provider)
-  then
+  if (Item <> nil) and Supports(Adapter, IListViewGlyphButtonProvider, Provider) then
   begin
     Drawable := Provider.GlyphButtonDrawable[Item.Index];
     if Drawable <> nil then
@@ -1869,8 +1730,8 @@ end;
 
 function TListViewBase.GetItemDeleteCutoff(const Item: TListItem): Single;
 begin
-  if (Item <> nil) and ((Item.Index = FDeleteButtonIndex) or
-    (Item.Index = FPrevDeleteButtonIndex)) and (FDeleteLayout <> nil) then
+  if (Item <> nil) and ((Item.Index = FDeleteButtonIndex) or (Item.Index = FPrevDeleteButtonIndex)) and
+    (FDeleteLayout <> nil) then
     Result := FDeleteLayout.Position.X
   else
     Result := 0;
@@ -1881,24 +1742,20 @@ begin
   Result := LocalRect;
 end;
 
-function TListViewBase.GetItemCurrentSelectionAlpha
-  (const Item: TListItem): Single;
+function TListViewBase.GetItemCurrentSelectionAlpha(const Item: TListItem): Single;
 begin
   if Item <> nil then
-    Result := Min(GetItemSelectionAlpha(Item.Index) /
-      GetDefaultSelectionAlpha, 1)
+    Result := Min(GetItemSelectionAlpha(Item.Index) / GetDefaultSelectionAlpha, 1)
   else
     Result := 0;
 end;
 
-procedure TListViewBase.CheckStateChanged(const Item: TListItem;
-  const Control: TListItemDrawable);
+procedure TListViewBase.CheckStateChanged(const Item: TListItem; const Control: TListItemDrawable);
 begin
   DoCheckStateChanged(Item, Control);
 end;
 
-procedure TListViewBase.ControlClicked(const Item: TListItem;
-  const Control: TListItemDrawable);
+procedure TListViewBase.ControlClicked(const Item: TListItem; const Control: TListItemDrawable);
 begin
   DoControlClicked(Item, Control);
 end;
@@ -1943,13 +1800,11 @@ procedure TListViewBase.DoRequestReindexing(const Item: TListItem);
 begin
 end;
 
-procedure TListViewBase.DoCheckStateChanged(const Item: TListItem;
-  const Control: TListItemDrawable);
+procedure TListViewBase.DoCheckStateChanged(const Item: TListItem; const Control: TListItemDrawable);
 begin
 end;
 
-procedure TListViewBase.DoControlClicked(const Item: TListItem;
-  const Control: TListItemDrawable);
+procedure TListViewBase.DoControlClicked(const Item: TListItem; const Control: TListItemDrawable);
 begin
 end;
 
@@ -2064,8 +1919,7 @@ var
     begin
       if Purpose(Index) = TListItemPurpose.Footer then
         Editor.Delete(Index);
-      if (Index = Adapter.Count) or (Purpose(Index) <> TListItemPurpose.None)
-      then
+      if (Index = Adapter.Count) or (Purpose(Index) <> TListItemPurpose.None) then
         Editor.Delete(Index - 1);
     end;
   end;
@@ -2109,8 +1963,7 @@ begin
   HasEvents := HasRecurrentTimerEvents;
 
   if HasEvents and (FRecurrentTimerHandle = 0) then
-    FRecurrentTimerHandle := FTimerService.CreateTimer(RecurrentTimerInterval,
-      RecurrentTimerEvent)
+    FRecurrentTimerHandle := FTimerService.CreateTimer(RecurrentTimerInterval, RecurrentTimerEvent)
   else if (not HasEvents) and (FRecurrentTimerHandle <> 0) then
     DestroyRecurrentTimer;
 end;
@@ -2135,9 +1988,8 @@ begin
   UpdateRecurrentTimer;
 end;
 
-procedure TListViewBase.StartIncident(const Incident: TDelayedIncident;
-  const Triggered: Boolean; const TimeToWait: Single;
-  const CustomData: NativeInt);
+procedure TListViewBase.StartIncident(const Incident: TDelayedIncident; const Triggered: Boolean;
+  const TimeToWait: Single; const CustomData: NativeInt);
 var
   Entry: TDelayedIncidentEntry;
 begin
@@ -2152,8 +2004,7 @@ begin
   UpdateRecurrentTimer;
 end;
 
-procedure TListViewBase.TriggerIncidents(const Incident: TDelayedIncident;
-  const ResetStartupTime: Boolean);
+procedure TListViewBase.TriggerIncidents(const Incident: TDelayedIncident; const ResetStartupTime: Boolean);
 var
   I: Integer;
   CurTime: Double;
@@ -2195,20 +2046,17 @@ begin
 
     TDelayedIncident.ClickEvent:
       begin
-        if Assigned(FOnItemClickEx) then
-          FOnItemClickEx(Self, FClickEventItemIndex, FClickEventMousePos,
-            FClickEventControl);
+        if Assigned(FOnItemClickEx) and (not FMouseClickSwipeEventSend) then
+          FOnItemClickEx(Self, FClickEventItemIndex, FClickEventMousePos, FClickEventControl);
         // ZuBy ***
-        if FAutoColumns then
+        if (FAutoColumns) { and (not FCanSwipeDirection) and (Assigned(FOnColumnClick)) } then
         begin
           pW := 0;
-          RowColumns := Min(TListViewItem(Adapter[FClickEventItemIndex]).Tag,
-            FColumns);
+          RowColumns := Min(TListViewItem(Adapter[FClickEventItemIndex]).Tag, FColumns);
           for J := 1 to RowColumns do
           begin
             pW := (J * FColumnWidth) - FColumnWidth;
-            if InRange(FClickEventMousePos.X, (pW + (J * FMarg)),
-              (pW + FColumnWidth) + (J * FMarg)) then
+            if InRange(FClickEventMousePos.X, (pW + (J * FMarg)), (pW + FColumnWidth) + (J * FMarg)) then
               break;
           end;
 
@@ -2220,31 +2068,27 @@ begin
             ObjX := FClickEventMousePos.X - (pW + (J * FMarg));
             DrawebleName := '';
 
-            iObject := TListViewItem(Adapter[FClickEventItemIndex])
-              .Objects.FindObjectT<TListItemDrawable>('bitmap' + J.ToString);
+            iObject := TListViewItem(Adapter[FClickEventItemIndex]).Objects.FindObjectT<TListItemDrawable>
+              ('bitmap' + J.ToString);
             if iObject <> nil then
             begin
               ObjPoint := iObject.PlaceOffset.Point;
-              if InRange(FClickEventMousePos.X, ObjPoint.X,
-                ObjPoint.X + iObject.Width) and InRange(FClickEventMousePos.Y,
-                ObjPoint.Y, ObjPoint.Y + iObject.Height) then
+              if InRange(FClickEventMousePos.X, ObjPoint.X, ObjPoint.X + iObject.Width) and
+                InRange(FClickEventMousePos.Y, ObjPoint.Y, ObjPoint.Y + iObject.Height) then
                 DrawebleName := iObject.Name;
             end;
 
             if DrawebleName.IsEmpty then
             begin
-              iObject := TListViewItem(Adapter[FClickEventItemIndex])
-                .Objects.FindObjectT<TListItemDrawable>
+              iObject := TListViewItem(Adapter[FClickEventItemIndex]).Objects.FindObjectT<TListItemDrawable>
                 ('oi_values' + J.ToString);
               if iObject <> nil then
               begin
                 if iObject.Visible then
                 begin
                   ObjPoint := iObject.PlaceOffset.Point;
-                  if InRange(FClickEventMousePos.X, ObjPoint.X,
-                    ObjPoint.X + iObject.Width) and
-                    InRange(FClickEventMousePos.Y, ObjPoint.Y,
-                    ObjPoint.Y + iObject.Height) then
+                  if InRange(FClickEventMousePos.X, ObjPoint.X, ObjPoint.X + iObject.Width) and
+                    InRange(FClickEventMousePos.Y, ObjPoint.Y, ObjPoint.Y + iObject.Height) then
                     DrawebleName := iObject.Name;
                 end;
               end;
@@ -2252,14 +2096,13 @@ begin
 
             if DrawebleName.IsEmpty then
             begin
-              iObject := TListViewItem(Adapter[FClickEventItemIndex])
-                .Objects.FindObjectT<TListItemDrawable>('price' + J.ToString);
+              iObject := TListViewItem(Adapter[FClickEventItemIndex]).Objects.FindObjectT<TListItemDrawable>
+                ('price' + J.ToString);
               if iObject <> nil then
               begin
                 ObjPoint := iObject.PlaceOffset.Point;
-                if InRange(FClickEventMousePos.X, ObjPoint.X,
-                  ObjPoint.X + iObject.Width) and InRange(FClickEventMousePos.Y,
-                  ObjPoint.Y, ObjPoint.Y + iObject.Height) then
+                if InRange(FClickEventMousePos.X, ObjPoint.X, ObjPoint.X + iObject.Width) and
+                  InRange(FClickEventMousePos.Y, ObjPoint.Y, ObjPoint.Y + iObject.Height) then
                   DrawebleName := iObject.Name;
               end;
             end;
@@ -2267,8 +2110,8 @@ begin
             if DrawebleName.IsEmpty then
               DrawebleName := 'item';
 
-            FOnColumnClick(Self, J, ObjX, FClickEventMousePos.Y,
-              TListViewItem(Adapter[FClickEventItemIndex]), DrawebleName);
+            FOnColumnClick(Self, J, ObjX, FClickEventMousePos.Y, TListViewItem(Adapter[FClickEventItemIndex]),
+              DrawebleName);
           end;
           // *** ZuBy
         end;
@@ -2280,8 +2123,7 @@ procedure TListViewBase.ProcessDelayedIncidents;
 
   function IsUnsafeIncident(const Incident: TDelayedIncident): Boolean;
   begin
-    Result := Incident in [TDelayedIncident.ChangeRepainted,
-      TDelayedIncident.ClickEvent];
+    Result := Incident in [TDelayedIncident.ChangeRepainted, TDelayedIncident.ClickEvent];
   end;
 
 var
@@ -2298,8 +2140,7 @@ begin
     begin
       Entry := FDelayedIncidents[I];
 
-      if Entry.Triggered and (Abs(CurTime - Entry.StartTime) >= Entry.TimeToWait)
-      then
+      if Entry.Triggered and (Abs(CurTime - Entry.StartTime) >= Entry.TimeToWait) then
       begin
         if IsUnsafeIncident(Entry.Incident) then
         begin
@@ -2329,8 +2170,7 @@ begin
     TTransitionType.EditMode:
       if FEditMode then
       begin
-        FEditModeTransitionAlpha :=
-          Min(Abs(FTimerService.GetTick - FTransitionStartTime) /
+        FEditModeTransitionAlpha := Min(Abs(FTimerService.GetTick - FTransitionStartTime) /
           EditModeAnimationDuration, 1);
 
         if FEditModeTransitionAlpha >= 1 then
@@ -2339,8 +2179,7 @@ begin
       else
       begin
         FEditModeTransitionAlpha :=
-          Max(1 - (Abs(FTimerService.GetTick - FTransitionStartTime) /
-          EditModeAnimationDuration), 0);
+          Max(1 - (Abs(FTimerService.GetTick - FTransitionStartTime) / EditModeAnimationDuration), 0);
 
         if FEditModeTransitionAlpha <= 0 then
           ResetEditModeAnimation;
@@ -2350,8 +2189,7 @@ begin
       begin
         if FDeleteButtonIndex <> -1 then
         begin
-          FDeleteModeTransitionAlpha :=
-            Min(Abs(FTimerService.GetTick - FTransitionStartTime) /
+          FDeleteModeTransitionAlpha := Min(Abs(FTimerService.GetTick - FTransitionStartTime) /
             DeleteModeAnimationDuration, 1);
 
           if FDeleteModeTransitionAlpha >= 1 then
@@ -2360,8 +2198,7 @@ begin
         else
         begin
           FDeleteModeTransitionAlpha :=
-            Max(1 - (Abs(FTimerService.GetTick - FTransitionStartTime) /
-            DeleteModeAnimationDuration), 0);
+            Max(1 - (Abs(FTimerService.GetTick - FTransitionStartTime) / DeleteModeAnimationDuration), 0);
 
           if FDeleteModeTransitionAlpha <= 0 then
             ResetDeleteModeAnimation;
@@ -2390,10 +2227,10 @@ begin
       FTapSelectNewIndexApplied := FTapSelectItemIndex;
 
       FClickEventItemIndex := FTapSelectItemIndex;
-      StartIncident(TDelayedIncident.ClickEvent);
+      if not FMouseClickSwipeEventSend then // ZuBy
+        StartIncident(TDelayedIncident.ClickEvent);
     end
-    else if FEditMode and Supports(Adapter, IListViewCheckProvider, Checkable)
-    then
+    else if FEditMode and Supports(Adapter, IListViewCheckProvider, Checkable) then
     begin
       Checkable[FTapSelectItemIndex] := not Checkable[FTapSelectItemIndex];
       FTapSelectNewIndexApplied := FTapSelectItemIndex;
@@ -2422,8 +2259,7 @@ begin
   try
     for Index in FSelectionAlphas.Keys do
     begin
-      if not FSelectionAlphas.TryGetValue(Index, ItemAlpha) or
-        not InRange(Index, 0, MaxIndex) then
+      if not FSelectionAlphas.TryGetValue(Index, ItemAlpha) or not InRange(Index, 0, MaxIndex) then
       begin
         TrashedItems.Add(Index);
         Continue;
@@ -2440,8 +2276,7 @@ begin
         FinalAlpha := 0;
       end;
 
-      NewAlpha := ItemAlpha.StartAlpha +
-        (FinalAlpha - ItemAlpha.StartAlpha) * Theta;
+      NewAlpha := ItemAlpha.StartAlpha + (FinalAlpha - ItemAlpha.StartAlpha) * Theta;
       if not SameValue(NewAlpha, ItemAlpha.Alpha, TEpsilon.Vector) then
       begin
         ItemAlpha.Alpha := NewAlpha;
@@ -2465,20 +2300,17 @@ begin
     Invalidate;
 end;
 
-procedure TListViewBase.InsertItemCrossFade(const Index: Integer;
-  const ShowAnimation: Boolean);
+procedure TListViewBase.InsertItemCrossFade(const Index: Integer; const ShowAnimation: Boolean);
 var
   ItemAlpha, PrevItemAlpha: TItemSelectionAlpha;
 begin
-  if (not FSelectionCrossfade) or (FSelectionAlphas = nil) or
-    (Adapter[Index].Purpose <> TListItemPurpose.None) then
+  if (not FSelectionCrossfade) or (FSelectionAlphas = nil) or (Adapter[Index].Purpose <> TListItemPurpose.None) then
     exit;
 
   if ShowAnimation then
     ItemAlpha := TItemSelectionAlpha.Create(FTimerService.GetTick, 0, 0)
   else
-    ItemAlpha := TItemSelectionAlpha.Create(FTimerService.GetTick,
-      GetDefaultSelectionAlpha, GetDefaultSelectionAlpha);
+    ItemAlpha := TItemSelectionAlpha.Create(FTimerService.GetTick, GetDefaultSelectionAlpha, GetDefaultSelectionAlpha);
 
   if FSelectionAlphas.TryGetValue(Index, PrevItemAlpha) then
   begin
@@ -2620,8 +2452,7 @@ procedure TListViewBase.ProcessPullRefreshAnimation;
 var
   EndTrigger: Boolean;
 begin
-  if TListingTransitionFeature.PullToRefresh in FListingService.GetTransitionFeatures
-  then
+  if TListingTransitionFeature.PullToRefresh in FListingService.GetTransitionFeatures then
     EndTrigger := GetPullRefreshIndicatorAlpha <= 0
   else
   begin
@@ -2656,8 +2487,7 @@ const
 begin
   case FPullRefreshAnimation of
     TListViewBase.TPullRefreshAnimation.NotPlaying:
-      Result := EnsureRange
-        (Round((GetPullRefreshStrength - PullRefreshIndicatorStrengthStart) /
+      Result := EnsureRange(Round((GetPullRefreshStrength - PullRefreshIndicatorStrengthStart) /
         IndicatorStrengthPerStep), 0, PullRefreshIndicatorMaxSteps);
 
     TListViewBase.TPullRefreshAnimation.Playing:
@@ -2677,21 +2507,17 @@ begin
       Result := 1;
 
     TListViewBase.TPullRefreshAnimation.Playing:
-      if SameValue(FPullRefreshAnimationStartTime,
-        FPullRefreshAnimationStopTime, TEpsilon.Vector) then
+      if SameValue(FPullRefreshAnimationStartTime, FPullRefreshAnimationStopTime, TEpsilon.Vector) then
         Result := 1
       else
-        Result := Max
-          ((1 - Abs(FTimerService.GetTick - FPullRefreshAnimationStopTime) *
-          IndicatorFadeVelocity), 0);
+        Result := Max((1 - Abs(FTimerService.GetTick - FPullRefreshAnimationStopTime) * IndicatorFadeVelocity), 0);
 
   else
     Result := 0;
   end;
 end;
 
-procedure TListViewBase.PaintPullRefreshIndicator(const ACanvas: TCanvas;
-  const AStrength, AOpacity: Single);
+procedure TListViewBase.PaintPullRefreshIndicator(const ACanvas: TCanvas; const AStrength, AOpacity: Single);
 const
   IndicatorMinRadius = 6.5;
   IndicatorMaxRadius = 13.5;
@@ -2731,14 +2557,12 @@ begin
   if FHorizontal then
   begin
     Center.X := Height / 2;
-    Center.Y := TopAdjust + PullRefreshIndicatorStrengthStart +
-      IndicatorMaxRadius;
+    Center.Y := TopAdjust + PullRefreshIndicatorStrengthStart + IndicatorMaxRadius;
   end
   else
   begin
     Center.X := Width / 2;
-    Center.Y := TopAdjust + PullRefreshIndicatorStrengthStart +
-      IndicatorMaxRadius;
+    Center.Y := TopAdjust + PullRefreshIndicatorStrengthStart + IndicatorMaxRadius;
   end;
   // *** ZuBy
 
@@ -2759,20 +2583,16 @@ begin
     Thickness := Thickness * ShrinkAlpha;
   end;
 
-  Stroke := TStrokeBrush.Create(TBrushKind.Solid,
-    FStyleResources.PullRefreshIndicatorColor);
+  Stroke := TStrokeBrush.Create(TBrushKind.Solid, FStyleResources.PullRefreshIndicatorColor);
   try
     Stroke.Thickness := Thickness;
 
     for I := 0 to LineCount - 1 do
     begin
-      Angle := ((I * PiMulTwo) / PullRefreshIndicatorMaxSteps) + TimeElapsed *
-        IndicatorRotation - PiByTwo;
+      Angle := ((I * PiMulTwo) / PullRefreshIndicatorMaxSteps) + TimeElapsed * IndicatorRotation - PiByTwo;
 
-      if not SameValue(FPullRefreshAnimationStartTime,
-        FPullRefreshAnimationStopTime, TEpsilon.Vector) then
-        Angle := Angle + Abs(FTimerService.GetTick -
-          FPullRefreshAnimationStopTime) * IndicatorRotation * 2;
+      if not SameValue(FPullRefreshAnimationStartTime, FPullRefreshAnimationStopTime, TEpsilon.Vector) then
+        Angle := Angle + Abs(FTimerService.GetTick - FPullRefreshAnimationStopTime) * IndicatorRotation * 2;
 
       SinCos(Angle, LSin, LCos);
       P1.X := Center.X + LCos * MinRadius;
@@ -2803,34 +2623,25 @@ begin
   begin
     // ZuBy ***
     if FHorizontal then
-      Result := Min
-        (Power(Abs(FTimerService.GetTick - FPullRefreshAnimationStartTime) *
-        StrokeCollapseSpeed1, StrokeCollapsePower) *
-        StrokeCollapseSpeed2, Height)
+      Result := Min(Power(Abs(FTimerService.GetTick - FPullRefreshAnimationStartTime) * StrokeCollapseSpeed1,
+        StrokeCollapsePower) * StrokeCollapseSpeed2, Height)
     else
-      Result := Min
-        (Power(Abs(FTimerService.GetTick - FPullRefreshAnimationStartTime) *
-        StrokeCollapseSpeed1, StrokeCollapsePower) *
-        StrokeCollapseSpeed2, Width);
+      Result := Min(Power(Abs(FTimerService.GetTick - FPullRefreshAnimationStartTime) * StrokeCollapseSpeed1,
+        StrokeCollapsePower) * StrokeCollapseSpeed2, Width);
     // *** ZuBy
   end
   else
   begin
     // ZuBy ***
     if FHorizontal then
-      Result := Min
-        (Sqr(Max(GetPullRefreshStrength - PullRefreshIndicatorStrengthStart,
-        0) * StrokeGrowthSpeed), Height)
+      Result := Min(Sqr(Max(GetPullRefreshStrength - PullRefreshIndicatorStrengthStart, 0) * StrokeGrowthSpeed), Height)
     else
-      Result := Min
-        (Sqr(Max(GetPullRefreshStrength - PullRefreshIndicatorStrengthStart,
-        0) * StrokeGrowthSpeed), Width);
+      Result := Min(Sqr(Max(GetPullRefreshStrength - PullRefreshIndicatorStrengthStart, 0) * StrokeGrowthSpeed), Width);
     // *** ZuBy
   end;
 end;
 
-procedure TListViewBase.PaintPullRefreshStroke(const ACanvas: TCanvas;
-  const AStrength, AOpacity: Single);
+procedure TListViewBase.PaintPullRefreshStroke(const ACanvas: TCanvas; const AStrength, AOpacity: Single);
 const
   DefaultStrokeThickness = 2.5;
 var
@@ -2849,8 +2660,7 @@ begin
   else
     TopAdjust := 0;
 
-  StrokeBrush := TBrush.Create(TBrushKind.Gradient,
-    FStyleResources.PullRefreshStrokeColor);
+  StrokeBrush := TBrush.Create(TBrushKind.Gradient, FStyleResources.PullRefreshStrokeColor);
   try
     StrokeBrush.Kind := TBrushKind.Solid;
     StrokeLength := GetPullRefreshStrokeWidth;
@@ -2860,21 +2670,17 @@ begin
       // ZuBy ***
       if FHorizontal then
       begin
-        ACanvas.FillRect(TRectF.Create(TopAdjust, 0,
-          TopAdjust + DefaultStrokeThickness, (Height - StrokeLength) / 2), 0,
-          0, AllCorners, AOpacity, StrokeBrush);
-        ACanvas.FillRect(TRectF.Create(TopAdjust, (Height + StrokeLength) / 2,
-          TopAdjust + DefaultStrokeThickness, Height), 0, 0, AllCorners,
-          AOpacity, StrokeBrush);
+        ACanvas.FillRect(TRectF.Create(TopAdjust, 0, TopAdjust + DefaultStrokeThickness, (Height - StrokeLength) / 2),
+          0, 0, AllCorners, AOpacity, StrokeBrush);
+        ACanvas.FillRect(TRectF.Create(TopAdjust, (Height + StrokeLength) / 2, TopAdjust + DefaultStrokeThickness,
+          Height), 0, 0, AllCorners, AOpacity, StrokeBrush);
       end
       else
       begin
-        ACanvas.FillRect(TRectF.Create(0, TopAdjust, (Width - StrokeLength) / 2,
-          TopAdjust + DefaultStrokeThickness), 0, 0, AllCorners, AOpacity,
-          StrokeBrush);
-        ACanvas.FillRect(TRectF.Create((Width + StrokeLength) / 2, TopAdjust,
-          Width, TopAdjust + DefaultStrokeThickness), 0, 0, AllCorners,
-          AOpacity, StrokeBrush);
+        ACanvas.FillRect(TRectF.Create(0, TopAdjust, (Width - StrokeLength) / 2, TopAdjust + DefaultStrokeThickness), 0,
+          0, AllCorners, AOpacity, StrokeBrush);
+        ACanvas.FillRect(TRectF.Create((Width + StrokeLength) / 2, TopAdjust, Width,
+          TopAdjust + DefaultStrokeThickness), 0, 0, AllCorners, AOpacity, StrokeBrush);
       end;
       // *** ZuBy
     end;
@@ -2883,13 +2689,11 @@ begin
     begin
       // ZuBy ***
       if FHorizontal then
-        ACanvas.FillRect(TRectF.Create(TopAdjust, (Height - StrokeLength) / 2,
-          TopAdjust + DefaultStrokeThickness, (Height + StrokeLength) / 2), 0,
-          0, AllCorners, AOpacity, StrokeBrush)
+        ACanvas.FillRect(TRectF.Create(TopAdjust, (Height - StrokeLength) / 2, TopAdjust + DefaultStrokeThickness,
+          (Height + StrokeLength) / 2), 0, 0, AllCorners, AOpacity, StrokeBrush)
       else
-        ACanvas.FillRect(TRectF.Create((Width - StrokeLength) / 2, TopAdjust,
-          (Width + StrokeLength) / 2, TopAdjust + DefaultStrokeThickness), 0, 0,
-          AllCorners, AOpacity, StrokeBrush);
+        ACanvas.FillRect(TRectF.Create((Width - StrokeLength) / 2, TopAdjust, (Width + StrokeLength) / 2,
+          TopAdjust + DefaultStrokeThickness), 0, 0, AllCorners, AOpacity, StrokeBrush);
       // *** ZuBy
     end;
   finally
@@ -2897,8 +2701,7 @@ begin
   end;
 end;
 
-procedure TListViewBase.PaintScrollingStretchGlow(const ACanvas: TCanvas;
-  const AIntensity, AOpacity: Single);
+procedure TListViewBase.PaintScrollingStretchGlow(const ACanvas: TCanvas; const AIntensity, AOpacity: Single);
 var
   TempPoint: TGradientPoint;
   TempColor: TAlphaColor;
@@ -2906,8 +2709,7 @@ var
   GlowDepth: Single;
   GlowRect: TRectF;
 begin
-  GlowBrush := TBrush.Create(TBrushKind.Gradient,
-    FStyleResources.ScrollingStretchGlowColor);
+  GlowBrush := TBrush.Create(TBrushKind.Gradient, FStyleResources.ScrollingStretchGlowColor);
   try
     GlowBrush.Gradient.Style := TGradientStyle.Radial;
     GlowBrush.Gradient.Points.Clear;
@@ -2930,26 +2732,21 @@ begin
       begin
         // ZuBy ***
         if FHorizontal then
-          GlowRect := TRectF.Create(-GlowDepth, -Height / 8, GlowDepth,
-            Height + Height / 8)
+          GlowRect := TRectF.Create(-GlowDepth, -Height / 8, GlowDepth, Height + Height / 8)
         else
-          GlowRect := TRectF.Create(-Width / 8, -GlowDepth, Width + Width / 8,
-            GlowDepth);
+          GlowRect := TRectF.Create(-Width / 8, -GlowDepth, Width + Width / 8, GlowDepth);
         // *** ZuBy
 
-        if (FSearchEdit <> nil) and FSearchEdit.Visible and not HasSearchAsItem
-        then
+        if (FSearchEdit <> nil) and FSearchEdit.Visible and not HasSearchAsItem then
           GlowRect.Offset(0, FSearchEdit.Height);
       end
       else
       begin
         // ZuBy ***
         if FHorizontal then
-          GlowRect := TRectF.Create(Width - GlowDepth, -Height / 8,
-            Width + GlowDepth, Height + Height / 8)
+          GlowRect := TRectF.Create(Width - GlowDepth, -Height / 8, Width + GlowDepth, Height + Height / 8)
         else
-          GlowRect := TRectF.Create(-Width / 8, Height - GlowDepth,
-            Width + Width / 8, Height + GlowDepth);
+          GlowRect := TRectF.Create(-Width / 8, Height - GlowDepth, Width + Width / 8, Height + GlowDepth);
         // *** ZuBy
       end;
 
@@ -2964,8 +2761,8 @@ procedure TListViewBase.UpdatePullRefreshState;
 var
   Trigger: Boolean;
 begin
-  if FPullRefreshTriggered and (GetPullRefreshStrength < 1) and
-    (FPullRefreshAnimation <> TPullRefreshAnimation.Playing) then
+  if FPullRefreshTriggered and (GetPullRefreshStrength < 1) and (FPullRefreshAnimation <> TPullRefreshAnimation.Playing)
+  then
   begin
     FPullRefreshTriggered := False;
     FPullRefreshAnimation := TPullRefreshAnimation.NotPlaying;
@@ -2973,8 +2770,7 @@ begin
   end
   else if not FPullRefreshTriggered then
   begin
-    if TListingTransitionFeature.PullToRefresh in FListingService.GetTransitionFeatures
-    then
+    if TListingTransitionFeature.PullToRefresh in FListingService.GetTransitionFeatures then
       Trigger := GetPullRefreshIndicatorSteps >= PullRefreshIndicatorMaxSteps
     else
     begin
@@ -2999,10 +2795,9 @@ begin
         end);
     end;
   end;
-  if FPullRefreshTriggered and
-    (FPullRefreshAnimation = TPullRefreshAnimation.Playing) and
-    SameValue(FPullRefreshAnimationStartTime, FPullRefreshAnimationStopTime,
-    TEpsilon.Vector) and (FAniCalc <> nil) and (not FAniCalc.Down) then
+  if FPullRefreshTriggered and (FPullRefreshAnimation = TPullRefreshAnimation.Playing) and
+    SameValue(FPullRefreshAnimationStartTime, FPullRefreshAnimationStopTime, TEpsilon.Vector) and (FAniCalc <> nil) and
+    (not FAniCalc.Down) then
     FPullRefreshAnimationStopTime := FTimerService.GetTick;
 end;
 
@@ -3028,16 +2823,14 @@ procedure TListViewBase.UpdateDeleteButtonLayout;
 var
   RelRect: TRectF;
 begin
-  if (Adapter.Count < 1) or (FDeleteLayout = nil) or
-    ((FDeleteButtonIndex = -1) and (FPrevDeleteButtonIndex = -1)) then
+  if (Adapter.Count < 1) or (FDeleteLayout = nil) or ((FDeleteButtonIndex = -1) and (FPrevDeleteButtonIndex = -1)) then
 
     exit;
 
-  if (FListingService <> nil) and (TListingTransitionFeature.DeleteButtonSlide
-    in FListingService.GetTransitionFeatures) then
+  if (FListingService <> nil) and (TListingTransitionFeature.DeleteButtonSlide in FListingService.GetTransitionFeatures)
+  then
   begin
-    FDeleteLayout.Width := DefaultDeleteButtonWidth *
-      FDeleteModeTransitionAlpha;
+    FDeleteLayout.Width := DefaultDeleteButtonWidth * FDeleteModeTransitionAlpha;
     FDeleteButton.Opacity := 1;
   end
   else
@@ -3064,8 +2857,7 @@ begin
   else
     RelRect := GetItemRelRect(FDeleteButtonIndex, LocalRect);
 
-  FDeleteLayout.Position.Y :=
-    (RelRect.Top + RelRect.Bottom - FDeleteLayout.Height) / 2;
+  FDeleteLayout.Position.Y := (RelRect.Top + RelRect.Bottom - FDeleteLayout.Height) / 2;
 end;
 
 procedure TListViewBase.DeleteButtonClicked(Sender: TObject);
@@ -3082,8 +2874,7 @@ procedure TListViewBase.ProceedDeleteItem;
 var
   Editor: IListViewEditor;
 begin
-  if (FDeleteButtonIndex = -1) or not Supports(Adapter, IListViewEditor, Editor)
-  then
+  if (FDeleteButtonIndex = -1) or not Supports(Adapter, IListViewEditor, Editor) then
     exit;
 
   if (FItemIndex <> -1) and (FItemIndex >= FDeleteButtonIndex) then
@@ -3133,8 +2924,7 @@ end;
 procedure TListViewBase.ObserversBeforeSelection(out LAllowSelection: Boolean);
 begin
   LAllowSelection := True;
-  if Observers.IsObserving(TObserverMapping.EditLinkID) and
-    not TLinkObservers.EditLinkEdit(Observers) then
+  if Observers.IsObserving(TObserverMapping.EditLinkID) and not TLinkObservers.EditLinkEdit(Observers) then
     LAllowSelection := False;
   if LAllowSelection then
     TLinkObservers.PositionLinkPosChanging(Observers);
@@ -3158,8 +2948,7 @@ begin
     FOnUpdateItemView(Self, AListItem);
 end;
 
-procedure TListViewBase.DoUpdatingItemView(const AListItem: TListItem;
-var AHandled: Boolean);
+procedure TListViewBase.DoUpdatingItemView(const AListItem: TListItem; var AHandled: Boolean);
 begin
   if Assigned(FOnUpdatingItemView) then
     FOnUpdatingItemView(Self, AListItem, AHandled);
@@ -3197,8 +2986,7 @@ begin
   Filer.DefineProperty('DeleteButtonEnabled', ReadCanSwipeDelete, nil, False);
   Filer.DefineProperty('EnabledDeleteButton', ReadCanSwipeDelete, nil, False);
   Filer.DefineProperty('IsSearchVisible', ReadIsSearchVisible, nil, False);
-  Filer.DefineProperty('IsSearchAlwaysOnTop', ReadIsSearchAlwaysOnTop,
-    nil, False);
+  Filer.DefineProperty('IsSearchAlwaysOnTop', ReadIsSearchAlwaysOnTop, nil, False);
   Filer.DefineProperty('EditModeOptions', ReadEditModeOptions, nil, False);
 end;
 
@@ -3220,7 +3008,7 @@ end;
 
 procedure TListViewBase.UpdateScrollViewPos(const Value: Single);
 begin
-  if not SameValue(FScrollViewPos, Value, TEpsilon.Vector) then
+  if (not SameValue(FScrollViewPos, Value, TEpsilon.Vector) and FCanScroll) then // sinuke
   begin
     FScrollViewPos := Value;
     DoUpdateScrollViewPos(Value);
@@ -3264,8 +3052,7 @@ begin
   if FHorizontal then
     Result := Max(Trunc(FSideSpace * 2 + FMaxKnownHeight - LocalRect.Width), 0)
   else
-    Result := Max(Trunc(FSideSpace * 2 + FMaxKnownHeight -
-      LocalRect.Height), 0);
+    Result := Max(Trunc(FSideSpace * 2 + FMaxKnownHeight - LocalRect.Height), 0);
   // *** ZuBy
 end;
 
@@ -3362,8 +3149,8 @@ begin
   if not HasStretchyScrolling then
     NewViewPos := EnsureRange(NewViewPos, 0, MaxScrollViewPos);
 
-  if (not SameValue(NewViewPos, FScrollViewPos, TEpsilon.Vector)) and
-    (TStateFlag.NeedsScrollBarDisplay in FStateFlags) then
+  if (not SameValue(NewViewPos, FScrollViewPos, TEpsilon.Vector)) and (TStateFlag.NeedsScrollBarDisplay in FStateFlags)
+  then
   begin
     FScrollBar.StopPropertyAnimation('Opacity');
     FScrollBar.Opacity := 1;
@@ -3390,8 +3177,7 @@ begin
 
   // ZuBy ***
   if FShowScrollBar then
-    FStateFlags := FStateFlags + [TStateFlag.NeedsScrollBarDisplay,
-      TStateFlag.ScrollingActive]
+    FStateFlags := FStateFlags + [TStateFlag.NeedsScrollBarDisplay, TStateFlag.ScrollingActive]
   else
     FStateFlags := FStateFlags + [TStateFlag.ScrollingActive];
   // *** ZuBy
@@ -3444,8 +3230,7 @@ begin
     // Don't show at design time
     if not(csDesigning in ComponentState) then
       FScrollBar.Visible := ((FMaxKnownHeight > LocalHeight) or
-        (HasTouchTracking and (TStateFlag.ScrollingActive in FStateFlags))) and
-        FShowScrollBar // ZuBy
+        (HasTouchTracking and (TStateFlag.ScrollingActive in FStateFlags))) and FShowScrollBar // ZuBy
     else
       FScrollBar.Visible := False;
     FScrollBar.Value := FScrollViewPos;
@@ -3477,11 +3262,9 @@ begin
     Targets[1].TargetType := TAniCalculations.TTargetType.Max;
     // ZuBy ***
     if FHorizontal then
-      Targets[1].Point := TPointD.Create
-        (Max(FSideSpace * 2 + FMaxKnownHeight - LocalRect.Width, 0), 0)
+      Targets[1].Point := TPointD.Create(Max(FSideSpace * 2 + FMaxKnownHeight - LocalRect.Width, 0), 0)
     else
-      Targets[1].Point := TPointD.Create(0,
-        Max(FSideSpace * 2 + FMaxKnownHeight - LocalRect.Height, 0));
+      Targets[1].Point := TPointD.Create(0, Max(FSideSpace * 2 + FMaxKnownHeight - LocalRect.Height, 0));
     // *** ZuBy
 
     FAniCalc.SetTargets(Targets);
@@ -3491,8 +3274,7 @@ begin
     UpdateScrollBar;
 end;
 
-procedure TListViewBase.GetNumberOfRenderingPasses(const StartItem,
-  EndItem: Integer; var Passes, Subpasses: Integer);
+procedure TListViewBase.GetNumberOfRenderingPasses(const StartItem, EndItem: Integer; var Passes, Subpasses: Integer);
 var
   I, J: Integer;
   ListItem: TListItem;
@@ -3509,16 +3291,14 @@ begin
   end;
 end;
 
-function TListViewBase.GetFinalItemSpaces(const ForceIncludeScrollBar
-  : Boolean): TRectF;
+function TListViewBase.GetFinalItemSpaces(const ForceIncludeScrollBar: Boolean): TRectF;
 begin
   Result := FItemSpaces.Rect;
 
   // ZuBy ***
   if FHorizontal then
   begin
-    if (FScrollBar <> nil) and (not HasTouchTracking) and
-      (ForceIncludeScrollBar or FScrollBar.Visible) then
+    if (FScrollBar <> nil) and (not HasTouchTracking) and (ForceIncludeScrollBar or FScrollBar.Visible) then
       Result.Bottom := Result.Bottom - FScrollBar.Height;
 
     // fix SearchVisible
@@ -3527,15 +3307,13 @@ begin
   end
   else
   begin
-    if (FScrollBar <> nil) and (not HasTouchTracking) and
-      (ForceIncludeScrollBar or FScrollBar.Visible) then
+    if (FScrollBar <> nil) and (not HasTouchTracking) and (ForceIncludeScrollBar or FScrollBar.Visible) then
       Result.Right := Result.Right + FScrollBar.Width;
   end;
   // *** ZuBy
 end;
 
-function TListViewBase.GetFinalItemSize(const ForceIncludeScrollBar
-  : Boolean): TSizeF;
+function TListViewBase.GetFinalItemSize(const ForceIncludeScrollBar: Boolean): TSizeF;
 var
   FinalItemSpaces: TRectF;
 begin
@@ -3544,19 +3322,17 @@ begin
     Height - FinalItemSpaces.Top - FinalItemSpaces.Bottom);
 end;
 
-function TListViewBase.GetItemRelRect(const Index: Integer;
-const LocRect: TRectF; const SideSpace: Integer = 0): TRectF;
+function TListViewBase.GetItemRelRect(const Index: Integer; const LocRect: TRectF;
+const SideSpace: Integer = 0): TRectF;
 begin
   // ZuBy ***
   if FHorizontal then
   begin
-    Result := RectF(LocRect.Left + FSideSpace + FHeightSums[Index] -
-      FScrollViewPos, LocRect.Top + FSideSpace + SideSpace,
-      GetItemHeight(Index) - FSideSpace,
+    Result := RectF(LocRect.Left + FSideSpace + FHeightSums[Index] - FScrollViewPos,
+      LocRect.Top + FSideSpace + SideSpace, GetItemHeight(Index) - FSideSpace,
       LocRect.Height - ((SideSpace + FSideSpace) * 2));
 
-    if (FScrollBar <> nil) and (not HasTouchTracking) and FScrollBar.Visible
-    then
+    if (FScrollBar <> nil) and (not HasTouchTracking) and FScrollBar.Visible then
       Result.Bottom := Result.Bottom - FScrollBar.Height;
 
     // fix SearchVisible
@@ -3565,13 +3341,11 @@ begin
   end
   else
   begin
-    Result := RectF(LocRect.Left + FSideSpace + SideSpace,
-      FItemBottomOffset + LocRect.Top + FSideSpace + FHeightSums[Index] -
-      FScrollViewPos, LocRect.Width - ((SideSpace + FSideSpace) * 2),
+    Result := RectF(LocRect.Left + FSideSpace + SideSpace, FItemBottomOffset + LocRect.Top + FSideSpace +
+      FHeightSums[Index] - FScrollViewPos, LocRect.Width - ((SideSpace + FSideSpace) * 2),
       GetItemHeight(Index) - FItemBottomOffset);
 
-    if (FScrollBar <> nil) and (not HasTouchTracking) and FScrollBar.Visible
-    then
+    if (FScrollBar <> nil) and (not HasTouchTracking) and FScrollBar.Visible then
       Result.Right := Result.Right - FScrollBar.Width;
   end;
   // *** ZuBy
@@ -3619,16 +3393,13 @@ begin
   if Index < EndIndex then
     Next := Adapter[Index + 1];
 
-  if (Prev <> nil) and (Next <> nil) and (Prev.Count > 0) and (Next.Count > 0)
-  then
+  if (Prev <> nil) and (Next <> nil) and (Prev.Count > 0) and (Next.Count > 0) then
     exit;
 
-  if (Index = 0) or ((Prev.Count < 1) and (Prev.Purpose = TListItemPurpose.None))
-  then
+  if (Index = 0) or ((Prev.Count < 1) and (Prev.Purpose = TListItemPurpose.None)) then
     Result := Result or ItemSeparatorTop;
 
-  if (Index >= EndIndex) or
-    ((Next.Count < 1) and (Next.Purpose = TListItemPurpose.None)) then
+  if (Index >= EndIndex) or ((Next.Count < 1) and (Next.Purpose = TListItemPurpose.None)) then
     Result := Result or ItemSeparatorBottom;
 end;
 
@@ -3663,8 +3434,8 @@ begin
     Result := Value;
 end;
 
-procedure TListViewBase.DrawItemsFill(const StartItem, EndItem: Integer;
-const LocRect: TRectF; const Opacity: Single; const HeaderIndex: Integer);
+procedure TListViewBase.DrawItemsFill(const StartItem, EndItem: Integer; const LocRect: TRectF; const Opacity: Single;
+const HeaderIndex: Integer);
 var
   I, Sep, AltIndex: Integer;
   DrawRect, DrawSubRect, SepRect: TRectF;
@@ -3680,8 +3451,7 @@ begin
     if I <> HeaderIndex then
     begin
       ListItem := Adapter[I];
-      HeaderBefore := (I > 0) and
-        (Adapter[I - 1].Purpose <> TListItemPurpose.None);
+      HeaderBefore := (I > 0) and (Adapter[I - 1].Purpose <> TListItemPurpose.None);
       if (ListItem <> nil) and ((ListItem.Count > 0) or HeaderBefore) then
       begin
         DrawRect := GetItemRelRect(I, LocRect);
@@ -3696,8 +3466,8 @@ begin
               RowColumns := Min(TListViewItem(ListItem).Tag, FColumns);
               for J := 1 to RowColumns { FColumns } do
               begin
-                DrawPanel := RectF(((J * FColumnWidth) - FColumnWidth) +
-                  (FMarg * J), DrawRect.Top, FColumnWidth, DrawRect.Height);
+                DrawPanel := RectF(((J * FColumnWidth) - FColumnWidth) + (FMarg * J), DrawRect.Top, FColumnWidth,
+                  DrawRect.Height);
                 FItemBoxLight.DrawToCanvas(Canvas, DrawPanel, Opacity);
               end;
             end
@@ -3721,8 +3491,7 @@ begin
 
               // ZuBy ***
               if TListViewItem(ListItem).Data['aUseCustomColor'].AsBoolean then
-                FBrush.Color := TListViewItem(ListItem).Data['aCustomColor']
-                  .AsInteger;
+                FBrush.Color := TListViewItem(ListItem).Data['aCustomColor'].AsInteger;
               // *** ZuBy
             end
             else
@@ -3742,8 +3511,7 @@ begin
           FBrush.Kind := TBrushKind.None;
         // *** ZuBy
 
-        if (Sep and ItemSeparatorTop > 0) and
-          (ListItem.Purpose = TListItemPurpose.None) then
+        if (Sep and ItemSeparatorTop > 0) and (ListItem.Purpose = TListItemPurpose.None) then
         begin
           // ZuBy ***
           if FHorizontal then
@@ -3768,8 +3536,7 @@ begin
       end;
 
       if (ListItem.Purpose = TListItemPurpose.None) and
-        ((I >= Adapter.Count - 1) or
-        (Adapter[I + 1].Purpose = TListItemPurpose.None)) then
+        ((I >= Adapter.Count - 1) or (Adapter[I + 1].Purpose = TListItemPurpose.None)) then
       begin
         // ZuBy ***
         if not FTransparentSeparator then
@@ -3804,8 +3571,7 @@ begin
     if I <> HeaderIndex then
     begin
       ListItem := Adapter[I];
-      HeaderBefore := (I > 0) and
-        (Adapter[I - 1].Purpose <> TListItemPurpose.None);
+      HeaderBefore := (I > 0) and (Adapter[I - 1].Purpose <> TListItemPurpose.None);
 
       if (ListItem <> nil) and ((ListItem.Count > 0) or HeaderBefore) then
       begin
@@ -3819,21 +3585,25 @@ begin
             DrawSubRect.Top := DrawSubRect.Top + 1;
 
           // ZuBy ***
-          if FHeaderStyleImage <> nil then
-            FHeaderStyleImage.DrawToCanvas(Canvas, DrawSubRect, Opacity)
-          else
+          if not FTransparentHeaders then
           begin
-            FBrush.Color := FHeaderStyleColor;
-            Canvas.FillRect(DrawSubRect, 0, 0, AllCorners, Opacity, FBrush);
-          end;
+            if FHeaderStyleImage <> nil then
+              FHeaderStyleImage.DrawToCanvas(Canvas, DrawSubRect, Opacity)
+            else
+            begin
+              FBrush.Color := FHeaderStyleColor;
+              Canvas.FillRect(DrawSubRect, 0, 0, AllCorners, Opacity, FBrush);
+            end;
+          end
+          else
+            FBrush.Kind := TBrushKind.None;
           // *** ZuBy
         end;
       end;
     end;
 end;
 
-procedure TListViewBase.DrawIndexFill(const AIndex: Integer;
-const LocRect: TRectF; const Opacity: Single);
+procedure TListViewBase.DrawIndexFill(const AIndex: Integer; const LocRect: TRectF; const Opacity: Single);
 var
   DrawRect, DrawPanel: TRectF;
   SepHeight, pW: Single;
@@ -3842,8 +3612,7 @@ begin
   DrawRect := GetItemRelRect(AIndex, LocRect);
   SepHeight := GetSeparatorLineHeight;
 
-  if (AIndex >= Adapter.Count - 1) or
-    (Adapter[AIndex + 1].Purpose = TListItemPurpose.None) then
+  if (AIndex >= Adapter.Count - 1) or (Adapter[AIndex + 1].Purpose = TListItemPurpose.None) then
     DrawRect.Bottom := DrawRect.Bottom - SepHeight;
 
   { .$IFDEF MSWINDOWS }
@@ -3869,16 +3638,15 @@ begin
       for J := 1 to RowColumns do
       begin
         pW := (J * FColumnWidth) - FColumnWidth;
-        if InRange(FClickEventMousePos.X, (pW + (J * FMarg)),
-          (pW + FColumnWidth) + (J * FMarg)) then
+        if InRange(FClickEventMousePos.X, (pW + (J * FMarg)), (pW + FColumnWidth) + (J * FMarg)) then
           break;
       end;
 
       if (J > RowColumns) then
         exit;
 
-      DrawPanel := RectF(((J * FColumnWidth) - FColumnWidth) + (FMarg * J),
-        DrawRect.Top, FColumnWidth, DrawRect.Height);
+      DrawPanel := RectF(((J * FColumnWidth) - FColumnWidth) + (FMarg * J), DrawRect.Top, FColumnWidth,
+        DrawRect.Height);
       FSelectionStyleImage.DrawToCanvas(Canvas, DrawPanel, Opacity);
     end
     else
@@ -3902,16 +3670,15 @@ begin
       for J := 1 to RowColumns do
       begin
         pW := (J * FColumnWidth) - FColumnWidth;
-        if InRange(FClickEventMousePos.X, (pW + (J * FMarg)),
-          (pW + FColumnWidth) + (J * FMarg)) then
+        if InRange(FClickEventMousePos.X, (pW + (J * FMarg)), (pW + FColumnWidth) + (J * FMarg)) then
           break;
       end;
 
       if (J > RowColumns) then
         exit;
 
-      DrawPanel := RectF(((J * FColumnWidth) - FColumnWidth) + (FMarg * J),
-        DrawRect.Top, FColumnWidth, DrawRect.Height);
+      DrawPanel := RectF(((J * FColumnWidth) - FColumnWidth) + (FMarg * J), DrawRect.Top, FColumnWidth,
+        DrawRect.Height);
       Canvas.FillRect(DrawPanel, 0, 0, AllCorners, Opacity, FBrush);
     end
     else
@@ -3920,8 +3687,7 @@ begin
   end;
 end;
 
-procedure TListViewBase.DrawTouchAnimation(const Index: Integer;
-const LocRect: TRectF; const Opacity: Single);
+procedure TListViewBase.DrawTouchAnimation(const Index: Integer; const LocRect: TRectF; const Opacity: Single);
 var
   R: TRectF;
 begin
@@ -3932,8 +3698,8 @@ begin
   end;
 end;
 
-function TListViewBase.GetHeaderRelRect(const StartItem, HeaderIndex: Integer;
-const LocRect: TRectF; const SideSpace: Integer): TRectF;
+function TListViewBase.GetHeaderRelRect(const StartItem, HeaderIndex: Integer; const LocRect: TRectF;
+const SideSpace: Integer): TRectF;
 var
   LimitRect: TRectF;
 begin
@@ -3941,8 +3707,7 @@ begin
   if Result.Top < LocRect.Top then
     Result.Offset(0, LocRect.Top - Result.Top);
 
-  if (StartItem < Adapter.Count - 1) and
-    (Adapter[StartItem + 1].HeaderRef <> HeaderIndex) then
+  if (StartItem < Adapter.Count - 1) and (Adapter[StartItem + 1].HeaderRef <> HeaderIndex) then
   begin
     LimitRect := GetItemRelRect(StartItem, LocRect, SideSpace);
 
@@ -3951,18 +3716,16 @@ begin
   end;
 end;
 
-procedure TListViewBase.DrawHeaderItem(const LocRect: TRectF;
-const StartItem, HeaderIndex: Integer; const Opacity: Single);
+procedure TListViewBase.DrawHeaderItem(const LocRect: TRectF; const StartItem, HeaderIndex: Integer;
+const Opacity: Single);
 begin
   // ZuBy ***
   if FHeaderStyleImage <> nil then
-    FHeaderStyleImage.DrawToCanvas(Canvas, GetHeaderRelRect(StartItem,
-      HeaderIndex, LocRect), Opacity)
+    FHeaderStyleImage.DrawToCanvas(Canvas, GetHeaderRelRect(StartItem, HeaderIndex, LocRect), Opacity)
   else
   begin
     FBrush.Color := FHeaderStyleColor;
-    Canvas.FillRect(GetHeaderRelRect(StartItem, HeaderIndex, LocRect), 0, 0,
-      AllCorners, Opacity, FBrush);
+    Canvas.FillRect(GetHeaderRelRect(StartItem, HeaderIndex, LocRect), 0, 0, AllCorners, Opacity, FBrush);
   end;
   // *** ZuBy
 end;
@@ -4010,9 +3773,8 @@ procedure TListViewBase.DrawListItems(const AbsOpacity: Single);
   end;
 
 const
-  DefaultParams: TListItemDrawable.TParams = (AbsoluteOpacity: 1.0;
-  ItemSelectedAlpha: 1.0; DeletingUnwantedOpacity: 1.0;
-  ParentAbsoluteRect: (Left: 0; Top: 0; Right: 0; Bottom: 0); Images: nil);
+  DefaultParams: TListItemDrawable.TParams = (AbsoluteOpacity: 1.0; ItemSelectedAlpha: 1.0;
+  DeletingUnwantedOpacity: 1.0; ParentAbsoluteRect: (Left: 0; Top: 0; Right: 0; Bottom: 0); Images: nil);
   AnimationDeltaEpsilon = 0.01;
 var
   I, StartItem, EndItem, MaxHeight, ItemHeaderIndex, SubPassNo: Integer;
@@ -4047,25 +3809,19 @@ begin
   Params := DefaultParams;
   Params.Images := GetImages;
   if GetDeleteModeTransitionAlpha > AnimationDeltaEpsilon then
-    Params.DeletingUnwantedOpacity :=
-      Max(0, 1 - (GetDeleteModeTransitionAlpha * 2));
+    Params.DeletingUnwantedOpacity := Max(0, 1 - (GetDeleteModeTransitionAlpha * 2));
   Params.ParentAbsoluteRect := AbsoluteRect;
 
-  if FPullToRefresh and ((PullRefreshStrength > 0) or
-    (FPullRefreshAnimation = TPullRefreshAnimation.Playing)) and
-    (FListingService <> nil) and (TListingTransitionFeature.PullToRefresh
-    in FListingService.GetTransitionFeatures) then
+  if FPullToRefresh and ((PullRefreshStrength > 0) or (FPullRefreshAnimation = TPullRefreshAnimation.Playing)) and
+    (FListingService <> nil) and (TListingTransitionFeature.PullToRefresh in FListingService.GetTransitionFeatures) then
     PaintPullRefreshIndicator(Canvas, PullRefreshStrength, AbsOpacity);
 
   if FSearchVisible and (FSearchEdit <> nil) and (FListingService <> nil) then
-    if (FSearchAlwaysOnTop or (not(TListingSearchFeature.AsFirstItem
-      in FListingService.GetSearchFeatures))) and
-      (TListingSearchFeature.StayOnTop in FListingService.GetSearchFeatures)
-    then
+    if (FSearchAlwaysOnTop or (not(TListingSearchFeature.AsFirstItem in FListingService.GetSearchFeatures))) and
+      (TListingSearchFeature.StayOnTop in FListingService.GetSearchFeatures) then
       ClipRect.Top := ClipRect.Top + FSearchEdit.Height
     else
-      ClipRect.Top := ClipRect.Top +
-        Max(0, FSearchEdit.Height - FScrollViewPos);
+      ClipRect.Top := ClipRect.Top + Max(0, FSearchEdit.Height - FScrollViewPos);
 
   // Set item clipping.
   State := Canvas.SaveState;
@@ -4092,8 +3848,7 @@ begin
       break;
     end;
 
-  if (FListingService <> nil) and
-    (TListingHeaderBehavior.Sticky in FListingService.GetHeaderBehaviors) then
+  if (FListingService <> nil) and (TListingHeaderBehavior.Sticky in FListingService.GetHeaderBehaviors) then
     ItemHeaderIndex := Adapter[StartItem].HeaderRef
   else
     ItemHeaderIndex := -1;
@@ -4111,8 +3866,8 @@ begin
     (FAlternatingColors and (TAlphaColorRec(FItemStyleFillAltColor).A > 0)) then
   begin
     if (TAlphaColorRec(FItemStyleFillColor).A >= 255) and
-      (not FAlternatingColors or (TAlphaColorRec(FItemStyleFillAltColor).A >=
-      255)) and SameValue(AbsOpacity, 1, TEpsilon.Vector) then
+      (not FAlternatingColors or (TAlphaColorRec(FItemStyleFillAltColor).A >= 255)) and
+      SameValue(AbsOpacity, 1, TEpsilon.Vector) then
     begin
       Canvas.Blending := False;
       try
@@ -4126,9 +3881,8 @@ begin
   end;
 
   // Draw regular selection
-  if (not FEditMode) and (FItemIndex >= StartItem) and (FItemIndex <= EndItem)
-    and (FSelectionAlphas.Count < 1) and CanDisplaySelectionForItem(FItemIndex)
-  then
+  if (not FEditMode) and (FItemIndex >= StartItem) and (FItemIndex <= EndItem) and (FSelectionAlphas.Count < 1) and
+    CanDisplaySelectionForItem(FItemIndex) then
     DrawIndexFill(FItemIndex, LocRect, AbsOpacity);
 
   // Edit mode has current item and selected items
@@ -4153,22 +3907,19 @@ begin
   // ZuBy ***
   if FHorizontal then
   begin
-    BorderRect.Right := BorderRect.Left + Adapter.GetDefaultViewHeight -
-      MarginSize.X;
+    BorderRect.Right := BorderRect.Left + Adapter.GetDefaultViewHeight - MarginSize.X;
     BorderRect.Bottom := LocRect.Bottom + (FSideSpace + FinalItemSpaces.Bottom);
   end
   else
   begin
     BorderRect.Right := LocRect.Right - (FSideSpace + FinalItemSpaces.Right);
-    BorderRect.Bottom := BorderRect.Top + Adapter.GetDefaultViewHeight -
-      MarginSize.Y;
+    BorderRect.Bottom := BorderRect.Top + Adapter.GetDefaultViewHeight - MarginSize.Y;
   end;
   // *** ZuBy
 
   SceneScale := Canvas.Scale;
 
-  GetNumberOfRenderingPasses(StartItem, EndItem, NumberOfPasses,
-    NumberOfSubPasses);
+  GetNumberOfRenderingPasses(StartItem, EndItem, NumberOfPasses, NumberOfSubPasses);
 
   DrawTouchAnimation(ItemIndex, LocRect, AbsOpacity);
 
@@ -4192,12 +3943,10 @@ begin
             if (FDeleteButtonIndex = I) or (FPrevDeleteButtonIndex = I) then
               Include(DrawStates, TListItemDrawState.Deleting);
 
-            if CanDisplaySelectionForItem(I, ListItem, True, True) and
-              (GetItemSelectionAlpha(I) > TEpsilon.Vector) then
+            if CanDisplaySelectionForItem(I, ListItem, True, True) and (GetItemSelectionAlpha(I) > TEpsilon.Vector) then
               Include(DrawStates, TListItemDrawState.Selected);
 
-            if (FEditModeTransitionAlpha > 0) and
-              (ListItem.Purpose = TListItemPurpose.None) then
+            if (FEditModeTransitionAlpha > 0) and (ListItem.Purpose = TListItemPurpose.None) then
               Include(DrawStates, TListItemDrawState.EditMode);
 
             // During the first sub-pass the designated areas are calculated.
@@ -4208,32 +3957,26 @@ begin
               else
                 ItemHeight := GetItemHeight(I);
               ListItem.WillBePainted;
-              CurDrawable.UpdateValuesFromResources(GetStyleResources,
-                ListItem.Purpose);
+              CurDrawable.UpdateValuesFromResources(GetStyleResources, ListItem.Purpose);
 
               // *** ZuBy
               if FHorizontal then
               begin
-                aDestRect :=
-                  TRectF.Create(TPointF.Create(BorderRect.Left + FHeightSums[I]
-                  - FScrollViewPos, BorderRect.Top),
-                  ItemHeight - VertMarginHeight, BorderRect.Height);
+                aDestRect := TRectF.Create(TPointF.Create(BorderRect.Left + FHeightSums[I] - FScrollViewPos,
+                  BorderRect.Top), ItemHeight - VertMarginHeight, BorderRect.Height);
               end
               else
               begin
-                aDestRect := TRectF.Create(TPointF.Create(BorderRect.Left,
-                  BorderRect.Top + FHeightSums[I] - FScrollViewPos),
-                  BorderRect.Width, ItemHeight - VertMarginHeight);
+                aDestRect := TRectF.Create(TPointF.Create(BorderRect.Left, BorderRect.Top + FHeightSums[I] -
+                  FScrollViewPos), BorderRect.Width, ItemHeight - VertMarginHeight);
               end;
-              CurDrawable.CalculateLocalRect(aDestRect, SceneScale, DrawStates,
-                ListItem);
+              CurDrawable.CalculateLocalRect(aDestRect, SceneScale, DrawStates, ListItem);
             end;
             // *** ZuBy
 
             Params.AbsoluteOpacity := AbsoluteOpacity * CurDrawable.Opacity;
             Params.ItemSelectedAlpha := GetItemSelectionAlpha(ListItem.Index);
-            CurDrawable.Render(Canvas, I, DrawStates, Resources, Params,
-              SubPassNo);
+            CurDrawable.Render(Canvas, I, DrawStates, Resources, Params, SubPassNo);
           end;
         end;
 
@@ -4268,15 +4011,13 @@ begin
               RelRect.Right := BorderRect.Right;
             end;
             // ZuBy ***
-            CurDrawable.UpdateValuesFromResources(GetStyleResources,
-              ListItem.Purpose);
+            CurDrawable.UpdateValuesFromResources(GetStyleResources, ListItem.Purpose);
             CurDrawable.CalculateLocalRect(RelRect, SceneScale, [], ListItem);
           end;
 
           Params.AbsoluteOpacity := AbsoluteOpacity * CurDrawable.Opacity;
           Params.ItemSelectedAlpha := GetItemSelectionAlpha(ListItem.Index);
-          CurDrawable.Render(Canvas, ItemHeaderIndex, DrawStates, Resources,
-            Params, SubPassNo);
+          CurDrawable.Render(Canvas, ItemHeaderIndex, DrawStates, Resources, Params, SubPassNo);
         end;
       end;
   end;
@@ -4286,8 +4027,7 @@ begin
 
   if FPullToRefresh then
   begin
-    NeedPaintScrollingStretchGlow := HasScrollingStretchGlow and
-      (Abs(FScrollStretchStrength) > 0);
+    NeedPaintScrollingStretchGlow := HasScrollingStretchGlow and (Abs(FScrollStretchStrength) > 0);
     NeedPaintPullRefreshStroke := HasPullRefreshStroke;
 
     if NeedPaintScrollingStretchGlow or NeedPaintPullRefreshStroke then
@@ -4354,8 +4094,7 @@ var
   TopViewIndex: Integer;
 begin
   TopViewIndex := Trunc(FScrollViewPos - FSideSpace);
-  FTopItemIndex := Min(Max(FindItemAbsoluteAt(TopViewIndex), 0),
-    Adapter.Count - 1);
+  FTopItemIndex := Min(Max(FindItemAbsoluteAt(TopViewIndex), 0), Adapter.Count - 1);
 end;
 
 procedure TListViewBase.RecreateNativePresentation;
@@ -4387,8 +4126,7 @@ begin
         sw := FScrollBar.Width;
 {$ENDIF}
       // *** sinuke
-      FMarg := Trunc(((Width - sw) - (FColumns * FColumnWidth)) /
-        (FColumns + 1));
+      FMarg := Trunc(((Width - sw) - (FColumns * FColumnWidth)) / (FColumns + 1));
     end;
   finally
     EndUpdate;
@@ -4405,8 +4143,7 @@ begin
       UpdateScrollingLimits;
     if TStateFlag.NeedsRebuild in FStateFlags then
       RebuildList;
-    FStateFlags := FStateFlags - [TStateFlag.NeedsScrollingLimitsUpdate,
-      TStateFlag.NeedsRebuild];
+    FStateFlags := FStateFlags - [TStateFlag.NeedsScrollingLimitsUpdate, TStateFlag.NeedsRebuild];
   end;
   // RecalcTopViewItemIndex; // ZuBy
 end;
@@ -4423,11 +4160,9 @@ begin
     LocalPt := ScreenToLocal(P);
     // *** ZuBy
     if FHorizontal then
-      ItemAt := FindItemAbsoluteAt
-        (Round(FScrollViewPos + LocalPt.X - (LocalRect.Left + FSideSpace)))
+      ItemAt := FindItemAbsoluteAt(Round(FScrollViewPos + LocalPt.X - (LocalRect.Left + FSideSpace)))
     else
-      ItemAt := FindItemAbsoluteAt
-        (Round(FScrollViewPos + LocalPt.Y - (LocalRect.Top + FSideSpace)));
+      ItemAt := FindItemAbsoluteAt(Round(FScrollViewPos + LocalPt.Y - (LocalRect.Top + FSideSpace)));
     // ZuBy ***
     if (ItemAt >= 0) and (ItemAt < Adapter.Count) then
     begin
@@ -4443,8 +4178,8 @@ begin
   Result := inherited ObjectAtPoint(P);
 end;
 
-function TListViewBase.FindLocalItemObjectAtPosition(const ItemIndex: Integer;
-const Position: TPointF): TListItemDrawable;
+function TListViewBase.FindLocalItemObjectAtPosition(const ItemIndex: Integer; const Position: TPointF)
+  : TListItemDrawable;
 var
   I: Integer;
   Item: TListItem;
@@ -4461,8 +4196,7 @@ begin
   Result := nil;
 end;
 
-procedure TListViewBase.KeyDown(var Key: Word; var KeyChar: System.WideChar;
-Shift: TShiftState);
+procedure TListViewBase.KeyDown(var Key: Word; var KeyChar: System.WideChar; Shift: TShiftState);
 var
   LFirstVisible, LLastVisible: Integer;
   LItemIndex: Integer;
@@ -4481,15 +4215,13 @@ var
     if FHorizontal then
       MaxHeight := Ceil(LocRect.Width + FScrollViewPos)
     else
-      MaxHeight := Ceil(LocRect.Height + FScrollViewPos);
-    // Calculate item height sums.
+      MaxHeight := Ceil(LocRect.Height + FScrollViewPos); // Calculate item height sums.
     // ZuBy ***
 
     // Determine starting and final elements that are currently visible.
     TopViewIndex := Trunc(FScrollViewPos - FSideSpace);
 
-    LFirstVisible := Min(Max(FindItemAbsoluteAt(TopViewIndex), 0),
-      Adapter.Count - 1);
+    LFirstVisible := Min(Max(FindItemAbsoluteAt(TopViewIndex), 0), Adapter.Count - 1);
     LLastVisible := Adapter.Count - 1;
 
     for I := LFirstVisible + 1 to Adapter.Count - 2 do
@@ -4505,8 +4237,7 @@ var
     // Cycle through items up until non-header and non-footer is found.
     repeat
       LItemIndex := Max(LItemIndex - 1, 0);
-    until (LItemIndex <= 0) or
-      (Adapter[LItemIndex].Purpose = TListItemPurpose.None);
+    until (LItemIndex <= 0) or (Adapter[LItemIndex].Purpose = TListItemPurpose.None);
   end;
 
   procedure CycleNewIndexDown;
@@ -4514,8 +4245,7 @@ var
     // Cycle through items down until non-header and non-footer is found.
     repeat
       LItemIndex := Min(LItemIndex + 1, Adapter.Count - 1);
-    until (LItemIndex >= ItemCount - 1) or
-      (Adapter[LItemIndex].Purpose = TListItemPurpose.None);
+    until (LItemIndex >= ItemCount - 1) or (Adapter[LItemIndex].Purpose = TListItemPurpose.None);
   end;
 
 var
@@ -4526,8 +4256,7 @@ begin
   LItemIndex := ItemIndex;
   if FAllowSelection then
     if Observers.IsObserving(TObserverMapping.EditLinkID) then
-      if (KeyChar > ' ') or (Key in [vkHome, vkEnd, vkUp, vkDown, vkRight,
-        vkLeft]) then
+      if (KeyChar > ' ') or (Key in [vkHome, vkEnd, vkUp, vkDown, vkRight, vkLeft]) then
         if TLinkObservers.EditLinkIsReadOnly(Observers) then
           exit
         else if not TLinkObservers.EditLinkEdit(Observers) then
@@ -4539,9 +4268,8 @@ begin
     begin
       if Supports(Adapter, IListViewTextProvider, TextProvider) then
         for I := 0 to ItemCount - 1 do
-          if (TextProvider.Text[I] <> '') and
-            (string(TextProvider.Text[I].Chars[0]).ToLower = string(KeyChar)
-            .ToLower) then
+          if (TextProvider.Text[I] <> '') and (string(TextProvider.Text[I].Chars[0]).ToLower = string(KeyChar).ToLower)
+          then
           begin
             LItemIndex := I;
             break;
@@ -4590,8 +4318,7 @@ begin
       vkPrior:
         begin
           CalcVisible;
-          LItemIndex :=
-            Max(0, LFirstVisible - Max(1, LLastVisible - LFirstVisible + 1));
+          LItemIndex := Max(0, LFirstVisible - Max(1, LLastVisible - LFirstVisible + 1));
 
           if Adapter[LItemIndex].Purpose <> TListItemPurpose.None then
             CycleNewIndexDown;
@@ -4600,8 +4327,7 @@ begin
       vkNext:
         begin
           CalcVisible;
-          LItemIndex := Min(Adapter.Count - 1,
-            LLastVisible + Max(1, LLastVisible - LFirstVisible + 1));
+          LItemIndex := Min(Adapter.Count - 1, LLastVisible + Max(1, LLastVisible - LFirstVisible + 1));
 
           if Adapter[LItemIndex].Purpose <> TListItemPurpose.None then
             CycleNewIndexUp;
@@ -4610,8 +4336,7 @@ begin
       vkSpace:
         begin
           SetNewItemIndex(FItemIndex);
-          if (not HasTouchTracking) and (FItemIndex >= 0) and
-            (FItemIndex < Adapter.Count) then
+          if (not HasTouchTracking) and (FItemIndex >= 0) and (FItemIndex < Adapter.Count) then
             Adapter[FItemIndex].MouseSelect;
         end
     else
@@ -4631,8 +4356,7 @@ begin
   end;
 end;
 
-procedure TListViewBase.MouseDown(Button: TMouseButton; Shift: TShiftState;
-X, Y: Single);
+procedure TListViewBase.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Single);
   function CancelMode: Boolean;
   var
     FirstIndex: Integer;
@@ -4654,14 +4378,11 @@ X, Y: Single);
         FTapSelectNewIndexApplied := -1;
         exit(True);
       end
-      else if Supports(Adapter, IListViewCheckProvider, Checkable) and
-        Checkable.AnyChecked(True) then
+      else if Supports(Adapter, IListViewCheckProvider, Checkable) and Checkable.AnyChecked(True) then
       begin
         FirstIndex := Checkable.FirstChecked(True);
         GlyphButtonDrawable := GetGlyphButton(FirstIndex);
-        if (FirstIndex <> -1) and
-          (not(TStateFlag.ScrollingActive in FStateFlags)) and
-          (GlyphButtonDrawable <> nil) and
+        if (FirstIndex <> -1) and (not(TStateFlag.ScrollingActive in FStateFlags)) and (GlyphButtonDrawable <> nil) and
           (GlyphButtonDrawable.ButtonType in [TGlyphButtonType.Delete]) then
         begin
           Checkable.CheckAll(False);
@@ -4685,8 +4406,7 @@ begin
 
   FDragListMode := TInternalDragMode.None;
 
-  if (FAniCalc <> nil) and (TStateFlag.ScrollingActive in FStateFlags) and
-    FAniCalc.Animation then
+  if (FAniCalc <> nil) and (TStateFlag.ScrollingActive in FStateFlags) and FAniCalc.Animation then
   begin
     FAniCalc.Averaging := ssTouch in Shift;
     FAniCalc.MouseUp(X, Y);
@@ -4714,8 +4434,7 @@ begin
         Distance := Y - LocalRect.Top;
       // ZuBy ***
 
-      if (not(TStateFlag.ScrollingActive in FStateFlags)) and FAutoTapScroll and
-        (Distance < FAutoTapTreshold) then
+      if (not(TStateFlag.ScrollingActive in FStateFlags)) and FAutoTapScroll and (Distance < FAutoTapTreshold) then
         FAutoTapDistance := Round(FScrollViewPos)
       else
         FAutoTapDistance := 0;
@@ -4725,22 +4444,18 @@ begin
     begin
       // ZuBy ***
       if FHorizontal then
-        ItemAt := FindItemAbsoluteAtWithCheck
-          (Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
+        ItemAt := FindItemAbsoluteAtWithCheck(Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
       else
-        ItemAt := FindItemAbsoluteAtWithCheck
-          (Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
+        ItemAt := FindItemAbsoluteAtWithCheck(Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
       // *** ZuBy
 
-      if (ItemAt >= 0) and (ItemAt < Adapter.Count) and
-        (Adapter[ItemAt].Count > 0) then
+      if (ItemAt >= 0) and (ItemAt < Adapter.Count) and (Adapter[ItemAt].Count > 0) then
       begin
         if Adapter[ItemAt].MouseDown(Button, Shift, PointF(X, Y)) then
         begin
           FMouseEventIndex := ItemAt;
 
-          FClickEventMousePos := TPointF.Create(X, Y) - GetItemRelRect(ItemAt,
-            LocalRect).TopLeft;
+          FClickEventMousePos := TPointF.Create(X, Y) - GetItemRelRect(ItemAt, LocalRect).TopLeft;
 
           if FAllowSelection then
             SetNewItemIndex(FMouseEventIndex);
@@ -4761,21 +4476,17 @@ begin
           GlyphButtonDrawable := GetGlyphButton(ItemAt);
           IsCheckGlyphVisible := FEditMode and (GlyphButtonDrawable <> nil) and
             (GlyphButtonDrawable.ButtonType in [TGlyphButtonType.Checkbox]);
-          if ((FMouseClickIndex = -1) or IsCheckGlyphVisible) and
-            (FDeleteButtonIndex = -1) then
+          if ((FMouseClickIndex = -1) or IsCheckGlyphVisible) and (FDeleteButtonIndex = -1) then
           begin
             FTapSelectItemIndex := ItemAt;
             FTapSelectNewIndexApplied := -1;
             FTapSelectStartTime := FTimerService.GetTick;
 
-            FClickEventMousePos := TPointF.Create(X, Y) - GetItemRelRect(ItemAt,
-              LocalRect).TopLeft;
-            FClickEventControl := FindLocalItemObjectAtPosition(ItemAt,
-              TPointF.Create(X, Y));
+            FClickEventMousePos := TPointF.Create(X, Y) - GetItemRelRect(ItemAt, LocalRect).TopLeft;
+            FClickEventControl := FindLocalItemObjectAtPosition(ItemAt, TPointF.Create(X, Y));
 
             if FTouchAnimationObject <> nil then
-              FTouchAnimationObject.TouchAnimation.StartAnimation(Self,
-                TTouchAnimationAdapter.TAnimationKind.Pressed);
+              FTouchAnimationObject.TouchAnimation.StartAnimation(Self, TTouchAnimationAdapter.TAnimationKind.Pressed);
 
             UpdateRecurrentTimer;
 
@@ -4803,7 +4514,7 @@ begin
       FMouseClickDelta := TPointF.Zero;
       // ZuBy ***
       FMouseClickSwipeEventSend := False;
-      FMouseClickSwipeStart := FMouseDownAt;
+      // FMouseClickSwipeStart := FMouseDownAt;
       // *** ZuBy
       FMousePrevScrollPos := FScrollViewPos;
     end;
@@ -4838,18 +4549,17 @@ begin
 
     if FDragListMode = TInternalDragMode.None then
     begin
-      if HasTouchTracking and (Abs(FMouseClickDelta.X) > MinSwypeThreshold) and
-        (FCanSwipeDelete or FCanSwipeDirection) and
-        (FTapSelectNewIndexApplied = -1) then
+      if HasTouchTracking and (Abs(FMouseClickDelta.X) > MinSwypeThreshold) and (FCanSwipeDelete or FCanSwipeDirection)
+        and (FTapSelectNewIndexApplied = -1) then
       begin
         if FCanSwipeDirection then
         begin
           if Assigned(FOnSwipe) and (not FMouseClickSwipeEventSend) then
           begin
             FMouseClickSwipeEventSend := True;
-            if Abs(FMouseClickSwipeStart.X) > (X + MinSwypeThreshold) then
+            if Abs(FMouseDownAt.X) > (X + MinSwypeThreshold) then
               FOnSwipe(Self, TSwipeDirection.ToLeft)
-            else if Abs(FMouseClickSwipeStart.X) < (X + MinSwypeThreshold) then
+            else if Abs(FMouseDownAt.X) < (X + MinSwypeThreshold) then
               FOnSwipe(Self, TSwipeDirection.ToRight);
           end;
         end
@@ -4882,32 +4592,26 @@ begin
     end;
   end;
 
-  if (FTapSelectNewIndexApplied <> -1) and
-    (FDragListMode = TInternalDragMode.Drag) then
+  if (FTapSelectNewIndexApplied <> -1) and (FDragListMode = TInternalDragMode.Drag) then
   begin
     if FEditMode and Supports(Adapter, IListViewCheckProvider, Checkable) then
-      Checkable[FTapSelectNewIndexApplied] :=
-        not Checkable[FTapSelectNewIndexApplied];
+      Checkable[FTapSelectNewIndexApplied] := not Checkable[FTapSelectNewIndexApplied];
 
     FTapSelectNewIndexApplied := -1;
     SetItemIndexInternal(-1);
   end;
 
   if (not FEditMode) and (FDragListMode = TInternalDragMode.Swype) and
-    (not(TStateFlag.ScrollingMouseTouch in FStateFlags)) and
-    (FDeleteButtonIndex = -1) and HasTouchTracking then
+    (not(TStateFlag.ScrollingMouseTouch in FStateFlags)) and (FDeleteButtonIndex = -1) and HasTouchTracking then
   begin
     // *** ZuBy
     if FHorizontal then
-      NewDeleteIndex := FindItemAbsoluteAt
-        (Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
+      NewDeleteIndex := FindItemAbsoluteAt(Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
     else
-      NewDeleteIndex := FindItemAbsoluteAt
-        (Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
+      NewDeleteIndex := FindItemAbsoluteAt(Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
     // ZuBy ***
 
-    if (NewDeleteIndex <> -1) and
-      (Adapter[NewDeleteIndex].Purpose <> TListItemPurpose.None) then
+    if (NewDeleteIndex <> -1) and (Adapter[NewDeleteIndex].Purpose <> TListItemPurpose.None) then
       NewDeleteIndex := -1;
 
     if NewDeleteIndex <> -1 then
@@ -4919,8 +4623,7 @@ begin
       FDragListMode := TInternalDragMode.None;
       FMouseClicked := False;
 
-      if (FAniCalc <> nil) and (TStateFlag.ScrollingActive in FStateFlags) and
-        FAniCalc.Animation then
+      if (FAniCalc <> nil) and (TStateFlag.ScrollingActive in FStateFlags) and FAniCalc.Animation then
       begin
         FAniCalc.Averaging := ssTouch in Shift;
         FAniCalc.MouseUp(X, Y);
@@ -4931,26 +4634,22 @@ begin
     end;
   end;
 
-  if (FAniCalc <> nil) and FAniCalc.Down and
-    (FDragListMode = TInternalDragMode.Drag) then
+  if (FAniCalc <> nil) and FAniCalc.Down and (FDragListMode = TInternalDragMode.Drag) then
     FAniCalc.MouseMove(X, Y);
 
   if (FMouseEventIndex <> -1) and (FDragListMode = TInternalDragMode.Drag) then
     Adapter[FMouseEventIndex].MouseMove(Shift, PointF(X, Y));
 
-  if (FTouchAnimationObject <> nil) and (FAniCalc <> nil) and
-    (TStateFlag.ScrollingActive in FStateFlags) then
+  if (FTouchAnimationObject <> nil) and (FAniCalc <> nil) and (TStateFlag.ScrollingActive in FStateFlags) then
     FTouchAnimationObject.TouchAnimation.StopAnimation;
 end;
 
-function TListViewBase.GetGlyphButton(const Index: Integer)
-  : TListItemGlyphButton;
+function TListViewBase.GetGlyphButton(const Index: Integer): TListItemGlyphButton;
 var
   Provider: IListViewGlyphButtonProvider;
 begin
   Result := nil;
-  if (Index <> -1) and Supports(Adapter, IListViewGlyphButtonProvider, Provider)
-  then
+  if (Index <> -1) and Supports(Adapter, IListViewGlyphButtonProvider, Provider) then
     Result := Provider.GlyphButtonDrawable[Index];
 end;
 
@@ -4975,8 +4674,7 @@ begin
       begin
         Checkable[NewIndex] := not Checkable[NewIndex];
         GlyphButtonDrawable := GetGlyphButton(NewIndex);
-        if (not(TStateFlag.ScrollingActive in FStateFlags)) and
-          (GlyphButtonDrawable <> nil) and
+        if (not(TStateFlag.ScrollingActive in FStateFlags)) and (GlyphButtonDrawable <> nil) and
           (GlyphButtonDrawable.ButtonType in [TGlyphButtonType.Delete]) then
           SetDeleteButtonIndex(NewIndex);
       end;
@@ -4988,19 +4686,17 @@ begin
   end;
 end;
 
-procedure TListViewBase.MouseUp(Button: TMouseButton; Shift: TShiftState;
-X, Y: Single);
+procedure TListViewBase.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 var
   NewIndex: Integer;
 begin
   inherited;
 
-  FMouseClickSwipeEventSend := False;
-  FMouseClickSwipeStart := TPoint.Zero;
-
-  if ((not FEditMode) and (FDeleteButtonIndex <> -1)) or (not ShouldHandleEvents)
-  then
+  if ((not FEditMode) and (FDeleteButtonIndex <> -1)) or (not ShouldHandleEvents) then
+  begin
+    FMouseClickSwipeEventSend := False;
     exit;
+  end;
 
   if FTapSelectNewIndexApplied <> -1 then
   begin
@@ -5027,10 +4723,8 @@ begin
   if (FAniCalc <> nil) and (TStateFlag.ScrollingActive in FStateFlags) then
     FAniCalc.MouseUp(X, Y);
 
-  if (FTouchAnimationObject <> nil) and
-    not((FAniCalc <> nil) and (TStateFlag.ScrollingActive in FStateFlags)) then
-    FTouchAnimationObject.TouchAnimation.StartAnimation(Self,
-      TTouchAnimationAdapter.TAnimationKind.Unpressed);
+  if (FTouchAnimationObject <> nil) and not((FAniCalc <> nil) and (TStateFlag.ScrollingActive in FStateFlags)) then
+    FTouchAnimationObject.TouchAnimation.StartAnimation(Self, TTouchAnimationAdapter.TAnimationKind.Unpressed);
 
   if FMouseClicked then
   begin
@@ -5047,45 +4741,37 @@ begin
       begin
         if (FAutoTapDistance > 0) and (FTapSelectNewIndexApplied = -1) then
         begin
-          TAnimator.AnimateFloat(Self, 'ScrollViewPos', 0,
-            Min(FAutoTapDistance / AutoTapScrollingSpeed,
-            AutoTapMaxScrollingTime), TAnimationType.Out,
-            TInterpolationType.Sinusoidal);
+          TAnimator.AnimateFloat(Self, 'ScrollViewPos', 0, Min(FAutoTapDistance / AutoTapScrollingSpeed,
+            AutoTapMaxScrollingTime), TAnimationType.Out, TInterpolationType.Sinusoidal);
           FAutoTapDistance := 0;
         end
-        else if (FMouseClickIndex = -1) and (FTapSelectNewIndexApplied = -1)
-        then
+        else if (FMouseClickIndex = -1) and (FTapSelectNewIndexApplied = -1) then
         begin
           if FDragListMode = TInternalDragMode.None then
           begin
             // *** ZuBy
             if FHorizontal then
-              NewIndex := FindItemAbsoluteAtWithCheck
-                (Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
+              NewIndex := FindItemAbsoluteAtWithCheck(Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
             else
-              NewIndex := FindItemAbsoluteAtWithCheck
-                (Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
+              NewIndex := FindItemAbsoluteAtWithCheck(Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
             // ZuBy ***
 
-            if (NewIndex >= 0) and (NewIndex < Adapter.Count) and
-              (Adapter[NewIndex].Count > 0) and
+            if (NewIndex >= 0) and (NewIndex < Adapter.Count) and (Adapter[NewIndex].Count > 0) and
               (Adapter[NewIndex].Purpose = TListItemPurpose.None) then
             begin
               if FEditMode or FAllowSelection then
               begin
-                if (FMouseClickIndex = -1) and Adapter[NewIndex].HasClickOnSelectItems
-                then
+                if (FMouseClickIndex = -1) and Adapter[NewIndex].HasClickOnSelectItems then
                   FItemIndex := -1;
                 SetNewItemIndex(NewIndex);
               end;
 
               FClickEventItemIndex := NewIndex;
-              FClickEventMousePos := TPointF.Create(X, Y) -
-                GetItemRelRect(NewIndex, LocalRect).TopLeft;
-              FClickEventControl := FindLocalItemObjectAtPosition
-                (FClickEventItemIndex, TPointF.Create(X, Y));
+              FClickEventMousePos := TPointF.Create(X, Y) - GetItemRelRect(NewIndex, LocalRect).TopLeft;
+              FClickEventControl := FindLocalItemObjectAtPosition(FClickEventItemIndex, TPointF.Create(X, Y));
 
-              StartIncident(TDelayedIncident.ClickEvent);
+              if not FMouseClickSwipeEventSend then
+                StartIncident(TDelayedIncident.ClickEvent);
 
               // ZuBy ***
               if FAutoColumns then
@@ -5105,10 +4791,11 @@ begin
     FTapSelectNewIndexApplied := -1;
     FDragListMode := TInternalDragMode.None;
   end;
+
+  FMouseClickSwipeEventSend := False;
 end;
 
-procedure TListViewBase.MouseWheel(Shift: TShiftState; WheelDelta: Integer;
-var Handled: Boolean);
+procedure TListViewBase.MouseWheel(Shift: TShiftState; WheelDelta: Integer; var Handled: Boolean);
 var
   Offset: Single;
 begin
@@ -5183,8 +4870,7 @@ end;
 
 procedure TListViewBase.DoChange;
 begin
-  StartIncident(TDelayedIncident.ChangeRepainted, False,
-    ChangeRepaintedIncidentDelay);
+  StartIncident(TDelayedIncident.ChangeRepainted, False, ChangeRepaintedIncidentDelay);
 
   if Assigned(FOnChange) then
     FOnChange(Self);
@@ -5305,33 +4991,19 @@ begin
 
   Result := Pivot;
 
-  if (Result > 0) and (Result < FHeightSums.Count) and
-    (FHeightSums[Result] >= ViewAt) then
+  if (Result > 0) and (Result < FHeightSums.Count) and (FHeightSums[Result] >= ViewAt) then
     Dec(Result);
 end;
 
-function TListViewBase.FindItemAbsoluteAtWithCheck(const ViewAt
-  : Integer): Integer;
+function TListViewBase.FindItemAbsoluteAtWithCheck(const ViewAt: Integer): Integer;
 begin
   Result := -1;
   if Adapter.Count > 0 then
   begin
     UpdateItemLookups;
-    if ViewAt < FHeightSums[FHeightSums.Count - 1] +
-      GetItemHeight(Adapter.Count - 1) then
+    if ViewAt < FHeightSums[FHeightSums.Count - 1] + GetItemHeight(Adapter.Count - 1) then
       Result := FindItemAbsoluteAt(ViewAt);
   end;
-end;
-
-function TListViewBase.FindItemByPosition(X, Y: Single): Integer; // ZuBy
-begin
-  if FHorizontal then
-    Result := FindItemAbsoluteAtWithCheck
-      (Round(FScrollViewPos + X - (LocalRect.Left + FSideSpace)))
-  else
-    Result := FindItemAbsoluteAtWithCheck
-      (Round(FScrollViewPos + Y - (LocalRect.Top + FSideSpace)));
-  // *** ZuBy
 end;
 
 function TListViewBase.GetDefaultStyleLookupName: string;
@@ -5349,8 +5021,7 @@ begin
   if Value then
   begin
     // Touch Animation
-    if FindStyleResource<TCustomStyleObject>('touchanimation', TouchAnimation)
-    then
+    if FindStyleResource<TCustomStyleObject>('touchanimation', TouchAnimation) then
     begin
       Supports(TouchAnimation, ITouchAnimationObject, FTouchAnimationObject);
       if FTouchAnimationObject <> nil then
@@ -5367,8 +5038,7 @@ end;
 
 procedure TListViewBase.ApplyStyle;
 
-  function GetColorFromStyle(const ObjectName: string;
-  const DefaultColor: TAlphaColor): TAlphaColor;
+  function GetColorFromStyle(const ObjectName: string; const DefaultColor: TAlphaColor): TAlphaColor;
   var
     StyleObject: TFmxObject;
   begin
@@ -5409,26 +5079,20 @@ begin
   FBackgroundStyleColor := GetColorFromStyle('background', claWhite);
 
   FItemStyleFillColor := GetColorFromStyle('itembackground', claWhite);
-  FItemStyleFillAltColor := GetColorFromStyle('alternatingitembackground',
-    claWhite);
+  FItemStyleFillAltColor := GetColorFromStyle('alternatingitembackground', claWhite);
   FItemStyleFrameColor := GetColorFromStyle('frame', claBlack);
 
   // Item Colors
   FStyleResources.DefaultTextColor := GetColorFromStyle('foreground', claBlack);
-  FStyleResources.DefaultTextSelectedColor := GetColorFromStyle('selectiontext',
-    claBlack);
+  FStyleResources.DefaultTextSelectedColor := GetColorFromStyle('selectiontext', claBlack);
   FStyleResources.DetailTextColor := GetColorFromStyle('detailtext', claBlack);
   FStyleResources.HeaderTextColor := GetColorFromStyle('headertext', claWhite);
-  FStyleResources.HeaderTextShadowColor := GetColorFromStyle('headertextshadow',
-    claWhite);
+  FStyleResources.HeaderTextShadowColor := GetColorFromStyle('headertextshadow', claWhite);
 
   FStyleResources.ButtonTextColor := GetColorFromStyle('buttontext', claWhite);
-  FStyleResources.ButtonTextPressedColor :=
-    GetColorFromStyle('buttontextpressed', claBlack);
-  FStyleResources.DeleteButtonTextColor := GetColorFromStyle('deletebuttontext',
-    claWhite);
-  FStyleResources.DeleteButtonTextPressedColor :=
-    GetColorFromStyle('deletebuttontextpressed', claWhite);
+  FStyleResources.ButtonTextPressedColor := GetColorFromStyle('buttontextpressed', claBlack);
+  FStyleResources.DeleteButtonTextColor := GetColorFromStyle('deletebuttontext', claWhite);
+  FStyleResources.DeleteButtonTextPressedColor := GetColorFromStyle('deletebuttontextpressed', claWhite);
 
   // Fonts
   AssignFontFromStyle(FStyleResources.DefaultTextFont, 'font');
@@ -5462,47 +5126,29 @@ begin
   EnableTouchAnimation(True);
   // ZuBy ***
 
-  FStyleResources.ButtonAddItemStyleImage.Normal :=
-    GetStyleObjectFromStyle('additembutton');
-  FStyleResources.ButtonAddItemStyleImage.Pressed :=
-    GetStyleObjectFromStyle('additembuttonpressed');
-  FStyleResources.ButtonDeleteItemStyleImage.Normal :=
-    GetStyleObjectFromStyle('deleteitembutton');
-  FStyleResources.ButtonDeleteItemStyleImage.Pressed :=
-    GetStyleObjectFromStyle('deleteitembuttonglyph');
-  FStyleResources.ButtonNormalStyleImage.Normal :=
-    GetStyleObjectFromStyle('button');
-  FStyleResources.ButtonNormalStyleImage.Pressed :=
-    GetStyleObjectFromStyle('buttonpressed');
-  FStyleResources.ButtonDeleteStyleImage.Normal :=
-    GetStyleObjectFromStyle('deletebutton');
-  FStyleResources.ButtonDeleteStyleImage.Pressed :=
-    GetStyleObjectFromStyle('deletebuttonpressed');
-  FStyleResources.ButtonCheckboxStyleImage.Normal :=
-    GetStyleObjectFromStyle('checkboxunchecked');
-  FStyleResources.ButtonCheckboxStyleImage.Pressed :=
-    GetStyleObjectFromStyle('checkboxchecked');
+  FStyleResources.ButtonAddItemStyleImage.Normal := GetStyleObjectFromStyle('additembutton');
+  FStyleResources.ButtonAddItemStyleImage.Pressed := GetStyleObjectFromStyle('additembuttonpressed');
+  FStyleResources.ButtonDeleteItemStyleImage.Normal := GetStyleObjectFromStyle('deleteitembutton');
+  FStyleResources.ButtonDeleteItemStyleImage.Pressed := GetStyleObjectFromStyle('deleteitembuttonglyph');
+  FStyleResources.ButtonNormalStyleImage.Normal := GetStyleObjectFromStyle('button');
+  FStyleResources.ButtonNormalStyleImage.Pressed := GetStyleObjectFromStyle('buttonpressed');
+  FStyleResources.ButtonDeleteStyleImage.Normal := GetStyleObjectFromStyle('deletebutton');
+  FStyleResources.ButtonDeleteStyleImage.Pressed := GetStyleObjectFromStyle('deletebuttonpressed');
+  FStyleResources.ButtonCheckboxStyleImage.Normal := GetStyleObjectFromStyle('checkboxunchecked');
+  FStyleResources.ButtonCheckboxStyleImage.Pressed := GetStyleObjectFromStyle('checkboxchecked');
 
   // Acessory Images
-  FStyleResources.AccessoryImages[TAccessoryType.More].Normal :=
-    GetStyleObjectFromStyle('accessorymore');
-  FStyleResources.AccessoryImages[TAccessoryType.More].Selected :=
-    GetStyleObjectFromStyle('accessorymoreselected');
-  FStyleResources.AccessoryImages[TAccessoryType.Checkmark].Normal :=
-    GetStyleObjectFromStyle('accessorycheckmark');
+  FStyleResources.AccessoryImages[TAccessoryType.More].Normal := GetStyleObjectFromStyle('accessorymore');
+  FStyleResources.AccessoryImages[TAccessoryType.More].Selected := GetStyleObjectFromStyle('accessorymoreselected');
+  FStyleResources.AccessoryImages[TAccessoryType.Checkmark].Normal := GetStyleObjectFromStyle('accessorycheckmark');
   FStyleResources.AccessoryImages[TAccessoryType.Checkmark].Selected :=
     GetStyleObjectFromStyle('accessorycheckmarkselected');
-  FStyleResources.AccessoryImages[TAccessoryType.Detail].Normal :=
-    GetStyleObjectFromStyle('accessorydetail');
-  FStyleResources.AccessoryImages[TAccessoryType.Detail].Selected :=
-    GetStyleObjectFromStyle('accessorydetailselected');
+  FStyleResources.AccessoryImages[TAccessoryType.Detail].Normal := GetStyleObjectFromStyle('accessorydetail');
+  FStyleResources.AccessoryImages[TAccessoryType.Detail].Selected := GetStyleObjectFromStyle('accessorydetailselected');
 
-  FStyleResources.ScrollingStretchGlowColor :=
-    GetColorFromStyle('glow', $FF87C3DC);
-  FStyleResources.PullRefreshIndicatorColor := GetColorFromStyle('indicator',
-    $FF686F7B);
-  FStyleResources.PullRefreshStrokeColor :=
-    GetColorFromStyle('pullrefreshstroke', $FF008CBB);
+  FStyleResources.ScrollingStretchGlowColor := GetColorFromStyle('glow', $FF87C3DC);
+  FStyleResources.PullRefreshIndicatorColor := GetColorFromStyle('indicator', $FF686F7B);
+  FStyleResources.PullRefreshStrokeColor := GetColorFromStyle('pullrefreshstroke', $FF008CBB);
 end;
 
 procedure TListViewBase.FreeStyle;
@@ -5543,15 +5189,14 @@ begin
       NewPos := FSideSpace + FHeightSums[AItemIndex];
 
       // Take into account sticky header, so it does not clutter the view.
-      if HasTouchTracking and (Adapter[AItemIndex].HeaderRef <> -1) and
-        (Adapter[AItemIndex].HeaderRef <> AItemIndex) then
+      if HasTouchTracking and (Adapter[AItemIndex].HeaderRef <> -1) and (Adapter[AItemIndex].HeaderRef <> AItemIndex)
+      then
         Dec(NewPos, GetItemHeight(Adapter[AItemIndex].HeaderRef));
 
       SetScrollViewPos(NewPos);
     end
     else if ItemRect.Right > LocRect.Right then
-      SetScrollViewPos(FSideSpace + FHeightSums[AItemIndex] -
-        (LocRect.Width - GetItemHeight(AItemIndex)));
+      SetScrollViewPos(FSideSpace + FHeightSums[AItemIndex] - (LocRect.Width - GetItemHeight(AItemIndex)));
   end
   else
   begin
@@ -5560,23 +5205,21 @@ begin
       NewPos := FSideSpace + FHeightSums[AItemIndex];
 
       // Take into account sticky header, so it does not clutter the view.
-      if HasTouchTracking and (Adapter[AItemIndex].HeaderRef <> -1) and
-        (Adapter[AItemIndex].HeaderRef <> AItemIndex) then
+      if HasTouchTracking and (Adapter[AItemIndex].HeaderRef <> -1) and (Adapter[AItemIndex].HeaderRef <> AItemIndex)
+      then
         Dec(NewPos, GetItemHeight(Adapter[AItemIndex].HeaderRef));
 
       SetScrollViewPos(NewPos);
     end
     else if ItemRect.Bottom > LocRect.Bottom then
-      SetScrollViewPos(FSideSpace + FHeightSums[AItemIndex] -
-        (LocRect.Height - GetItemHeight(AItemIndex)));
+      SetScrollViewPos(FSideSpace + FHeightSums[AItemIndex] - (LocRect.Height - GetItemHeight(AItemIndex)));
   end;
   // *** ZuBy
 end;
 
 procedure TListViewBase.ImagesChanged;
 begin
-  if ([csLoading, csDestroying] * ComponentState = []) and (FImageLink <> nil)
-  then
+  if ([csLoading, csDestroying] * ComponentState = []) and (FImageLink <> nil) then
     Invalidate;
 end;
 
@@ -5623,8 +5266,7 @@ var
   PresentationService: IFMXListViewPresentationService;
 begin
   inherited;
-  if (csDesigning in ComponentState) and
-    TPlatformServices.Current.SupportsPlatformService
+  if (csDesigning in ComponentState) and TPlatformServices.Current.SupportsPlatformService
     (IFMXListViewPresentationService, PresentationService) then
     PresentationService.DetachPresentation(Self);
 end;
@@ -5635,8 +5277,7 @@ begin
   inherited;
 end;
 
-procedure TPresentedListView.PMAncesstorPresentationLoaded
-  (var AMessage: TDispatchMessageWithValue<Boolean>);
+procedure TPresentedListView.PMAncesstorPresentationLoaded(var AMessage: TDispatchMessageWithValue<Boolean>);
 begin
   ExecuteInterlocked(
     procedure
@@ -5650,15 +5291,13 @@ var
   PresentationService: IFMXListViewPresentationService;
   LPresentation: IInterface;
 begin
-  if ((FControlType = TControlType.Platform) or (csDesigning in ComponentState))
-    and TPlatformServices.Current.SupportsPlatformService
-    (IFMXListViewPresentationService, PresentationService) then
+  if ((FControlType = TControlType.Platform) or (csDesigning in ComponentState)) and
+    TPlatformServices.Current.SupportsPlatformService(IFMXListViewPresentationService, PresentationService) then
   begin
     FPresentation := nil;
     // Make sure that presentation is purged before it's recreated
     LPresentation := PresentationService.AttachPresentation(Self);
-    if Supports(LPresentation, IListViewPresentation, FPresentation) and
-      (FItemIndex <> -1) and not FEditMode then
+    if Supports(LPresentation, IListViewPresentation, FPresentation) and (FItemIndex <> -1) and not FEditMode then
       FPresentation.SetItemSelected(FItemIndex, True);
   end
   else
@@ -5715,8 +5354,7 @@ const
   var
     Service: IPresentedControlBehavior;
   begin
-    if TBehaviorServices.Current.SupportsBehaviorService
-      (IPresentedControlBehavior, Service, Self) then
+    if TBehaviorServices.Current.SupportsBehaviorService(IPresentedControlBehavior, Service, Self) then
       Result := Service.GetOverlayIcon
     else
       Result := nil;
@@ -5732,13 +5370,12 @@ const
   begin
     TextWidth := Canvas.TextWidth(ControlTypeCaption) + 2 * LabelPadding;
     TextHeight := Canvas.TextHeight(ControlTypeCaption) + 2 * LabelPadding;
-    TextRect := TRectF.Create(TPointF.Create(Width - TextWidth - LabelMargins,
-      Height - TextHeight - LabelMargins), TextWidth, TextHeight);
+    TextRect := TRectF.Create(TPointF.Create(Width - TextWidth - LabelMargins, Height - TextHeight - LabelMargins),
+      TextWidth, TextHeight);
     Canvas.Fill.Color := TAlphaColorRec.Black;
     Canvas.FillRect(TextRect, 3, 3, AllCorners, 0.5);
     Canvas.Fill.Color := TAlphaColorRec.White;
-    Canvas.FillText(TextRect, ControlTypeCaption, False, 1, [],
-      TTextAlign.Center, TTextAlign.Center);
+    Canvas.FillText(TextRect, ControlTypeCaption, False, 1, [], TTextAlign.Center, TTextAlign.Center);
   end;
 
   procedure PaintDesignTimeIcon;
@@ -5751,9 +5388,8 @@ const
     if Icon <> nil then
     begin
       IconRect := TRectF.Create(0, 0, Icon.Width, Icon.Height);
-      DestRect := TRectF.Create(TPointF.Create(Width - LabelPadding -
-        Icon.Width, Height - LabelPadding - Icon.Height), Icon.Width,
-        Icon.Height);
+      DestRect := TRectF.Create(TPointF.Create(Width - LabelPadding - Icon.Width, Height - LabelPadding - Icon.Height),
+        Icon.Width, Icon.Height);
       Canvas.DrawBitmap(Icon, IconRect, DestRect, 0.5);
     end
     else
@@ -5762,8 +5398,7 @@ const
 
 begin
   inherited;
-  if (csDesigning in ComponentState) and not Locked and not FInPaintTo and
-    (ControlType = TControlType.Platform) then
+  if (csDesigning in ComponentState) and not Locked and not FInPaintTo and (ControlType = TControlType.Platform) then
   begin
     Canvas.SetMatrix(AbsoluteMatrix);
     PaintDesignTimeIcon;
@@ -5948,8 +5583,7 @@ begin
   end;
 end;
 
-procedure TPresentedListView.DoCheckStateChanged(const AItem: TListItem;
-const Control: TListItemDrawable);
+procedure TPresentedListView.DoCheckStateChanged(const AItem: TListItem; const Control: TListItemDrawable);
 var
   Checkable: IListViewCheckProvider;
 begin
@@ -6013,8 +5647,7 @@ procedure TPresentedListView.ItemButtonClicked(const ItemIndex: Integer);
 var
   Provider: IListViewTextButtonProvider;
 begin
-  if Supports(Adapter, IListViewTextButtonProvider, Provider) and
-    (Provider.TextButtonDrawable[ItemIndex] <> nil) then
+  if Supports(Adapter, IListViewTextButtonProvider, Provider) and (Provider.TextButtonDrawable[ItemIndex] <> nil) then
     Provider.TextButtonDrawable[ItemIndex].Click;
 end;
 
@@ -6138,8 +5771,7 @@ end;
 
 procedure TPresentedListView.ExecuteInterlocked(const P: TProc);
 begin
-  if (FPresentation <> nil) and
-    (TInterlocked.CompareExchange(FPresentationLocked, 1, 0) = 0) then
+  if (FPresentation <> nil) and (TInterlocked.CompareExchange(FPresentationLocked, 1, 0) = 0) then
     try
       P;
     finally
@@ -6157,17 +5789,13 @@ begin
   FAppearanceProperties := TPublishedAppearance.Create(Self);
   FItemAppearanceObjects := TPublishedObjects.Create(Self);
 
-  FItemAppearanceProperties := TItemAppearanceProperties.Create(Self,
-    TAppearanceType.Item);
+  FItemAppearanceProperties := TItemAppearanceProperties.Create(Self, TAppearanceType.Item);
   InitializeItemAppearance(FItemAppearanceProperties);
-  FItemEditAppearanceProperties := TItemAppearanceProperties.Create(Self,
-    TAppearanceType.ItemEdit);
+  FItemEditAppearanceProperties := TItemAppearanceProperties.Create(Self, TAppearanceType.ItemEdit);
   InitializeItemAppearance(FItemEditAppearanceProperties);
-  FHeaderAppearanceProperties := TItemAppearanceProperties.Create(Self,
-    TAppearanceType.Header);
+  FHeaderAppearanceProperties := TItemAppearanceProperties.Create(Self, TAppearanceType.Header);
   InitializeItemAppearance(FHeaderAppearanceProperties);
-  FFooterAppearanceProperties := TItemAppearanceProperties.Create(Self,
-    TAppearanceType.Footer);
+  FFooterAppearanceProperties := TItemAppearanceProperties.Create(Self, TAppearanceType.Footer);
   InitializeItemAppearance(FFooterAppearanceProperties);
 
   // Create our own adapter
@@ -6197,15 +5825,14 @@ begin
   inherited;
 end;
 
-procedure TAppearanceListView.SearchBoxClear;
+procedure TListViewBase.SearchBoxClear;
 begin
   if FSearchEdit = nil then
     exit;
   FSearchEdit.Text := '';
 end;
 
-procedure TAppearanceListView.SetAppearanceListViewItems
-  (const AItems: TAppearanceListViewItems);
+procedure TAppearanceListView.SetAppearanceListViewItems(const AItems: TAppearanceListViewItems);
 begin
   FAppearanceViewItems := AItems;
   FAppearanceViewItems.OnNotify := ObjectsNotify;
@@ -6239,8 +5866,7 @@ begin
   DoChange;
 end;
 
-function TAppearanceListView.GetAppearanceListViewItem(const Index: Integer)
-  : TListViewItem;
+function TAppearanceListView.GetAppearanceListViewItem(const Index: Integer): TListViewItem;
 begin
   Result := FAppearanceViewItems.AppearanceItem[Index];
 end;
@@ -6250,8 +5876,7 @@ begin
   Result := FHeaderAppearanceProperties.Name;
 end;
 
-function TAppearanceListView.GetHeaderAppearanceProperties
-  : TItemAppearanceProperties;
+function TAppearanceListView.GetHeaderAppearanceProperties: TItemAppearanceProperties;
 begin
   Result := FHeaderAppearanceProperties;
 end;
@@ -6266,8 +5891,7 @@ begin
   Result := FFooterAppearanceProperties.Name;
 end;
 
-function TAppearanceListView.GetFooterAppearanceProperties
-  : TItemAppearanceProperties;
+function TAppearanceListView.GetFooterAppearanceProperties: TItemAppearanceProperties;
 begin
   Result := FFooterAppearanceProperties;
 end;
@@ -6292,14 +5916,12 @@ begin
   Result := FItemEditAppearanceProperties.Name;
 end;
 
-function TAppearanceListView.GetItemAppearanceProperties
-  : TItemAppearanceProperties;
+function TAppearanceListView.GetItemAppearanceProperties: TItemAppearanceProperties;
 begin
   Result := FItemAppearanceProperties;
 end;
 
-function TAppearanceListView.GetItemEditAppearanceProperties
-  : TItemAppearanceProperties;
+function TAppearanceListView.GetItemEditAppearanceProperties: TItemAppearanceProperties;
 begin
   Result := FItemEditAppearanceProperties;
 end;
@@ -6314,80 +5936,81 @@ begin
   Result := FTopItemIndex;
 end;
 
-function TAppearanceListView.getItemTextButtonHeight
-  (const AItem: TListItemTextButton; const aWidth: Single = 0): Integer;
+function TListViewBase.getItemTextButtonHeight(const AItem: TListItemTextButton; const aWidth: Single = 0): Integer;
 // ZuBy
 var
   aItemWidth: Single;
 begin
   if AItem.Text.IsEmpty then
+  begin
     Result := Ceil(AItem.Height);
+    exit;
+  end;
 
   aItemWidth := 0;
   if ShowScrollBar then
     aItemWidth := DefaultScrollBarWidth;
 
   if SameValue(0, aWidth) then
-    aItemWidth := Width - (aItemWidth + ItemSpaces.Left + ItemSpaces.Right +
-      (SideSpace * 2))
+    aItemWidth := Width - (aItemWidth + ItemSpaces.Left + ItemSpaces.Right + (SideSpace * 2))
   else
     aItemWidth := aWidth;
 
-  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, aItemWidth,
-    0).Height);
+  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, aItemWidth, 0).Height);
 end;
 
-function TAppearanceListView.getItemTextButtonWidth
-  (const AItem: TListItemTextButton; const aHeight: Single): Integer;
+function TListViewBase.getItemTextButtonWidth(const AItem: TListItemTextButton; const aHeight: Single): Integer;
 begin
   if AItem.Text.IsEmpty then
-    Result := Ceil(AItem.Width);
+  begin
+    Result := Ceil(AItem.Height);
+    exit;
+  end;
 
-  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, 0,
-    0).Width);
+  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, 0, 0).Width);
 end;
 
-function TAppearanceListView.getItemTextHeight(const AItem: TListItemText;
-const aWidth: Single = 0): Integer; // ZuBy
+function TListViewBase.getItemTextHeight(const AItem: TListItemText; const aWidth: Single = 0): Integer; // ZuBy
 var
   aItemWidth: Single;
 begin
   if AItem.Text.IsEmpty then
+  begin
     Result := Ceil(AItem.Height);
+    exit;
+  end;
 
   aItemWidth := 0;
   if ShowScrollBar then
     aItemWidth := DefaultScrollBarWidth;
 
   if SameValue(0, aWidth) then
-    aItemWidth := Width - (aItemWidth + ItemSpaces.Left + ItemSpaces.Right +
-      (SideSpace * 2))
+    aItemWidth := Width - (aItemWidth + ItemSpaces.Left + ItemSpaces.Right + (SideSpace * 2))
   else
     aItemWidth := aWidth;
 
-  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, aItemWidth,
-    0).Height);
+  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, aItemWidth, 0).Height);
 
 end;
 
-function TAppearanceListView.getItemTextWidth(const AItem: TListItemText;
-const aHeight: Single): Integer;
+function TListViewBase.getItemTextWidth(const AItem: TListItemText; const aHeight: Single): Integer;
 begin
   if AItem.Text.IsEmpty then
-    Result := Ceil(AItem.Width);
+  begin
+    Result := Ceil(AItem.Height);
+    exit;
+  end;
 
-  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, 0,
-    0).Width);
+  Result := Ceil(getTextSize(AItem.Text, AItem.Font, AItem.WordWrap, 0, 0).Width);
 end;
 
 function TAppearanceListView.getLastVisibleItemindex: Integer; // ZuBy
 begin
-  Result := Min(getFirstVisibleItemIndex + getVisibleCount,
-    TListViewBase(Self).Adapter.Count - 1);
+  Result := Min(getFirstVisibleItemIndex + getVisibleCount, TListViewBase(Self).Adapter.Count - 1);
 end;
 
-function TAppearanceListView.getTextSize(const aText: string; aFont: TFont;
-const aWordWrap: Boolean; aWidth, aHeight: Single): TSizeF; // ZuBy
+function TListViewBase.getTextSize(const aText: string; aFont: TFont; const aWordWrap: Boolean; aWidth, aHeight: Single)
+  : TSizeF; // ZuBy
 var
   aMaxSize: TPointF;
 begin
@@ -6421,24 +6044,22 @@ begin
   if FHorizontal then
     Result := Round(Width / GetItemAppearanceProperties.Height)
   else
-    Result := Round(Height / GetItemAppearanceProperties.Height);
+    Result := Round(Height / FItemAppearanceProperties.Height);
 end;
 
-function TAppearanceListView.GetScrollWidth: Single; // ZuBy
+function TListViewBase.GetScrollWidth: Single; // ZuBy
 begin
   Result := DefaultScrollBarWidth;
 end;
 
 function TAppearanceListView.HasButtonsInCells: Boolean;
 begin
-  Result := ItemAppearance.ItemAppearance = TAppearanceNames.
-    ImageListItemRightButton;
+  Result := ItemAppearance.ItemAppearance = TAppearanceNames.ImageListItemRightButton;
 end;
 
 function TAppearanceListView.HasCheckboxMode: Boolean;
 begin
-  Result := FEditMode and (FAppearanceAllowsCheckboxes or
-    ((not IsDeleteModeAllowed) and HasDeletionEditMode));
+  Result := FEditMode and (FAppearanceAllowsCheckboxes or ((not IsDeleteModeAllowed) and HasDeletionEditMode));
 end;
 
 function TAppearanceListView.HasDeletionEditMode: Boolean;
@@ -6461,7 +6082,7 @@ begin
   FHeaderAppearanceProperties.Height := Value;
 end;
 
-procedure TAppearanceListView.SetHorizontal(const Value: Boolean); // ZuBy
+procedure TListViewBase.SetHorizontal(const Value: Boolean); // ZuBy
 begin
   if FHorizontal <> Value then
   begin
@@ -6486,14 +6107,13 @@ begin
   FFooterAppearanceProperties.AppearanceClassName := Value;
 end;
 
-procedure TAppearanceListView.SetAppearanceProperties
-  (const Value: TPublishedAppearance);
+procedure TAppearanceListView.SetAppearanceProperties(const Value: TPublishedAppearance);
 begin
   Assert(False);
   // Do nothing
 end;
 
-procedure TAppearanceListView.SetAutoColumns(const Value: Boolean); // ZuBy
+procedure TListViewBase.SetAutoColumns(const Value: Boolean); // ZuBy
 begin
   if FAutoColumns <> Value then
   begin
@@ -6502,7 +6122,7 @@ begin
   end;
 end;
 
-procedure TAppearanceListView.SetBottomOffset(const Value: Integer); // ZuBy
+procedure TListViewBase.SetBottomOffset(const Value: Integer); // ZuBy
 begin
   if FBottomOffset <> Value then
   begin
@@ -6513,6 +6133,12 @@ begin
     UpdateItemLookups;
     Invalidate;
   end;
+end;
+
+procedure TListViewBase.SetCanScroll(const Value: Boolean); // sinuke
+begin
+  FCanScroll := Value;
+  StopPropertyAnimation('ScrollViewPos');
 end;
 
 procedure TAppearanceListView.SetColorBackground(aColor: TAlphaColor); // ZuBy
@@ -6526,12 +6152,11 @@ begin
   FStyleResources.ButtonNormalStyleImage.Normal := nil;
   FStyleResources.ButtonNormalStyleImage.Pressed := nil;
   FStyleResources.ButtonTextColor := aColor;
-  ItemAppearanceObjects.ItemObjects.TextButton.TextColor := aColor;
+  FItemAppearanceObjects.ItemObjects.TextButton.TextColor := aColor;
   Repaint;
 end;
 
-procedure TAppearanceListView.SetColorButtonTextPressed(aColor: TAlphaColor);
-// ZuBy
+procedure TAppearanceListView.SetColorButtonTextPressed(aColor: TAlphaColor); // ZuBy
 begin
   FStyleResources.ButtonTextPressedColor := aColor;
   Repaint;
@@ -6543,15 +6168,13 @@ begin
   Repaint;
 end;
 
-procedure TAppearanceListView.SetColorDeleteTextPressed(aColor: TAlphaColor);
-// ZuBy
+procedure TAppearanceListView.SetColorDeleteTextPressed(aColor: TAlphaColor); // ZuBy
 begin
   FStyleResources.DeleteButtonTextPressedColor := aColor;
   Repaint;
 end;
 
-procedure TAppearanceListView.SetColorDeleteTintColor(aColor: TAlphaColor);
-// ZuBy
+procedure TAppearanceListView.SetColorDeleteTintColor(aColor: TAlphaColor); // ZuBy
 begin
   FDeleteButton.TintColor := aColor;
   Repaint;
@@ -6583,8 +6206,7 @@ begin
   Repaint;
 end;
 
-procedure TAppearanceListView.SetColorItemSeparator(aColor: TAlphaColor);
-// ZuBy
+procedure TAppearanceListView.SetColorItemSeparator(aColor: TAlphaColor); // ZuBy
 begin
   FItemStyleFrameColor := aColor;
   Repaint;
@@ -6611,8 +6233,7 @@ begin
   Repaint;
 end;
 
-procedure TAppearanceListView.SetColorTextHeaderShadow(aColor: TAlphaColor);
-// ZuBy
+procedure TAppearanceListView.SetColorTextHeaderShadow(aColor: TAlphaColor); // ZuBy
 begin
   FStyleResources.HeaderTextShadowColor := aColor;
   Repaint;
@@ -6624,7 +6245,7 @@ begin
   Repaint;
 end;
 
-procedure TAppearanceListView.SetColumnWidth(const Value: Single); // ZuBy
+procedure TListViewBase.SetColumnWidth(const Value: Single); // ZuBy
 begin
   if not SameValue(FColumnWidth, Value, TEpsilon.Position) then
   begin
@@ -6634,8 +6255,7 @@ begin
 end;
 
 /// <summary> óñòàíàâëèâàåì êàñòîìíîé öâåò äëÿ Item'a </summary>
-procedure TAppearanceListView.SetCustomColorForItem(const ItemIndex: Integer;
-const aColor: TAlphaColor); // ZuBy
+procedure TAppearanceListView.SetCustomColorForItem(const ItemIndex: Integer; const aColor: TAlphaColor); // ZuBy
 begin
   with Items[ItemIndex] do
   begin
@@ -6646,8 +6266,7 @@ begin
 end;
 
 /// <summary> âûêëþ÷àåì îòðèñîâêó êàñòîìíîãî öâåòà ó Item'a </summary>
-procedure TAppearanceListView.SetDefaultColorForItem(const ItemIndex: Integer);
-// ZuBy
+procedure TAppearanceListView.SetDefaultColorForItem(const ItemIndex: Integer); // ZuBy
 begin
   Items[ItemIndex].Data['aUseCustomColor'] := False;
   Repaint;
@@ -6659,8 +6278,7 @@ begin
   Repaint;
 end;
 
-procedure TAppearanceListView.SetColorPullRefreshIndicator(aColor: TAlphaColor);
-// ZuBy
+procedure TAppearanceListView.SetColorPullRefreshIndicator(aColor: TAlphaColor); // ZuBy
 begin
   FStyleResources.PullRefreshIndicatorColor := aColor;
   Repaint;
@@ -6672,14 +6290,13 @@ begin
   Repaint;
 end;
 
-procedure TAppearanceListView.SetItemAppearanceObjects
-  (const Value: TPublishedObjects);
+procedure TAppearanceListView.SetItemAppearanceObjects(const Value: TPublishedObjects);
 begin
   Assert(False);
   // Do nothing
 end;
 
-procedure TAppearanceListView.SetItemBottomOffset(const Value: Integer);
+procedure TListViewBase.SetItemBottomOffset(const Value: Integer);
 begin
   if FItemBottomOffset <> Value then
   begin
@@ -6695,8 +6312,7 @@ begin
   FItemAppearanceProperties.AppearanceClassName := Value;
 end;
 
-procedure TAppearanceListView.SetSeparatorLeftOffset(const Value: Single);
-// ZuBy
+procedure TListViewBase.SetSeparatorLeftOffset(const Value: Single); // ZuBy
 begin
   if FSeparatorLeftOffset <> Value then
   begin
@@ -6707,8 +6323,7 @@ begin
   end;
 end;
 
-procedure TAppearanceListView.SetSeparatorRightOffset(const Value: Single);
-// ZuBy
+procedure TListViewBase.SetSeparatorRightOffset(const Value: Single); // ZuBy
 begin
   if FSeparatorRightOffset <> Value then
   begin
@@ -6719,7 +6334,7 @@ begin
   end;
 end;
 
-procedure TAppearanceListView.SetShowScrollBar(const Value: Boolean); // ZuBy
+procedure TListViewBase.SetShowScrollBar(const Value: Boolean); // ZuBy
 begin
   if FShowScrollBar <> Value then
   begin
@@ -6729,7 +6344,7 @@ begin
   end;
 end;
 
-procedure TAppearanceListView.SetTopOffset(const Value: Integer); // ZuBy
+procedure TListViewBase.SetTopOffset(const Value: Integer); // ZuBy
 begin
   if FTopOffset <> Value then
   begin
@@ -6742,13 +6357,19 @@ begin
   end;
 end;
 
-procedure TAppearanceListView.SetTransparentItems(const Value: Boolean);
+procedure TListViewBase.SetTransparentHeader(const Value: Boolean);
+begin
+  FTransparentHeaders := Value;
+  Invalidate;
+end;
+
+procedure TListViewBase.SetTransparentItems(const Value: Boolean);
 begin
   FTransparentItems := Value;
   Invalidate;
 end;
 
-procedure TAppearanceListView.SetTransparentSeparator(const Value: Boolean);
+procedure TListViewBase.SetTransparentSeparator(const Value: Boolean);
 begin
   FTransparentSeparator := Value;
   Invalidate;
@@ -6782,8 +6403,7 @@ begin
   end;
 end;
 
-function TAppearanceListView.GetAppearanceProperties
-  : TArray<TItemAppearanceProperties>;
+function TAppearanceListView.GetAppearanceProperties: TArray<TItemAppearanceProperties>;
 begin
   SetLength(Result, 4);
   Result[0] := FItemEditAppearanceProperties;
@@ -6805,10 +6425,8 @@ procedure TAppearanceListView.SetItemEditAppearanceName(const Value: string);
 
   function AllowsCheckboxes(const Name: string): Boolean;
   begin
-    Result := (Name = TAppearanceNames.ListItemRightDetailShowCheck) or
-      (Name = TAppearanceNames.ImageListItemShowCheck) or
-      (Name = TAppearanceNames.ImageListItemRightButtonShowCheck) or
-      (Name = TAppearanceNames.ListItemShowCheck) or
+    Result := (Name = TAppearanceNames.ListItemRightDetailShowCheck) or (Name = TAppearanceNames.ImageListItemShowCheck)
+      or (Name = TAppearanceNames.ImageListItemRightButtonShowCheck) or (Name = TAppearanceNames.ListItemShowCheck) or
 
       (Name = TAppearanceNames.ImageListItemBottomDetailShowCheck) or
       (Name = TAppearanceNames.ImageListItemBottomDetailRightButtonShowCheck);
@@ -6816,10 +6434,8 @@ procedure TAppearanceListView.SetItemEditAppearanceName(const Value: string);
 
   function AllowsDeleteMode(const Name: string): Boolean;
   begin
-    Result := (Name = TAppearanceNames.ListItemDelete) or
-      (Name = TAppearanceNames.ListItemRightDetailDelete) or
-      (Name = TAppearanceNames.ImageListItemDelete) or
-      (Name = TAppearanceNames.ImageListItemRightButtonDelete);
+    Result := (Name = TAppearanceNames.ListItemDelete) or (Name = TAppearanceNames.ListItemRightDetailDelete) or
+      (Name = TAppearanceNames.ImageListItemDelete) or (Name = TAppearanceNames.ImageListItemRightButtonDelete);
 
   end;
 
@@ -6838,20 +6454,17 @@ begin
   end;
 end;
 
-procedure TAppearanceListView.InitializeItemAppearance(const AAppearance
-  : TItemAppearanceProperties);
+procedure TAppearanceListView.InitializeItemAppearance(const AAppearance: TItemAppearanceProperties);
 begin
   AAppearance.AppearanceClass := TNullItemObjects;
 end;
 
-function TAppearanceListView.IsCustomColorUsed(const ItemIndex: Integer)
-  : Boolean; // ZuBy
+function TAppearanceListView.IsCustomColorUsed(const ItemIndex: Integer): Boolean; // ZuBy
 begin
   Result := Items[ItemIndex].Data['aUseCustomColor'].AsBoolean;
 end;
 
-procedure TAppearanceListView.ItemAppearanceChange(const Sender
-  : TItemAppearanceProperties);
+procedure TAppearanceListView.ItemAppearanceChange(const Sender: TItemAppearanceProperties);
 var
   Purposes: set of TListItemPurpose;
 begin
@@ -6867,8 +6480,7 @@ begin
     FChangedAppearanceObjects := FChangedAppearanceObjects + Purposes;
 end;
 
-procedure TAppearanceListView.ItemAppearanceChangeObjects
-  (const Sender: TItemAppearanceProperties);
+procedure TAppearanceListView.ItemAppearanceChangeObjects(const Sender: TItemAppearanceProperties);
 begin
   ItemAppearanceChange(Sender);
 end;
@@ -6880,8 +6492,7 @@ begin
     Items.Delete(0);
 end;
 
-procedure TAppearanceListView.ObjectsNotify(Sender: TObject;
-const Item: TListItem; Action: TCollectionNotification);
+procedure TAppearanceListView.ObjectsNotify(Sender: TObject; const Item: TListItem; Action: TCollectionNotification);
 begin
   if Action = TCollectionNotification.cnRemoved then
   begin
@@ -6890,8 +6501,7 @@ begin
   end;
 end;
 
-procedure TAppearanceListView.AppearanceResetObjects
-  (APurposes: TListItemPurposes);
+procedure TAppearanceListView.AppearanceResetObjects(APurposes: TListItemPurposes);
 var
   LPurposes: TListItemPurposes;
   LProperties: TItemAppearanceProperties;
@@ -6919,8 +6529,7 @@ begin
   UpdateAppearanceStyleResources;
 end;
 
-procedure TAppearanceListView.AppearanceResetHeights
-  (APurposes: TListItemPurposes);
+procedure TAppearanceListView.AppearanceResetHeights(APurposes: TListItemPurposes);
 var
   LPurposes: TListItemPurposes;
   LProperties: TItemAppearanceProperties;
@@ -6985,8 +6594,7 @@ begin
   end;
 end;
 
-procedure TAppearanceListView.RefreshAppearances(const APurposes
-  : TListItemPurposes);
+procedure TAppearanceListView.RefreshAppearances(const APurposes: TListItemPurposes);
 begin
   Adapter.ResetViews(APurposes);
   InvalidateHeights; // Object heights may have changed
@@ -7010,8 +6618,7 @@ begin
     RefreshAppearances([TListItemPurpose.None]);
 end;
 
-procedure TAppearanceListView.ItemAppearanceChangeHeight
-  (const Sender: TItemAppearanceProperties);
+procedure TAppearanceListView.ItemAppearanceChangeHeight(const Sender: TItemAppearanceProperties);
 begin
   Assert(Sender <> nil);
   if Sender <> nil then
@@ -7046,13 +6653,12 @@ begin
     begin
       inherited;
       AppearanceResetObjects(FChangedAppearanceObjects);
-      AppearanceResetHeights(FChangedAppearanceHeights -
-        FChangedAppearanceObjects);
+      AppearanceResetHeights(FChangedAppearanceHeights - FChangedAppearanceObjects);
     end;
   end;
 end;
 
-function TAppearanceListView.getAniCalc: TAniCalculations; // ZuBy
+function TListViewBase.getAniCalc: TAniCalculations; // ZuBy
 begin
   Result := FAniCalc;
 end;
@@ -7064,8 +6670,7 @@ procedure TAppearanceListView.EditModeAppearances;
   begin
     Result := False;
     for LProperties in GetAppearanceProperties do
-      if LProperties.Active and not(LProperties.Objects is TNullItemObjects)
-      then
+      if LProperties.Active and not(LProperties.Objects is TNullItemObjects) then
         exit(True);
   end;
 
@@ -7125,7 +6730,7 @@ begin
   Result := FHeaderAppearanceProperties.Height;
 end;
 
-function TAppearanceListView.getHeightByIndex(Index: Integer): Integer; // ZuBy
+function TListViewBase.getHeightByIndex(Index: Integer): Integer; // ZuBy
 begin
   Result := GetItemHeight(index);
 end;
@@ -7145,16 +6750,14 @@ begin
   FAppearanceViewItems.ReindexAndFindItem(TListViewItem(Item));
 end;
 
-procedure TAppearanceListView.DoCheckStateChanged(const AItem: TListItem;
-const Control: TListItemDrawable);
+procedure TAppearanceListView.DoCheckStateChanged(const AItem: TListItem; const Control: TListItemDrawable);
 begin
   inherited;
   if Assigned(FOnButtonChange) and (Control is TListItemSimpleControl) then
     FOnButtonChange(Self, AItem, TListItemSimpleControl(Control));
 end;
 
-procedure TAppearanceListView.DoControlClicked(const Item: TListItem;
-const Control: TListItemDrawable);
+procedure TAppearanceListView.DoControlClicked(const Item: TListItem; const Control: TListItemDrawable);
 begin
   inherited;
   if Control is TListItemSimpleControl then
@@ -7162,7 +6765,8 @@ begin
     if Assigned(FOnButtonClick) then
       FOnButtonClick(Self, Item, TListItemSimpleControl(Control));
     FClickEventControl := Control;
-    StartIncident(TDelayedIncident.ClickEvent);
+    if not FMouseClickSwipeEventSend then // ZuBy
+      StartIncident(TDelayedIncident.ClickEvent);
   end;
 end;
 
@@ -7174,7 +6778,7 @@ end;
 procedure TAppearanceListView.DoListItemClick(const AItem: TListItem);
 begin
   inherited;
-  if Assigned(FOnItemClick) and (AItem is TListViewItem) then
+  if Assigned(FOnItemClick) and (AItem is TListViewItem) and (not FMouseClickSwipeEventSend) then
     FOnItemClick(Self, TListViewItem(AItem));
 end;
 
@@ -7185,8 +6789,7 @@ begin
     FOnUpdateObjects(Self, TListViewItem(AListItem));
 end;
 
-procedure TAppearanceListView.DoUpdatingItemView(const AListItem: TListItem;
-var AHandled: Boolean);
+procedure TAppearanceListView.DoUpdatingItemView(const AListItem: TListItem; var AHandled: Boolean);
 begin
   inherited;
   if Assigned(FOnUpdatingObjects) and (AListItem is TListViewItem) then
@@ -7196,25 +6799,20 @@ end;
 {$ENDREGION}
 {$REGION 'TListView'}
 
-procedure TListView.InitializeItemAppearance(const AAppearance
-  : TItemAppearanceProperties);
+procedure TListView.InitializeItemAppearance(const AAppearance: TItemAppearanceProperties);
 begin
   case AAppearance.AppearanceType of
     TAppearanceType.Item:
-      AAppearance.AppearanceClass :=
-        TAppearancesRegistry.FindItemAppearanceObjectsClassByOption
+      AAppearance.AppearanceClass := TAppearancesRegistry.FindItemAppearanceObjectsClassByOption
         (TRegisterAppearanceOption.DefaultItem);
     TAppearanceType.ItemEdit:
-      AAppearance.AppearanceClass :=
-        TAppearancesRegistry.FindItemAppearanceObjectsClassByOption
+      AAppearance.AppearanceClass := TAppearancesRegistry.FindItemAppearanceObjectsClassByOption
         (TRegisterAppearanceOption.DefaultItemEdit);
     TAppearanceType.Header:
-      AAppearance.AppearanceClass :=
-        TAppearancesRegistry.FindItemAppearanceObjectsClassByOption
+      AAppearance.AppearanceClass := TAppearancesRegistry.FindItemAppearanceObjectsClassByOption
         (TRegisterAppearanceOption.DefaultHeader);
     TAppearanceType.Footer:
-      AAppearance.AppearanceClass :=
-        TAppearancesRegistry.FindItemAppearanceObjectsClassByOption
+      AAppearance.AppearanceClass := TAppearancesRegistry.FindItemAppearanceObjectsClassByOption
         (TRegisterAppearanceOption.DefaultFooter);
   else
     Assert(False);
@@ -7226,31 +6824,26 @@ begin
   FItemSelectedBeforeEdit := Selected;
 end;
 
-procedure TAppearanceListView.EditorAfterItemAdded(Sender: IListViewEditor;
-const Item: TListItem);
+procedure TAppearanceListView.EditorAfterItemAdded(Sender: IListViewEditor; const Item: TListItem);
 begin
-  if (FItemSelectedBeforeEdit <> nil) and
-    (ItemIndex <> FItemSelectedBeforeEdit.Index) then
+  if (FItemSelectedBeforeEdit <> nil) and (ItemIndex <> FItemSelectedBeforeEdit.Index) then
     SetItemIndexInternal(FItemSelectedBeforeEdit.Index, True, True);
   FItemSelectedBeforeEdit := nil;
 end;
 
-procedure TAppearanceListView.EditorBeforeItemDeleted(Sender: IListViewEditor;
-const Index: Integer);
+procedure TAppearanceListView.EditorBeforeItemDeleted(Sender: IListViewEditor; const Index: Integer);
 begin
   if ItemIndex >= Adapter.Count - 1 then
     ItemIndex := -1;
   RemoveItemCrossFade(Index);
   FItemSelectedBeforeEdit := Selected;
-  if (FItemSelectedBeforeEdit <> nil) and (FItemSelectedBeforeEdit.Index = Index)
-  then
+  if (FItemSelectedBeforeEdit <> nil) and (FItemSelectedBeforeEdit.Index = Index) then
     FItemSelectedBeforeEdit := nil;
 end;
 
 procedure TAppearanceListView.EditorAfterItemDeleted(Sender: IListViewEditor);
 begin
-  if (FItemSelectedBeforeEdit <> nil) and
-    (ItemIndex <> FItemSelectedBeforeEdit.Index) then
+  if (FItemSelectedBeforeEdit <> nil) and (ItemIndex <> FItemSelectedBeforeEdit.Index) then
     SetItemIndexInternal(FItemSelectedBeforeEdit.Index, True, True);
   FItemSelectedBeforeEdit := nil;
 end;

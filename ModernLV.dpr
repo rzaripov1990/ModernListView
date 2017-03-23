@@ -8,12 +8,12 @@ uses
   uForm2 in 'uForm2.pas' {Form2},
   uForm3 in 'uForm3.pas' {Form3},
   FMX.ListView in 'FMX.ListView.pas',
-  FMX.ListView.Types in 'FMX.ListView.Types.pas',
   FMX.ListView.TextButtonFix in 'comps\FMX.ListView.TextButtonFix.pas',
   FMX.FireMonkey.Parser in 'comps\FMX.FireMonkey.Parser.pas',
   uForm4 in 'uForm4.pas' {Form4},
   uForm5 in 'uForm5.pas' {Form5},
-  uForm6 in 'uForm6.pas' {Form6};
+  uForm6 in 'uForm6.pas' {Form6},
+  FMX.ListView.Types in 'FMX.ListView.Types.pas';
 
 {$R *.res}
 

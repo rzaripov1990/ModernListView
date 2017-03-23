@@ -177,7 +177,7 @@ var
   iBitmap: TListItemImage;
   aPos: Single;
   I: Integer;
-  realIndex: Integer;
+//  realIndex: Integer;
 begin
   for I := 1 to ListView1.Columns do
   begin

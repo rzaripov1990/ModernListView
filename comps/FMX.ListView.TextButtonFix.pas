@@ -5,6 +5,7 @@ unit FMX.ListView.TextButtonFix;
 interface
 
 uses
+  System.Types, System.Classes, FMX.Utils, FMX.Types,
   FMX.ListView.Types, FMX.ListView.Appearances;
 
 type
