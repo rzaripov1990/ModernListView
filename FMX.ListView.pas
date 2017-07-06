@@ -287,7 +287,9 @@ type
     FColumns: Integer; // ZuBy
     FMarg: Integer; // ZuBy
     FAutoColumns: Boolean; // ZuBy
-    FCanScroll: Boolean; // sinuke
+    FCanScroll: Boolean;
+    FShowFirstSeparator: Boolean;
+    FShowLastSeparator: Boolean; // sinuke
 
     function IsRunningOnDesktop: Boolean;
     function HasTouchTracking: Boolean;
@@ -423,7 +425,9 @@ type
     function getTextSize(const aText: string; aFont: TFont; const aWordWrap: Boolean; aWidth, aHeight: Single): TSizeF;
     // ZuBy
     procedure SetTransparentHeader(const Value: Boolean); // ZuBy
-    procedure SetCanScroll(const Value: Boolean); // ZuBy
+    procedure SetCanScroll(const Value: Boolean);
+    procedure SetShowFirstSeparator(const Value: Boolean);
+    procedure SetShowLastSeparator(const Value: Boolean);
   protected
     procedure DefineProperties(Filer: TFiler); override;
     function IsEditMode: Boolean; virtual;
@@ -584,6 +588,9 @@ type
     function getAniCalc: TAniCalculations; // ZuBy
 
     procedure SearchBoxClear; // ZuBy
+
+    property ShowFirstSeparator: Boolean read FShowFirstSeparator write SetShowFirstSeparator default True;
+    property ShowLastSeparator: Boolean read FShowLastSeparator write SetShowLastSeparator default True;
 
     property TransparentSeparators: Boolean read FTransparentSeparator write SetTransparentSeparator default False;
     // ZuBy
@@ -991,6 +998,8 @@ type
     property ParentShowHint;
     property ShowHint;
 
+    property ShowFirstSeparator;
+    property ShowLastSeparator;
     property TransparentSeparators;
     property TransparentItems;
     property AutoPositionToItem;
@@ -3387,6 +3396,10 @@ begin
   EndIndex := Adapter.Count - 1;
   if (Index < 0) or (Index > EndIndex) then
     exit;
+  if (Index = 0) and (not FShowFirstSeparator) then
+    Exit;
+  if (Index = EndIndex) and (not FShowLastSeparator) then
+    Exit;
 
   Prev := nil;
   Next := nil;
@@ -3537,8 +3550,9 @@ begin
         end;
       end;
 
-      if (ListItem.Purpose = TListItemPurpose.None) and
-        ((I >= Adapter.Count - 1) or (Adapter[I + 1].Purpose = TListItemPurpose.None)) then
+      if (not ((I >= Adapter.Count - 1) and (not FShowLastSeparator))) and
+         (ListItem.Purpose = TListItemPurpose.None) and
+         ((I >= Adapter.Count - 1) or (Adapter[I + 1].Purpose = TListItemPurpose.None)) then
       begin
         // ZuBy ***
         if not FTransparentSeparator then
@@ -6344,6 +6358,16 @@ begin
     UpdateItemLookups;
     Invalidate;
   end;
+end;
+
+procedure TListViewBase.SetShowFirstSeparator(const Value: Boolean);
+begin
+  FShowFirstSeparator := Value;
+end;
+
+procedure TListViewBase.SetShowLastSeparator(const Value: Boolean);
+begin
+  FShowLastSeparator := Value;
 end;
 
 procedure TListViewBase.SetShowScrollBar(const Value: Boolean); // ZuBy
