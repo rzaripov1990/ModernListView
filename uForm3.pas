@@ -291,7 +291,7 @@ begin
 
   AniIndicator1.Enabled := false;
   ListView1.OnPaint := ListView1Paint;
-  funally
+  finally
     ListView1.EndUpdate;
     ListView1.Repaint;
   end;
