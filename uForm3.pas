@@ -199,7 +199,7 @@ begin
     if (iBitmap.Bitmap = nil) then
       iBitmap.Bitmap := TBitmap.Create;
 
-    // заголовок
+    // Г§Г ГЈГ®Г«Г®ГўГ®ГЄ
     iTitle := AItem.Objects.FindObjectT<TListItemText>(colTitle + IntToStr(I));
     if iTitle = nil then
       iTitle := TListItemText.Create(AItem);
@@ -237,6 +237,8 @@ var
   AItem: TListViewItem;
   iBitmap: TListItemImage;
 begin
+  ListView1.BeginUpdate;
+  try
   ListView1.OnPaint := nil;
   AniIndicator1.Enabled := true;
 
@@ -289,6 +291,10 @@ begin
 
   AniIndicator1.Enabled := false;
   ListView1.OnPaint := ListView1Paint;
+  funally
+    ListView1.EndUpdate;
+    ListView1.Repaint;
+  end;
 end;
 
 end.
