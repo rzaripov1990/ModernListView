@@ -62,23 +62,22 @@ end;
 
 class procedure TFireMonkey.MakeList;
 var
-  aDel, aName, aURL: string;
+  aName, aURL, aUser: string;
   I: Integer;
 begin
-  System.Delete(FContent, 1, pos('<div class="ipsAreaBackground_light ipsPad">', FContent));
+  System.Delete(FContent, 1, pos('ipsList_reset cStream_members', FContent)-1);
 
   I := 1;
-  while I < 26 do
+  while I < 21 do
   begin
-    aName := Parse(' alt=', ' itemprop="image">', FContent);
-    if not aName.IsEmpty then
+    aUser := Parse('<img src=', '>', FContent);
+    if not aUser.IsEmpty then
     begin
-      aURL := Parse('<img src=', ' alt=' + aName, FContent).DeQuotedString;
+      aURL := Copy(aUser, 1, PosEx(' alt=', aUser)-1).DeQuotedString;
       aURL := StringReplace(aURL, 'https:', 'http:', []);
-      aName := aName.DeQuotedString;
+      aName := Copy(aUser, PosEx('alt=', aUser)+4).DeQuotedString;
 
-      aDel := '<img src=' + Parse('<img src=', 'itemprop="image">', FContent) + 'itemprop="image">';
-      System.Delete(FContent, 1, pos(aDel, FContent) + aDel.Length + 1);
+      System.Delete(FContent, 1, pos(aUser, FContent) + aUser.Length + 1);
 
       FMembersList.Add(TFMXMember.Create(aName, aURL));
       // SetLength(FStreamList, Length(FStreamList) + 1);
@@ -222,8 +221,7 @@ end;
 
 class function TFireMonkey.GetURL: string;
 begin
-  Result := 'http://fire-monkey.ru/search/?type=core_members&group%5B4%5D=1&group%5B6%5D=1&group%5B3%5D=1';
-  Result := Result + '&sortby=pp_reputation_points&sortdirection=desc&page=1';
+  Result := 'http://fire-monkey.ru/search/?type=core_members&group%5B4%5D=1&group%5B6%5D=1&group%5B3%5D=1&sortby=pp_reputation_points&sortdirection=desc&page=1';
 end;
 
 { TFMXMembers }
