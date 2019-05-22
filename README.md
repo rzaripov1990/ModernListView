@@ -1,3 +1,5 @@
+[![HitCount](http://hits.dwyl.io/rzaripov1990/ModernListView.svg)](http://hits.dwyl.io/rzaripov1990/ModernListView)
+
 # ModernListView (Berlin, Tokyo [with fix], Rio)
 Modern ListView - Colorizer, Vertical\Horizontal mode, Columns and other
 
